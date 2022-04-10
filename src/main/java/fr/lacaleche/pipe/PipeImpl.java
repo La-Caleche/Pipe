@@ -1,35 +1,78 @@
 package fr.lacaleche.pipe;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
+import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 
-public class PipeImpl implements Pipe {
+import java.util.ArrayList;
+import java.util.List;
+
+public class PipeImpl<T> implements Pipe<T> {
 
     public static Pipe instance;
-    private JavaPlugin plugin;
+    private T plugin;
+    private CommandManager commandManager;
+
+    private List<T> plugins;
+
+    public PipeImpl() {
+        this.plugins = new ArrayList<>();
+    }
 
     public static Pipe get() {
+        if (instance == null) {
+            instance = new PipeImpl<>();
+        }
         return instance;
     }
 
     @Override
-    public JavaPlugin getPlugin() {
+    public T getPlugin() {
         return plugin;
     }
 
     @Override
-    public void setPlugin(JavaPlugin plugin) {
+    public void setPlugin(T plugin) {
         if (this.plugin != null) {
             throw new RuntimeException("Plugin is already set");
         }
         this.plugin = plugin;
     }
 
-    public static Pipe init() {
-        if (instance != null) {
-            throw new RuntimeException("Pipe is already initialized");
+    @Override
+    public void registerNewPlugin(T plugin) {
+        plugins.add(plugin);
+    }
+
+    @Override
+    public List<T> getRegisteredPlugins() {
+        return this.plugins;
+    }
+
+    @Override
+    public void unregister(T plugin) {
+        if (this.plugin == plugin) {
+            this.plugin = null;
         }
-        instance = new PipeImpl();
-        return instance;
+
+        plugins.remove(plugin);
+    }
+
+    @Override
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    @Override
+    public void setCommandManager(CommandManager commandManager) {
+        this.commandManager = commandManager;
+    }
+
+    @Override
+    public BukkitPipeListenerManager getListenerManager() {
+        if (!(CalecheCore.get().getListenerManager() instanceof BukkitPipeListenerManager)) throw new RuntimeException("Listener manager is not a PipeListenerManager");
+
+        return (BukkitPipeListenerManager) CalecheCore.get().getListenerManager();
     }
 
 }

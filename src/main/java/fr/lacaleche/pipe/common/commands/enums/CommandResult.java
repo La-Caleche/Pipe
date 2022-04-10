@@ -1,0 +1,7 @@
+package fr.lacaleche.pipe.common.commands.enums;
+
+public enum CommandResult {
+
+    MISSING_EXECUTOR, BAD_EXECUTOR, MISSING_ARGUMENT, MISSING_PERMISSION, COMMAND_NOT_FOUND, COMMAND_SUCESS, COMMAND_FAILED;
+
+}

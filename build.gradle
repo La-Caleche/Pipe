@@ -1,5 +1,8 @@
 def minecraftVersion = '1.18.2-R0.1-SNAPSHOT'
 def commandApiVersion = '6.3.1'
+def waterfallVersion = '1.18-R0.1-SNAPSHOT'
+
+def joorVersion = '0.9.14'
 
 repositories {
     maven { url = "https://jitpack.io" }
@@ -8,11 +11,13 @@ repositories {
 
 dependencies {
     implementation project(":library:CalecheCore")
-    implementation project(":library:MinecraftBase")
 
     implementation group: 'dev.jorel.CommandAPI', name: 'commandapi-core', version: commandApiVersion
     implementation group: 'io.papermc.paper', name: 'paper-api', version: minecraftVersion
     implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion
+    implementation group: 'io.github.waterfallmc', name: 'waterfall-api', version: waterfallVersion
+
+    implementation group: 'org.jooq', name: 'joor', version: joorVersion
 }
 
 compileJava.options.encoding = 'UTF-8'
