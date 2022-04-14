@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.client;
 
+import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
@@ -10,10 +11,14 @@ import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerJoinListener;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerLeftListener;
+import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
+import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class ClientModule extends Module {
 
@@ -54,6 +59,10 @@ public class ClientModule extends Module {
             Client client = new ModelFilter<ClientImpl>().find(ClientImpl.class, c -> c.getUUID().equals(player.getUniqueId()));
             client.expireNow();
         }
+
+        List<RankImpl> cachedRanks = new ArrayList<>(CalecheCore.get().getModelManager().get(RankImpl.class));
+        Logger.info("Removing %s ranks from cache...".formatted(cachedRanks.size()));
+        cachedRanks.forEach(RankImpl::expireNow);
     }
 
     @Override
