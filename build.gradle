@@ -3,6 +3,7 @@ def commandApiVersion = '6.3.1'
 def waterfallVersion = '1.18-R0.1-SNAPSHOT'
 
 def joorVersion = '0.9.14'
+def jsonVersion = '20190722'
 
 repositories {
     maven { url = "https://jitpack.io" }
@@ -18,6 +19,8 @@ dependencies {
     implementation group: 'io.github.waterfallmc', name: 'waterfall-api', version: waterfallVersion
 
     implementation group: 'org.jooq', name: 'joor', version: joorVersion
+    implementation group: 'org.json', name: 'json', version: jsonVersion
+
 }
 
 compileJava.options.encoding = 'UTF-8'
