@@ -1,24 +1,26 @@
 package fr.lacaleche.pipe;
 
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
-import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import net.kyori.adventure.platform.AudienceProvider;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface Pipe<T> {
+public interface Pipe {
 
-    public T getPlugin();
+    <T> T getPlugin();
 
-    public void setPlugin(T plugin);
+    void setPlugin(Object plugin);
 
-    public void registerNewPlugin(T plugin);
+    void registerNewPlugin(Object plugin);
 
-    public List<T> getRegisteredPlugins();
+    <T> List<T> getRegisteredPlugins();
 
-    public void unregister(T plugin);
+    void unregister(Object plugin);
 
-    public BukkitPipeListenerManager getListenerManager();
+    <T> T getListenerManager();
 
     /**
      * Get command manager that manager modules commands
@@ -34,7 +36,27 @@ public interface Pipe<T> {
      * */
     void setCommandManager(CommandManager manager);
 
-    public static Pipe get() {
+    /**
+     * TODO
+     * */
+    Locale getDefaultLocale();
+
+    /**
+     * TODO
+     * */
+    Client getClient(UUID uuid);
+
+    /**
+     * TODO
+     * */
+    <T extends AudienceProvider> T adventure();
+
+    /**
+     * TODO
+     * */
+    void setAdventure(AudienceProvider provider);
+
+    static Pipe get() {
         return PipeImpl.get();
     }
 

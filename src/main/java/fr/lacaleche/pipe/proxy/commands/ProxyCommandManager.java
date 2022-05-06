@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.proxy.commands;
 
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.GlobalCommandManager;
@@ -50,7 +51,7 @@ public class ProxyCommandManager extends GlobalCommandManager {
     @Override
     public Client getClient(Object sender) {
         if (!(sender instanceof ProxiedPlayer)) return null;
-        return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getUUID().equals(((ProxiedPlayer) sender).getUniqueId()));
+        return Pipe.get().getClient(((ProxiedPlayer) sender).getUniqueId());
     }
 
     @Override

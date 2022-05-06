@@ -20,16 +20,24 @@ import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class GlobalCommandManager implements CommandManager {
 
-    private static Map<String, Class<MinecraftCommand>> commands = new HashMap<>();
-    private static Map<String, Class<MinecraftCommand>> aliases = new HashMap<>();
-    private static Map<String, Object> commandsCache = new HashMap<>();
-    private static Map<IModule, List<Class<MinecraftCommand>>> moduleCommands = new HashMap<>();
+    private final Map<String, Class<MinecraftCommand>> commands;
+    private final Map<String, Class<MinecraftCommand>> aliases;
+    private final Map<String, Object> commandsCache;
+    private final Map<IModule, List<Class<MinecraftCommand>>> moduleCommands;
+
+    public GlobalCommandManager() {
+        this.commands = new HashMap<>();
+        this.aliases = new HashMap<>();
+        this.commandsCache = new HashMap<>();
+        this.moduleCommands = new HashMap<>();
+    }
 
     /**
      * {@inheritDoc}
@@ -79,7 +87,7 @@ public abstract class GlobalCommandManager implements CommandManager {
         moduleCommandsList.remove(classCommand);
         moduleCommands.put(module, moduleCommandsList);
 
-        commandsCache.remove(command.label());
+        commandsCache.remove(unregistered.getName());
 
         for (String alias : command.aliases()) {
             aliases.remove(alias);
@@ -105,7 +113,7 @@ public abstract class GlobalCommandManager implements CommandManager {
      */
     @Override
     public CoreCommandImpl handleChild(String label, Object sender, Class<?> command, String userInput, String[] arguments) {
-        if (arguments.length > 0) {
+        if (arguments != null && arguments.length > 0) {
             for (Class<?> subCommands : command.getDeclaredClasses()) {
                 CommandChild child = CommandsUtils.validateChild(subCommands);
                 if (child != null && child.label().equalsIgnoreCase(arguments[0]) && child.enabled())
@@ -225,8 +233,7 @@ public abstract class GlobalCommandManager implements CommandManager {
     @Override
     public Class<MinecraftCommand> getCommand(String label) {
         if (!this.isRegistered(label)) return null;
-        Class<MinecraftCommand> object = commands.containsKey(label) ? commands.get(label) : aliases.get(label);
-        return object;
+        return commands.containsKey(label) ? commands.get(label) : aliases.get(label);
     }
 
     /**
@@ -289,14 +296,18 @@ public abstract class GlobalCommandManager implements CommandManager {
         if (commandsCache.containsKey(command.getName())) instance = commandsCache.get(command.getName());
         else {
             try {
-                commandsCache.put(command.getName(), instance = command.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
+                commandsCache.put(command.getName(), instance = command.getDeclaredConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 SentryAPIImpl.getInstance().captureException(e);
             }
         }
         return instance;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean validateArguments(ArgumentManager argumentManager) {
         for (Argument argument : argumentManager.getArguments()) {
@@ -316,7 +327,9 @@ public abstract class GlobalCommandManager implements CommandManager {
      */
     private ArgumentManager parseArguments(Class<?> command, String[] arguments) {
         ArgumentManager manager = this.handleArguments(command);
-        String join = Arrays.stream(arguments).collect(Collectors.joining(" "));
+        if (arguments == null || arguments.length == 0) return manager;
+
+        String join = String.join(" ", arguments);
 
         manager.getArgument("default").setValue(join);
         if (manager.getArguments().size() == 1) return manager;

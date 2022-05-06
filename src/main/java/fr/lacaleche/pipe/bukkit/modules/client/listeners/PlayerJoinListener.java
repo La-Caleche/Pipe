@@ -15,7 +15,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         new ModelFilter<ClientImpl>()
-            .findWithSqlOrDefault(
+            .findOrDefault(
                 ClientImpl.class,
                 c -> c.getUUID().equals(player.getUniqueId()),
                 (queryBuilder) -> queryBuilder.where(new Where("uuid", player.getUniqueId())),

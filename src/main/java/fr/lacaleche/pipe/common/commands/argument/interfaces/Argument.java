@@ -2,20 +2,20 @@ package fr.lacaleche.pipe.common.commands.argument.interfaces;
 
 public interface Argument {
 
-    public String getKey();
+    String getKey();
 
-    public Argument setValue(String value);
+    Argument setValue(String value);
 
-    public String getValue();
+    String getValue();
 
-    public boolean isMandatory();
+    boolean isMandatory();
 
-    public Argument setMandatory(boolean mandatory);
+    Argument setMandatory(boolean mandatory);
 
-    public Argument setMultiple(boolean multiple);
+    Argument setMultiple(boolean multiple);
 
-    public boolean isMultiple();
+    boolean isMultiple();
 
-    public void completer(Completer completer);
+    void completer(Completer completer);
 
 }

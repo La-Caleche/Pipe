@@ -1,5 +1,7 @@
 package fr.lacaleche.pipe.bukkit.commands;
 
+import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.colors.AsciiColors;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.GlobalCommandManager;
@@ -21,7 +23,7 @@ public class BukkitCommandManager extends GlobalCommandManager {
 
     @Override
     public MinecraftCommand registerNewCommand(IModule module, Class<?> newCommand) {
-        Pipe<JavaPlugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
 
         MinecraftCommand command = super.registerNewCommand(module, newCommand);
         PipeCommandUtils.registerCommandAsBukkit(pipe.getPlugin(), command, new SimpleBukkitPipeCommand(command));
@@ -30,7 +32,8 @@ public class BukkitCommandManager extends GlobalCommandManager {
 
     @Override
     public boolean unregisterCommand(IModule module, Class<?> unregistered) {
-        Pipe<JavaPlugin> pipe = Pipe.get();
+        Logger.customDebug("Unregistering command " + unregistered.getSimpleName() + " from module " + module.getClass().getName());
+        Pipe pipe = Pipe.get();
 
         if(!super.unregisterCommand(module, unregistered)) return false;
         PipeCommandUtils.unregisterBukkitCommand(pipe.getPlugin(), CommandsUtils.validateCommand(unregistered));
@@ -56,7 +59,7 @@ public class BukkitCommandManager extends GlobalCommandManager {
     @Override
     public Client getClient(Object sender) {
         if (!(sender instanceof Player)) return null;
-        return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getUUID().equals(((Player) sender).getUniqueId()));
+        return Pipe.get().getClient(((Player) sender).getUniqueId());
     }
 
     @Override
@@ -74,7 +77,7 @@ public class BukkitCommandManager extends GlobalCommandManager {
      */
     @Override
     public boolean isNativeCommand(String label) {
-        Pipe<JavaPlugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
 
         return PipeCommandUtils.isNativeCommand(pipe.getPlugin(), label);
     }

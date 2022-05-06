@@ -3,20 +3,23 @@ package fr.lacaleche.pipe.common.clients.ranks.interfaces;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
 import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
 @Entity("ranks")
 public interface Rank extends ISqlModel {
 
-    public String getSlug();
+    String getSlug();
 
-    public String getColorCode();
+    String getColorCode();
 
-    public boolean isDefault();
+    Component colorize(String text);
 
-    public List<PermissionImpl> getPermissions();
+    boolean isDefault();
 
-    public int getPermissionLevel();
+    List<PermissionImpl> getPermissions();
+
+    int getPermissionLevel();
 
 }

@@ -25,7 +25,7 @@ public @interface CommandExecutor {
      *
      * @since 1.0.0
      * */
-    public enum Executor {
+    enum Executor {
         SERVER, PLAYER, COMMAND_BLOCK, EVERYONE
     }
 

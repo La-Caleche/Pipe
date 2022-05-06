@@ -3,7 +3,8 @@ package fr.lacaleche.pipe.common.packets;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
-import fr.lacaleche.core.utils.redis.packet.Packet;
+import fr.lacaleche.core.utils.redis.packet.PacketImpl;
+import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
 import fr.lacaleche.core.utils.serializer.annotations.Serializer;
 import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
@@ -15,7 +16,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerListPacket extends Packet {
+@Packet(name = "ServerListPacket")
+public class ServerListPacket extends PacketImpl {
 
     private List<ServerInfo> servers;
     private Token token;

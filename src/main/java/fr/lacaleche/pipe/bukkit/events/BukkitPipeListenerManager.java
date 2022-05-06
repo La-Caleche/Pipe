@@ -1,9 +1,10 @@
 package fr.lacaleche.pipe.bukkit.events;
 
+import fr.lacaleche.core.events.interfaces.IListenerManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import org.bukkit.event.Listener;
 
-public interface BukkitPipeListenerManager {
+public interface BukkitPipeListenerManager extends IListenerManager {
 
     /**
      * TODO

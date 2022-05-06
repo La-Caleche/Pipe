@@ -3,14 +3,16 @@ package fr.lacaleche.pipe.common.packets;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
-import fr.lacaleche.core.utils.redis.packet.Packet;
+import fr.lacaleche.core.utils.redis.packet.PacketImpl;
+import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
 
 import java.util.UUID;
 
-public class ConnectPacket extends Packet {
+@Packet(name = "ConnectPacket")
+public class ConnectPacket extends PacketImpl {
 
     private UUID player;
     private String server;

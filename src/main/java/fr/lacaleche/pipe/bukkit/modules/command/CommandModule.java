@@ -3,6 +3,8 @@ package fr.lacaleche.pipe.bukkit.modules.command;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.bukkit.modules.command.commands.HelpCommand;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
 
 /**
@@ -19,7 +21,12 @@ public class CommandModule extends Module {
 
     @Override
     public void registerListeners() {
-        Pipe.get().getListenerManager().registerBukkitListener(this, new CommandListeners());
+        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        bukkitManager.registerBukkitListener(this, new CommandListeners());
     }
-    
+
+    @Override
+    public void registerCommands() {
+        Pipe.get().getCommandManager().registerNewCommand(this, HelpCommand.class);
+    }
 }

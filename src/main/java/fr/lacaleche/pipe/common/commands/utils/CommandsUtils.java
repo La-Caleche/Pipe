@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.commands.utils;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;

@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.client.listeners;
 
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
@@ -14,7 +15,7 @@ public class PlayerLeftListener implements Listener {
     public void onPlayerLeft(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        Client client = new ModelFilter<ClientImpl>().find(ClientImpl.class, c -> c.getUUID().equals(player.getUniqueId()));
+        Client client = Pipe.get().getClient(player.getUniqueId());
         client.expireNow();
 
         event.quitMessage(null);

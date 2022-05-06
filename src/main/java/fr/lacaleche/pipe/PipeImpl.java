@@ -1,19 +1,28 @@
 package fr.lacaleche.pipe;
 
+import fr.lacaleche.core.databases.generic.ModelFilter;
+import fr.lacaleche.core.events.interfaces.IListenerManager;
+import fr.lacaleche.pipe.common.clients.Client;
+import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.common.i18n.LocaleImpl;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import net.kyori.adventure.platform.AudienceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class PipeImpl<T> implements Pipe<T> {
+public class PipeImpl implements Pipe {
 
     public static Pipe instance;
-    private T plugin;
+    private Object plugin;
     private CommandManager commandManager;
+    private AudienceProvider adventure;
 
-    private List<T> plugins;
+    private final List<Object> plugins;
 
     public PipeImpl() {
         this.plugins = new ArrayList<>();
@@ -21,18 +30,18 @@ public class PipeImpl<T> implements Pipe<T> {
 
     public static Pipe get() {
         if (instance == null) {
-            instance = new PipeImpl<>();
+            instance = new PipeImpl();
         }
         return instance;
     }
 
     @Override
-    public T getPlugin() {
-        return plugin;
+    public <T> T getPlugin() {
+        return (T) plugin;
     }
 
     @Override
-    public void setPlugin(T plugin) {
+    public void setPlugin(Object plugin) {
         if (this.plugin != null) {
             throw new RuntimeException("Plugin is already set");
         }
@@ -40,17 +49,17 @@ public class PipeImpl<T> implements Pipe<T> {
     }
 
     @Override
-    public void registerNewPlugin(T plugin) {
+    public void registerNewPlugin(Object plugin) {
         plugins.add(plugin);
     }
 
     @Override
-    public List<T> getRegisteredPlugins() {
-        return this.plugins;
+    public <T> List<T> getRegisteredPlugins() {
+        return (List<T>) this.plugins;
     }
 
     @Override
-    public void unregister(T plugin) {
+    public void unregister(Object plugin) {
         if (this.plugin == plugin) {
             this.plugin = null;
         }
@@ -69,10 +78,27 @@ public class PipeImpl<T> implements Pipe<T> {
     }
 
     @Override
-    public BukkitPipeListenerManager getListenerManager() {
-        if (!(CalecheCore.get().getListenerManager() instanceof BukkitPipeListenerManager)) throw new RuntimeException("Listener manager is not a PipeListenerManager");
-
-        return (BukkitPipeListenerManager) CalecheCore.get().getListenerManager();
+    public <T> T getListenerManager() {
+        return CalecheCore.get().getListenerManager();
     }
 
+    @Override
+    public Locale getDefaultLocale() {
+        return new ModelFilter<LocaleImpl>().find(LocaleImpl.class, LocaleImpl::isDefault);
+    }
+
+    @Override
+    public void setAdventure(AudienceProvider adventure) {
+        this.adventure = adventure;
+    }
+
+    @Override
+    public <T extends AudienceProvider> T adventure() {
+        return (T) this.adventure;
+    }
+
+    @Override
+    public Client getClient(UUID uuid) {
+        return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getUUID().equals(uuid));
+    }
 }

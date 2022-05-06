@@ -28,7 +28,7 @@ public interface CommandManager {
      * @param newCommand class object of the newly registred command
      * @return new registered Command
      * */
-    public MinecraftCommand registerNewCommand(IModule module, Class<?> newCommand);
+    MinecraftCommand registerNewCommand(IModule module, Class<?> newCommand);
 
     /**
      * Function to unregister a valid Core Command.
@@ -38,37 +38,37 @@ public interface CommandManager {
      * @param command class object of the command
      * @return true if command as been succesfully unregistered of false if error occured (Such as command didn't registered yet)
      * */
-    public boolean unregisterCommand(IModule module, Class<?> command);
+    boolean unregisterCommand(IModule module, Class<?> command);
 
     /**
      * TODO
      * */
-    public void unregisterModuleCommands(IModule module);
+    void unregisterModuleCommands(IModule module);
 
     /**
      * TODO
      * */
-    public boolean validateSender(CommandExecutor executor, Object sender);
+    boolean validateSender(CommandExecutor executor, Object sender);
 
     /**
      * TODO
      * */
-    public CommandExecutor.Executor translateSender(Object sender);
+    CommandExecutor.Executor translateSender(Object sender);
 
     /**
      * TODO
      * */
-    public Client getClient(Object sender);
+    Client getClient(Object sender);
 
     /**
      * TODO
      * */
-    public boolean validatePermissions(CommandExecutor commandExecutor, Object sender);
+    boolean validatePermissions(CommandExecutor commandExecutor, Object sender);
 
     /**
      * TODO
      * */
-    public void parseHelpToSender(Class<?> command, Object object);
+    void parseHelpToSender(Class<?> command, Object object);
 
     /**
      * Function that handle Minecraft Command
@@ -83,7 +83,7 @@ public interface CommandManager {
      *
      * @return executeCommand result.
      * */
-    public CoreCommandImpl handleCommand(Object sender, String label, String userInput, String[] arguments);
+    CoreCommandImpl handleCommand(Object sender, String label, String userInput, String[] arguments);
 
     /**
      * Function that handle Minecraft Command
@@ -99,12 +99,12 @@ public interface CommandManager {
      *
      * @return last command occurence.
      * */
-    public CoreCommandImpl handleChild(String label, Object sender, Class<?> classComand, String userInput, String[] arguments);
+    CoreCommandImpl handleChild(String label, Object sender, Class<?> classComand, String userInput, String[] arguments);
 
     /**
      * TODO
      * */
-    public ArgumentManager handleArguments(Class<?> command);
+    ArgumentManager handleArguments(Class<?> command);
 
     /**
      * Function that execute the command.
@@ -130,7 +130,7 @@ public interface CommandManager {
      *
      * @return true or false depend if command is registred
      * */
-    public boolean isRegistered(String label);
+    boolean isRegistered(String label);
 
     /**
      * Get all commands registred.
@@ -139,12 +139,12 @@ public interface CommandManager {
      *
      * @return Map that contains all registred CoreCommand
      * */
-    public Map<String, Class<MinecraftCommand>> getCommands();
+    Map<String, Class<MinecraftCommand>> getCommands();
 
     /**
      * TODO
      * */
-    public List<Class<MinecraftCommand>> getModuleCommands(IModule module);
+    List<Class<MinecraftCommand>> getModuleCommands(IModule module);
 
     /**
      * Search a command in the map using it's command label
@@ -156,7 +156,7 @@ public interface CommandManager {
      *
      * @return return CoreCommand linked to label if exist
      * */
-    public Class<MinecraftCommand> getCommand(String label);
+    Class<MinecraftCommand> getCommand(String label);
 
     /**
      * Search for cached Fake Command instance from class command
@@ -168,26 +168,26 @@ public interface CommandManager {
      *
      * @return instance of fake command for the specified command
      * */
-    public Object getCachedInstance(Class<?> command);
+    Object getCachedInstance(Class<?> command);
 
     /**
      * TODO
      * */
-    public void parseCompleter(Object sender, Completer completer);
+    void parseCompleter(Object sender, Completer completer);
 
     /**
      * TODO
      * */
-    public void customCompleter(Completer completer);
+    void customCompleter(Completer completer);
 
     /**
      * TODO
      * */
-    public boolean validateArguments(ArgumentManager manager);
+    boolean validateArguments(ArgumentManager manager);
 
     /**
      * TODO
      * */
-    public boolean isNativeCommand(String label);
+    boolean isNativeCommand(String label);
 
 }

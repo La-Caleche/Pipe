@@ -4,6 +4,8 @@ import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class RankImpl extends SqlModel implements Rank {
     @Property
     private boolean isDefault;
 
-    @HasMany(type = PermissionImpl.class, table = "rank_permissions", key1 = "rank_id", key2 = "permission_id")
+    @HasMany(clazz = PermissionImpl.class, table = "rank_permissions", field = "rank_id", targetField = "permission_id")
     private List<PermissionImpl> permissions;
 
     @Property
@@ -32,6 +34,11 @@ public class RankImpl extends SqlModel implements Rank {
     @Override
     public String getColorCode() {
         return colorCode;
+    }
+
+    @Override
+    public Component colorize(String text) {
+        return MiniMessage.miniMessage().deserialize("%s%s".formatted(colorCode, text));
     }
 
     @Override

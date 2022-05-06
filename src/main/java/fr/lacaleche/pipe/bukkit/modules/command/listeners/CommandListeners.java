@@ -26,7 +26,7 @@ public class CommandListeners implements Listener {
 
     @EventHandler
     public void onCommandExecute(PlayerCommandPreprocessEvent event) {
-        Logger.info(AsciiColors.YELLOW + "Command: " + event.getMessage());
+        Logger.customDebug(AsciiColors.YELLOW + "Command: " + event.getMessage());
         String message = event.getMessage().substring(1);
         CoreCommandImpl command = parseCommand(event, event.getPlayer(), message);
         if (command == null) {

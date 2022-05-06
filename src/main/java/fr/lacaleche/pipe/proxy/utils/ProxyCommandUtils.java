@@ -29,7 +29,7 @@ public class ProxyCommandUtils {
      * @since 1.0.0
      */
     public static void registerCommandAsBungee(MinecraftCommand command, Command proxyCommand) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin parent = pipe.getPlugin();
 
         try {
@@ -57,7 +57,7 @@ public class ProxyCommandUtils {
      * TODO
      * */
     public static boolean isNativeCommand(String label) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin parent = pipe.getPlugin();
 
         try {
@@ -83,7 +83,7 @@ public class ProxyCommandUtils {
      * @since 1.0.0
      */
     public static void unregisterBungeeCommand(MinecraftCommand command) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin parent = pipe.getPlugin();
 
         try {
@@ -117,8 +117,8 @@ public class ProxyCommandUtils {
      * @since 1.0.0
      */
     public static boolean validateSender(CommandExecutor executor, CommandSender sender) {
-        Pipe<Plugin> pipe = Pipe.get();
-        ProxyServer server = pipe.getPlugin().getProxy();
+        Pipe pipe = Pipe.get();
+        ProxyServer server = pipe.<Plugin>getPlugin().getProxy();
 
         for (CommandExecutor.Executor executors : executor.executor()) {
             if (executors == CommandExecutor.Executor.EVERYONE ||
@@ -133,8 +133,8 @@ public class ProxyCommandUtils {
      * TODO
      * */
     public static CommandExecutor.Executor translateSender(CommandSender sender) {
-        Pipe<Plugin> pipe = Pipe.get();
-        ProxyServer server = pipe.getPlugin().getProxy();
+        Pipe pipe = Pipe.get();
+        ProxyServer server = pipe.<Plugin>getPlugin().getProxy();
 
         if (sender instanceof ProxiedPlayer)
             return CommandExecutor.Executor.PLAYER;

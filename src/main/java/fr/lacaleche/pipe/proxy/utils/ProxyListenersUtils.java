@@ -14,7 +14,7 @@ public class ProxyListenersUtils {
      * @param listener the listener to register
      * */
     public static void registerNewListener(Listener listener) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin server = pipe.getPlugin();
         server.getProxy().getPluginManager().registerListener(server, listener);
     }

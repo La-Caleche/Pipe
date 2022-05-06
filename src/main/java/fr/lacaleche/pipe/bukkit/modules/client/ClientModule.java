@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.client;
 
 import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
@@ -17,8 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class ClientModule extends Module {
 
@@ -33,11 +32,11 @@ public class ClientModule extends Module {
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
 
-        Logger.info("Loading clients for %d players...".formatted(players.size()));
+        Logger.customDebug("Loading clients for %d players...".formatted(players.size()));
 
         for (Player player : players) {
             new ModelFilter<ClientImpl>()
-                .findWithSqlOrDefault(
+                .findOrDefault(
                         ClientImpl.class,
                         c -> c.getUUID().equals(player.getUniqueId()),
                         (queryBuilder) -> queryBuilder.where(new Where("uuid", player.getUniqueId())),
@@ -53,21 +52,28 @@ public class ClientModule extends Module {
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
 
-        Logger.info("Removing clients for %d players...".formatted(players.size()));
+        Logger.customDebug("Removing clients for %d players...".formatted(players.size()));
 
         for (Player player : players) {
-            Client client = new ModelFilter<ClientImpl>().find(ClientImpl.class, c -> c.getUUID().equals(player.getUniqueId()));
+            Client client = Pipe.get().getClient(player.getUniqueId());
             client.expireNow();
         }
 
-        List<RankImpl> cachedRanks = new ArrayList<>(CalecheCore.get().getModelManager().get(RankImpl.class));
-        Logger.info("Removing %s ranks from cache...".formatted(cachedRanks.size()));
+        List<RankImpl> cachedRanks = new ArrayList<RankImpl>(CalecheCore.get().getModelManager().get(RankImpl.class));
+        Logger.customDebug("Removing %s ranks from cache...".formatted(cachedRanks.size()));
         cachedRanks.forEach(RankImpl::expireNow);
     }
 
     @Override
+    public void onReload() {
+        this.onDisable();
+        this.onEnable();
+    }
+
+    @Override
     public void registerListeners() {
-        Pipe.get().getListenerManager().registerBukkitListener(this, new PlayerJoinListener());
-        Pipe.get().getListenerManager().registerBukkitListener(this, new PlayerLeftListener());
+        BukkitPipeListenerManager bukkitManager = (BukkitPipeListenerManager) Pipe.get().getListenerManager();
+        bukkitManager.registerBukkitListener(this, new PlayerJoinListener());
+        bukkitManager.registerBukkitListener(this, new PlayerLeftListener());
     }
 }

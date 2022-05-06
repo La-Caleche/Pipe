@@ -1,0 +1,58 @@
+package fr.lacaleche.pipe.bukkit.modules.command.commands;
+
+import fr.lacaleche.core.utils.colors.Colors;
+import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.Client;
+import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
+import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
+import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
+import fr.lacaleche.pipe.common.commands.argument.arguments.RegisteredCommandArgument;
+import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
+import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
+import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+@MinecraftCommand(label = "help", aliases = {"?", "aide", "h"}, description = "Give help for every commands", arguments = {"command"})
+public class HelpCommand {
+
+    @ArgumentsManager
+    public void manager(ArgumentManager manager) {
+        manager.addArgument(new RegisteredCommandArgument("command").setMandatory(false));
+    }
+
+    @CommandExecutor
+    public boolean execute(CommandSender sender, Arguments arguments) {
+        Locale locale = Pipe.get().getDefaultLocale();
+
+        if (sender instanceof Player player) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            locale = client.getLocale();
+        }
+
+        if (arguments.blank("command")) {
+            TextComponent.Builder builder = Component.text();
+            builder.append(locale.t("command.helper.header").ct());
+            builder.append(Component.newline());
+            Locale finalLocale = locale;
+            Pipe.get().getCommandManager().getCommands().forEach((label, commandClass) ->
+                    builder.append(Component.text("  > ").color(TextColor.fromHexString(Colors.LC_MAIN_WHITE)).append(finalLocale.t("command.helper.click_to_run").arg("command", "help %s".formatted(label)).arg("label", StringUtils.capitalize(label)).ct()).append(Component.newline()))
+            );
+            builder.append(Component.newline());
+            builder.append(locale.t("command.helper.footer").ct());
+
+            sender.sendMessage(builder);
+            return true;
+        }
+
+        sender.sendMessage(new HelperImpl(locale, arguments.get("command").getValue()).format());
+
+        return true;
+    }
+
+}

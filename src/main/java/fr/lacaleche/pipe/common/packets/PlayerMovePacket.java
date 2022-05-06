@@ -1,10 +1,12 @@
 package fr.lacaleche.pipe.common.packets;
 
-import fr.lacaleche.core.utils.redis.packet.Packet;
+import fr.lacaleche.core.utils.redis.packet.PacketImpl;
+import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 
 import java.util.UUID;
 
-public class PlayerMovePacket extends Packet {
+@Packet(name = "PlayerMovePacket")
+public class PlayerMovePacket extends PacketImpl {
 
     private UUID             player;
     private String           server;

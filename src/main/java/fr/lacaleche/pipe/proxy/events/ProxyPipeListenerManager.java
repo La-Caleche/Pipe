@@ -1,9 +1,10 @@
 package fr.lacaleche.pipe.proxy.events;
 
+import fr.lacaleche.core.events.interfaces.IListenerManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import net.md_5.bungee.api.plugin.Listener;
 
-public interface ProxyPipeListenerManager {
+public interface ProxyPipeListenerManager extends IListenerManager {
 
     /**
      * TODO

@@ -2,7 +2,6 @@ package fr.lacaleche.pipe.proxy.modules.command.events;
 
 import fr.lacaleche.core.events.CoreEvent;
 import fr.lacaleche.core.events.interfaces.Cancellable;
-import fr.lacaleche.core.utils.redis.packet.Packet;
 import net.md_5.bungee.api.CommandSender;
 
 import java.util.ArrayList;

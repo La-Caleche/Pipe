@@ -17,7 +17,7 @@ public class ProxyPipeListenerManagerImpl extends GlobalListenerManager implemen
 
     @Override
     public void registerProxyListener(IModule module, Listener listener) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin plugin = pipe.getPlugin();
         List<Listener> listeners = proxyListeners.get(module);
 
@@ -32,7 +32,7 @@ public class ProxyPipeListenerManagerImpl extends GlobalListenerManager implemen
 
     @Override
     public void unregisterProxyListener(Listener listener) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin plugin = pipe.getPlugin();
         IModule module = this.getModuleFor(listener);
         if (module != null) {
@@ -49,7 +49,7 @@ public class ProxyPipeListenerManagerImpl extends GlobalListenerManager implemen
 
     @Override
     public void unregisterProxyListeners(IModule module) {
-        Pipe<Plugin> pipe = Pipe.get();
+        Pipe pipe = Pipe.get();
         Plugin plugin = pipe.getPlugin();
         List<Listener> listeners = this.getCustomListeners(module);
         if (listeners.isEmpty()) return;
