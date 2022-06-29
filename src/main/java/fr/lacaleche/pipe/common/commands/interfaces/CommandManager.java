@@ -133,6 +133,17 @@ public interface CommandManager {
     boolean isRegistered(String label);
 
     /**
+     * Check if command is already registred as CoreCommand somewhere on network.
+     *
+     * @since 1.0.0
+     *
+     * @param label used to check if command is registered.
+     *
+     * @return true or false depend if command is registered
+     * */
+    boolean isRegisteredOnNetwork(String label);
+
+    /**
      * Get all commands registred.
      *
      * @since 1.0.0
@@ -140,6 +151,15 @@ public interface CommandManager {
      * @return Map that contains all registred CoreCommand
      * */
     Map<String, Class<MinecraftCommand>> getCommands();
+
+    /**
+     * Get all aliases registred.
+     *
+     * @since 1.0.0
+     *
+     * @return Map that contains all registred aliases.
+     */
+    Map<String, Class<MinecraftCommand>> getAliases();
 
     /**
      * TODO
@@ -189,5 +209,20 @@ public interface CommandManager {
      * TODO
      * */
     boolean isNativeCommand(String label);
+
+    /**
+     * TODO
+     * */
+    Map<String, List<String>> getNetworkCommands();
+
+    /**
+     * TODO
+     * */
+    void addNetworkCommand(String app, String command);
+
+    /**
+     * TODO
+     * */
+    void clearNetworkCommands(String app);
 
 }

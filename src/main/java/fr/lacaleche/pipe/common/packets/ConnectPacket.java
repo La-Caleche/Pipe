@@ -4,55 +4,56 @@ import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
+import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
 import fr.lacaleche.core.utils.Token;
+import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
+import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
 
 import java.util.UUID;
 
 @Packet(name = "ConnectPacket")
-public class ConnectPacket extends PacketImpl {
+public class ConnectPacket extends TransactionalPacket {
 
     private UUID player;
     private String server;
-    private Token token;
-    private Resolve<Object> resolve;
-    private Reject<Object> reject;
-    private PacketType packetType;
-    private boolean result;
 
     public ConnectPacket() {
     }
 
-    public ConnectPacket(UUID player, String server, Token token, boolean result) {
+    public ConnectPacket(UUID player, String server, Token token) {
         this.player = player;
         this.server = server;
-        this.token = token;
-        this.result = result;
-        this.packetType = PacketType.ANSWER;
+
+        this.setToken(token);
+        this.setPacketType(PacketType.ANSWER);
     }
 
     public ConnectPacket(UUID player, String server, Resolve<Object> resolve, Reject<Object> reject) {
         this.player = player;
         this.server = server;
-        this.token = new Token(64);
-        this.resolve = resolve;
-        this.reject = reject;
-        this.packetType = PacketType.REQUEST;
+
+        this.setToken(new Token(64));
+        this.setResolve(resolve);
+        this.setReject(reject);
+        this.setResponse(false);
+        this.setPacketType(PacketType.REQUEST);
     }
     
     @Override
-    public void read(String[] data) {
-        this.packetType = PacketType.valueOf(data[1]);
-        this.player = UUID.fromString(data[2]);
-        this.server = data[3];
-        this.token = new Token(data[4]);
-        this.result = Boolean.parseBoolean(data[5]);
-    }
+    public void read(IPacketData data) {
+        this.setToken(new Token(data.next()));
+        this.setPacketType(PacketType.valueOf(data.next()));
 
-    public PacketType getPacketType() {
-        return packetType;
+        this.player = UUID.fromString(data.next());
+        this.server = data.next();
+
+        if (this.getPacketType() == PacketType.ANSWER && data.hasNext()) {
+            this.setResponse(Boolean.valueOf(data.next()));
+            this.setResult(TransactionResult.valueOf(data.next()));
+        }
     }
 
     public UUID getPlayer() {
@@ -63,24 +64,19 @@ public class ConnectPacket extends PacketImpl {
         return server;
     }
 
-    public Token getToken() {
-        return token;
-    }
-
-    public boolean getResult() {
-        return result;
-    }
-
     @Override
     public String write() {
-        String data = null;
-        data = getBuilder().build(id()).build(getPacketType()).build(player).build(server).build(token).build(result).toString();
+        buildDefault().build(this.player).build(this.server).build(this.getResponse());
 
         if (getPacketType() == PacketType.REQUEST) {
-            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, token, resolve, reject));
+            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
         }
 
-        return data;
+        if (this.getPacketType() == PacketType.ANSWER) {
+            getBuilder().build(this.getResult());
+        }
+
+        return getBuilder().toString();
     }
 
 }

@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.commands;
 
+import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
@@ -19,11 +20,11 @@ import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class GlobalCommandManager implements CommandManager {
 
@@ -31,12 +32,14 @@ public abstract class GlobalCommandManager implements CommandManager {
     private final Map<String, Class<MinecraftCommand>> aliases;
     private final Map<String, Object> commandsCache;
     private final Map<IModule, List<Class<MinecraftCommand>>> moduleCommands;
+    private final Map<String, List<String>> networkCommands;
 
     public GlobalCommandManager() {
         this.commands = new HashMap<>();
         this.aliases = new HashMap<>();
         this.commandsCache = new HashMap<>();
         this.moduleCommands = new HashMap<>();
+        this.networkCommands = new HashMap<>();
     }
 
     /**
@@ -55,13 +58,21 @@ public abstract class GlobalCommandManager implements CommandManager {
             return null;
 
         if (!this.isRegistered(command.label())) {
+            RegisterNetworkCommandPacket packet = new RegisterNetworkCommandPacket(CalecheCore.get().getAppName(), command.label());
+            CalecheCore.get().getPacketManager().publish(packet);
+
             commands.put(command.label(), classCommand);
 
             moduleCommandsList.add(classCommand);
             moduleCommands.put(module, moduleCommandsList);
 
             for (String alias : command.aliases()) {
-                if (!aliases.containsKey(alias)) aliases.put(alias, classCommand);
+                if (!aliases.containsKey(alias)) {
+                    packet = new RegisterNetworkCommandPacket(CalecheCore.get().getAppName(), "∅" + alias);
+                    CalecheCore.get().getPacketManager().publish(packet);
+
+                    aliases.put(alias, classCommand);
+                }
             }
         }
         return command;
@@ -215,8 +226,27 @@ public abstract class GlobalCommandManager implements CommandManager {
      * {@inheritDoc}
      */
     @Override
+    public boolean isRegisteredOnNetwork(String label) {
+        for (String s : networkCommands.keySet()) {
+            if (networkCommands.get(s).contains(label)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, Class<MinecraftCommand>> getCommands() {
         return commands;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Class<MinecraftCommand>> getAliases() {
+        return aliases;
     }
 
     /**
@@ -347,5 +377,29 @@ public abstract class GlobalCommandManager implements CommandManager {
         return manager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, List<String>> getNetworkCommands() {
+        return networkCommands;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addNetworkCommand(String label, String command) {
+        if (!networkCommands.containsKey(label)) networkCommands.put(label, new ArrayList<>());
+        networkCommands.get(label).add(command);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearNetworkCommands(String app) {
+        networkCommands.remove(app);
+    }
 }
 

@@ -1,10 +1,9 @@
 package fr.lacaleche.pipe.common.packets;
 
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
+import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
-import net.md_5.bungee.api.CommandSender;
 
 import java.util.UUID;
 
@@ -25,14 +24,14 @@ public class GsPacket extends PacketImpl {
     }
     
     @Override
-    public void read(String[] data) {
-        this.executor = CommandExecutor.Executor.valueOf(data[1]);
+    public void read(IPacketData data) {
+        this.executor = CommandExecutor.Executor.valueOf(data.next());
         if (this.executor == CommandExecutor.Executor.PLAYER) {
-            this.sender = UUID.fromString(data[2]);
+            this.sender = UUID.fromString(data.next());
         } else {
             this.sender = null;
         }
-        this.message = data[3];
+        this.message = data.next();
     }
     
     public UUID getSender() {
@@ -49,9 +48,7 @@ public class GsPacket extends PacketImpl {
     
     @Override
     public String write() {
-        String data = null;
-        data = getBuilder().build(id()).build(executor.name()).build(sender).build(message).toString();
-        return data;
+        return buildDefault().build(this.executor.name()).build(this.sender).build(this.message).toString();
     }
     
 }

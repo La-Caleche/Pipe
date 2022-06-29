@@ -56,6 +56,26 @@ public interface Pipe {
      * */
     void setAdventure(AudienceProvider provider);
 
+    /**
+     * TODO
+     * */
+    void setShutdownHook(Runnable hook);
+
+    /**
+     * TODO
+     * */
+    Runnable getShutdownHook();
+
+    /**
+     * TODO
+     * */
+    void shutdown();
+
+    /**
+     * TODO
+     * */
+    void shutdown(String reason);
+
     static Pipe get() {
         return PipeImpl.get();
     }

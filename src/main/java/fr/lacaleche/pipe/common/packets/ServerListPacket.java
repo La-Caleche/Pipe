@@ -4,8 +4,10 @@ import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
+import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
+import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 import fr.lacaleche.core.utils.serializer.annotations.Serializer;
 import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
 import fr.lacaleche.core.utils.Token;
@@ -17,47 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Packet(name = "ServerListPacket")
-public class ServerListPacket extends PacketImpl {
-
-    private List<ServerInfo> servers;
-    private Token token;
-    private Resolve<Object> resolve;
-    private Reject<Object> reject;
-    private PacketType packetType;
+public class ServerListPacket extends TransactionalPacket {
 
     public ServerListPacket() {}
 
-    public ServerListPacket(List<ServerInfo> servers, Token token) {
-        this.servers = servers;
-        this.token = token;
-        this.packetType = PacketType.ANSWER;
+    public ServerListPacket(Token token) {
+        this.setToken(token);
+        this.setPacketType(PacketType.ANSWER);
     }
 
     public ServerListPacket(Resolve<Object> resolve, Reject<Object> reject) {
-        this.token = new Token(64);
-        this.servers = new ArrayList<>();
-        this.resolve = resolve;
-        this.reject = reject;
-        this.packetType = PacketType.REQUEST;
+        this.setResponse(new ArrayList<>());
+        this.setToken(new Token(64));
+        this.setResolve(resolve);
+        this.setReject(reject);
+        this.setPacketType(PacketType.REQUEST);
     }
     
     @Override
-    public void read(String[] data) {
-        this.token = new Token(data[1]);
-        this.packetType = PacketType.valueOf(data[2]);
-        this.servers = parseJson(new JSONObject(data[3]).getJSONArray("servers"));
-    }
-
-    public List<ServerInfo> getServers() {
-        return servers;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public PacketType getPacketType() {
-        return packetType;
+    public void read(IPacketData data) {
+        this.setToken(new Token(data.next()));
+        this.setPacketType(PacketType.valueOf(data.next()));
+        this.setResponse(this.parseJson(new JSONObject(data.<String>next()).getJSONArray("servers")));
     }
 
     private List<ServerInfo> parseJson(JSONArray data) {
@@ -76,20 +59,21 @@ public class ServerListPacket extends PacketImpl {
 
     @Override
     public String write() {
-        String data = null;
+        List<String> servers = this.getResponse();
 
         JSONObject serverInfos = new JSONObject();
         JSONArray array = new JSONArray();
-        this.servers.forEach(serverInfo -> array.put(new JSONObject(CoreSerializer.get().serialize(serverInfo).get())));
+
+        servers.forEach(serverInfo -> array.put(new JSONObject(CoreSerializer.get().serialize(serverInfo).get())));
         serverInfos.put("servers", array);
 
-        data = getBuilder().build(id()).build(this.token).build(this.packetType).build(serverInfos.toString()).toString();
+        buildDefault().build(serverInfos.toString());
 
-        if (this.packetType == PacketType.REQUEST) {
-            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, token, resolve, reject));
+        if (this.getPacketType() == PacketType.REQUEST) {
+            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
         }
 
-        return data;
+        return getBuilder().toString();
     }
 
     @Serializer(variables = {"serverName", "online", "onlinePlayers", "serverIcon"})

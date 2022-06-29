@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.common.packets;
 
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
+import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 
 import java.util.UUID;
 
@@ -20,9 +21,9 @@ public class PlayerMovePacket extends PacketImpl {
     }
     
     @Override
-    public void read(String[] data) {
-        this.player = UUID.fromString(data[1]);
-        this.server = data[2];
+    public void read(IPacketData data) {
+        this.player = UUID.fromString(data.next());
+        this.server = data.next();
     }
 
     public UUID getPlayer() {
@@ -35,9 +36,7 @@ public class PlayerMovePacket extends PacketImpl {
 
     @Override
     public String write() {
-        String data = null;
-        data = getBuilder().build(id()).build(player).build(server).toString();
-        return data;
+        return buildDefault().build(this.player).build(this.server).toString();
     }
 
 }

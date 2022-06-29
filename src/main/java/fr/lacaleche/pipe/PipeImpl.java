@@ -2,6 +2,7 @@ package fr.lacaleche.pipe;
 
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.events.interfaces.IListenerManager;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
@@ -21,6 +22,7 @@ public class PipeImpl implements Pipe {
     private Object plugin;
     private CommandManager commandManager;
     private AudienceProvider adventure;
+    private Runnable shutdownHook;
 
     private final List<Object> plugins;
 
@@ -100,5 +102,28 @@ public class PipeImpl implements Pipe {
     @Override
     public Client getClient(UUID uuid) {
         return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getUUID().equals(uuid));
+    }
+
+    @Override
+    public void setShutdownHook(Runnable shutdownHook) {
+        this.shutdownHook = shutdownHook;
+    }
+
+    @Override
+    public Runnable getShutdownHook() {
+        return shutdownHook;
+    }
+
+    @Override
+    public void shutdown() {
+        this.shutdown("Shutdown hook manually called. Please check what's happening.");
+    }
+
+    @Override
+    public void shutdown(String reason) {
+        if (shutdownHook != null) {
+            Logger.err(reason);
+            shutdownHook.run();
+        }
     }
 }
