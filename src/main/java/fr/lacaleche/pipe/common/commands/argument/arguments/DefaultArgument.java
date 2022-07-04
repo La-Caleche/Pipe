@@ -33,6 +33,11 @@ public abstract class DefaultArgument implements Argument {
     }
 
     @Override
+    public Argument optional() {
+        return this.setMandatory(false);
+    }
+
+    @Override
     public Argument setValue(String value) {
         this.value = value;
         return this;

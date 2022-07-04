@@ -4,12 +4,34 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 
 public interface Arguments {
 
-    public Argument get(String key);
+    Argument get(String key);
 
-    public boolean exist(String key);
+    boolean exist(String key);
 
-    public boolean blank(String key);
+    boolean blank(String key);
 
-    public boolean mandatory(String key);
+    boolean mandatory(String key);
+
+    String getString(String key);
+
+    int getInt(String key);
+
+    double getDouble(String key);
+
+    boolean getBoolean(String key);
+
+    long getLong(String key);
+
+    float getFloat(String key);
+
+    short getShort(String key);
+
+    byte getByte(String key);
+
+    char getChar(String key);
+
+    Object getObject(String key);
+
+    <T> T as(String key);
 
 }

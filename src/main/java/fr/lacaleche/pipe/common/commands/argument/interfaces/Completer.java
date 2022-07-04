@@ -7,32 +7,36 @@ import java.util.List;
 
 public interface Completer {
 
-    public CoreCommandImpl getCoreCommand();
+    Object sender();
 
-    public ArgumentManager getArgumentManager();
+    CoreCommandImpl getCoreCommand();
 
-    public List<String> getCompleter();
+    ArgumentManager getArgumentManager();
 
-    public int index();
+    List<String> getCompleter();
 
-    public void incrementIndex();
+    int index();
 
-    public void setIndex(int index);
+    void incrementIndex();
 
-    public boolean next();
+    void setIndex(int index);
 
-    public void setNext(boolean next);
+    boolean next();
 
-    public void add(String value);
+    void setNext(boolean next);
 
-    public void addAll(Collection<? extends String> values);
+    void add(String value);
 
-    public void setCompleter(List<String> completer);
+    void addAll(Collection<? extends String> values);
 
-    public boolean doValidation();
+    void addAll(String[] values);
 
-    public void cancelValidation();
+    void setCompleter(List<String> completer);
 
-    public void setValidation(boolean validation);
+    boolean doValidation();
+
+    void cancelValidation();
+
+    void setValidation(boolean validation);
 
 }

@@ -41,7 +41,7 @@ public class CommandListener implements CoreListener, Listener {
         String buffer = command.getUserInput().endsWith(" ") ? command.getUserInput().trim() + " " : command.getUserInput();
         if (userArgumentsLength == 0 && !buffer.endsWith(" ")) return;
 
-        Completer completer = new CompleterImpl(command);
+        Completer completer = new CompleterImpl(command, event.getSender());
         completer.setIndex(command.getUserArguments().length);
         completer.setNext(userArgumentsLength == 0 || buffer.endsWith(command.getUserArguments()[userArgumentsLength - 1] + " "));
 

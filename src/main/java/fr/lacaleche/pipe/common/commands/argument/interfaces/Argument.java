@@ -12,6 +12,8 @@ public interface Argument {
 
     Argument setMandatory(boolean mandatory);
 
+    Argument optional();
+
     Argument setMultiple(boolean multiple);
 
     boolean isMultiple();

@@ -19,6 +19,61 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public String getString(String key) {
+        return this.get(key).getValue();
+    }
+
+    @Override
+    public int getInt(String key) {
+        return Integer.parseInt(this.getString(key));
+    }
+
+    @Override
+    public double getDouble(String key) {
+        return Double.parseDouble(this.getString(key));
+    }
+
+    @Override
+    public boolean getBoolean(String key) {
+        return Boolean.parseBoolean(this.getString(key));
+    }
+
+    @Override
+    public long getLong(String key) {
+        return Long.parseLong(this.getString(key));
+    }
+
+    @Override
+    public float getFloat(String key) {
+        return Float.parseFloat(this.getString(key));
+    }
+
+    @Override
+    public short getShort(String key) {
+        return Short.parseShort(this.getString(key));
+    }
+
+    @Override
+    public byte getByte(String key) {
+        return Byte.parseByte(this.getString(key));
+    }
+
+    @Override
+    public char getChar(String key) {
+        return this.getString(key).charAt(0);
+    }
+
+    @Override
+    public Object getObject(String key) {
+        return this.get(key).getValue();
+    }
+
+    @Override
+    public <T> T as(String key) {
+        return (T) this.getObject(key);
+    }
+
+    @Override
     public boolean exist(String key) {
         return this.manager.getArguments().stream().anyMatch(argument -> argument.getKey().equals(key));
     }

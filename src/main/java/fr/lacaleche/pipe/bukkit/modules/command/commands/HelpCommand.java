@@ -29,7 +29,7 @@ public class HelpCommand {
 
     @ArgumentsManager
     public void manager(ArgumentManager manager) {
-        manager.addArgument(new RegisteredCommandArgument("command").setMandatory(false));
+        manager.addArgument(new RegisteredCommandArgument("command").optional());
     }
 
     @CommandExecutor

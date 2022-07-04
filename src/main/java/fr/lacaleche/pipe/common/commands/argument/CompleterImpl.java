@@ -5,11 +5,13 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class CompleterImpl implements Completer {
 
+    private Object sender;
     private CoreCommandImpl coreCommand;
     private ArgumentManager argumentManager;
     private boolean validation;
@@ -17,11 +19,17 @@ public class CompleterImpl implements Completer {
     private int index;
     private boolean next;
 
-    public CompleterImpl(CoreCommandImpl coreCommand) {
+    public CompleterImpl(CoreCommandImpl coreCommand, Object sender) {
         this.coreCommand = coreCommand;
+        this.sender = sender;
         this.validation = true;
         this.argumentManager = coreCommand.getManager();
         this.completer = new ArrayList<>();
+    }
+
+    @Override
+    public Object sender() {
+        return this.sender;
     }
 
     @Override
@@ -47,6 +55,11 @@ public class CompleterImpl implements Completer {
     @Override
     public void addAll(Collection<? extends String> values) {
         this.completer.addAll(values);
+    }
+
+    @Override
+    public void addAll(String[] values) {
+        this.completer.addAll(Arrays.stream(values).toList());
     }
 
     @Override

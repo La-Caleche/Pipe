@@ -150,7 +150,7 @@ public abstract class GlobalCommandManager implements CommandManager {
         Object instance = Pipe.get().getCommandManager().getCachedInstance(command);
 
         if (method != null && instance != null) CommandsUtils.invokeArgumentsManager(method, instance, argumentManager);
-        argumentManager.addArgument(new StringArgument("default").setMandatory(false));
+        argumentManager.addArgument(new StringArgument("default").optional());
 
         return argumentManager;
     }
