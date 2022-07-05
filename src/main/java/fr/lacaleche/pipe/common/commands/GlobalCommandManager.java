@@ -228,7 +228,7 @@ public abstract class GlobalCommandManager implements CommandManager {
     @Override
     public boolean isRegisteredOnNetwork(String label) {
         for (String s : networkCommands.keySet()) {
-            if (networkCommands.get(s).contains(label)) return true;
+            if (networkCommands.get(s).contains(label) || networkCommands.get(s).contains("∅" + label)) return true;
         }
         return false;
     }

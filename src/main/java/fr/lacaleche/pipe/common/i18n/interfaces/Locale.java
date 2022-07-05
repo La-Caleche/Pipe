@@ -4,6 +4,7 @@ import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.TranslationImpl;
 import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilder;
+import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilderImpl;
 
 import java.util.List;
 
@@ -23,5 +24,9 @@ public interface Locale extends ISqlModel {
     TranslationBuilder t(String key);
 
     TranslationBuilder t(Translation translation);
+
+    TranslationBuilder ct(String trueKey, String falseKey, boolean condition);
+
+    TranslationBuilder ct(Translation trueTranslation, Translation falseTranslation, boolean condition);
 
 }

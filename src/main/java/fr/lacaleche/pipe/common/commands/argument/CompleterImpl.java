@@ -53,6 +53,51 @@ public class CompleterImpl implements Completer {
     }
 
     @Override
+    public void add(int value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(long value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(float value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(double value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(boolean value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(short value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(byte value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(char value) {
+        this.completer.add(String.valueOf(value));
+    }
+
+    @Override
+    public void add(Object value) {
+        this.completer.add(value.toString());
+    }
+
+    @Override
     public void addAll(Collection<? extends String> values) {
         this.completer.addAll(values);
     }

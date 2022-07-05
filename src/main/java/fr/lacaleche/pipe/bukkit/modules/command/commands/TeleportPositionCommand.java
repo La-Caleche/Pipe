@@ -8,8 +8,6 @@ import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.annotations.TabCompleter;
 import fr.lacaleche.pipe.common.commands.argument.arguments.CustomArgument;
-import fr.lacaleche.pipe.common.commands.argument.arguments.DoubleArgument;
-import fr.lacaleche.pipe.common.commands.argument.arguments.FloatArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
@@ -20,7 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@MinecraftCommand(label = "teleportposition", aliases = {"tppos", "tpp", "tpposition", "teleportpos", "teleportp"}, description = "Tp pos command", arguments = {"x", "y", "z", "yaw", "pitch", "world"})
+@MinecraftCommand(label = "teleportposition", aliases = {"tppos", "tpp", "tpposition", "teleportpos", "teleportp"}, description = "pipe.command.tpp.description", arguments = {"x", "y", "z", "yaw", "pitch", "world"})
 public class TeleportPositionCommand {
 
     @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER, CommandExecutor.Executor.COMMAND_BLOCK})
@@ -42,13 +40,13 @@ public class TeleportPositionCommand {
             world = Pipe.get().<JavaPlugin>getPlugin().getServer().getWorld(arguments.getString("world"));
 
             if (world == null) {
-                sender.sendMessage(locale.t("command.tp.world_not_found").arg("world", arguments.getString("world")).ct());
+                sender.sendMessage(locale.t("global.world_not_found").arg("world", arguments.getString("world")).ct());
                 return true;
             }
         }
 
         player.teleport(new Location(world, x, y, z, yaw, pitch));
-        sender.sendMessage(locale.t("command.tp.success").ct());
+        sender.sendMessage(locale.t("pipe.command.tpp.success").ct());
 
         return true;
     }
@@ -83,11 +81,11 @@ public class TeleportPositionCommand {
         if (completer.sender() instanceof Player player) {
             Location location = player.getLocation();
             switch (completer.index()) {
-                case 1 -> completer.add(String.valueOf(location.getX()));
-                case 2 -> completer.add(String.valueOf(location.getY()));
-                case 3 -> completer.add(String.valueOf(location.getZ()));
-                case 4 -> completer.add(String.valueOf(location.getYaw()));
-                case 5 -> completer.add(String.valueOf(location.getPitch()));
+                case 1 -> completer.add(location.getX());
+                case 2 -> completer.add(location.getY());
+                case 3 -> completer.add(location.getZ());
+                case 4 -> completer.add(location.getYaw());
+                case 5 -> completer.add(location.getPitch());
             }
         }
     }

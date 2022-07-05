@@ -1,8 +1,13 @@
 package fr.lacaleche.pipe.bukkit.utils;
 
+import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
+import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilder;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Server;
 import org.bukkit.command.BlockCommandSender;
@@ -15,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PipeCommandUtils {
@@ -37,6 +43,58 @@ public class PipeCommandUtils {
             commandMap.register("nymbis", bukkitCommand);
         } catch (Exception exception) {
             SentryAPIImpl.getInstance().captureException(exception);
+        }
+    }
+
+    /**
+     * TODO
+     * */
+    public static PlayerResult getPlayerFromArgsOrSender(CommandSender sender, Arguments arguments, String key) {
+        Player target;
+        Locale locale = Pipe.get().getDefaultLocale();
+
+        if (sender instanceof Player player) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            locale = client.getLocale();
+        }
+
+        if (arguments.blank(key)) {
+            if (sender instanceof Player player) target = player;
+            else {
+                return new PlayerResult(locale.t("global.only_for_players"));
+            }
+        } else target = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
+
+        if (target == null) {
+            return new PlayerResult(locale.t("global.player_not_found").arg("player", arguments.getString("player")));
+        }
+
+        return new PlayerResult(target);
+    }
+
+    public static class PlayerResult {
+
+        private Player player;
+        private TranslationBuilder error;
+
+        public PlayerResult(Player player) {
+            this.player = player;
+        }
+
+        public PlayerResult(TranslationBuilder error) {
+            this.error = error;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public TranslationBuilder getError() {
+            return error;
+        }
+
+        public boolean hasError() {
+            return error != null;
         }
     }
 

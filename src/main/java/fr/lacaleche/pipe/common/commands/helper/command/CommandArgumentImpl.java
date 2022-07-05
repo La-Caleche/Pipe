@@ -51,13 +51,13 @@ public class CommandArgumentImpl implements CommandArgument {
     public TextComponent.Builder format() {
         TextComponent.Builder textBuilder = Component.text();
         TextComponent.Builder hoverBuilder   = Component.text();
-        String translationKey = this.multiple ? "command.helper.command.argument.format.multiple" : "command.helper.command.argument.format.classic";
+        String translationKey = this.multiple ? "pipe.helper.argument.format.multiple" : "pipe.helper.argument.format.classic";
         if (this.mandatory) translationKey = translationKey.concat("_mandatory");
 
         textBuilder.append(this.command.getHelper().getLocale().t(translationKey).arg("name", this.name).ct());
-        hoverBuilder.append(this.command.getHelper().getLocale().t("command.helper.command.argument.type").arg("type", this.type).ct());
-        hoverBuilder.append(this.command.getHelper().getLocale().t(this.mandatory ? "command.helper.command.argument.mandatory" : "command.helper.command.argument.not_mandatory").ct());
-        hoverBuilder.append(this.command.getHelper().getLocale().t(this.multiple ? "command.helper.command.argument.multiple" : "command.helper.command.argument.not_multiple").ct());
+        hoverBuilder.append(this.command.getHelper().getLocale().t("pipe.helper.argument.type").arg("type", this.type).ct());
+        hoverBuilder.append(this.command.getHelper().getLocale().ct("pipe.helper.argument.mandatory", "pipe.helper.argument.not_mandatory", this.mandatory).ct());
+        hoverBuilder.append(this.command.getHelper().getLocale().ct("pipe.helper.argument.multiple", "pipe.helper.argument.not_multiple", this.multiple).ct());
 
         textBuilder.hoverEvent(hoverBuilder.asComponent().asHoverEvent());
 

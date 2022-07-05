@@ -4,10 +4,8 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
-import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
-import fr.lacaleche.pipe.common.commands.argument.arguments.DoubleArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
@@ -15,7 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@MinecraftCommand(label = "teleport", aliases = {"tp"}, description = "Tp command", arguments = {"player", "otherPlayer"})
+@MinecraftCommand(label = "teleport", aliases = {"tp"}, description = "pipe.command.tp.description", arguments = {"player", "otherPlayer"})
 public class TeleportCommand {
 
     @CommandExecutor
@@ -27,25 +25,32 @@ public class TeleportCommand {
             locale = client.getLocale();
         }
 
-        Player player = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
+        Player player, otherPlayer;
+
+        if (arguments.blank("otherPlayer")) {
+            if (sender instanceof Player playerSender) player = playerSender;
+            else {
+                sender.sendMessage(locale.t("global.only_for_players").ct());
+                return true;
+            }
+            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
+        } else {
+            player = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
+            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("otherPlayer"));
+        }
 
         if (player == null) {
-            sender.sendMessage(locale.t("pipe.command.teleport.player.notfound").arg("player", arguments.getString("player")).ct());
+            sender.sendMessage(locale.t("global.player_not_found").arg("player", arguments.getString("player")).ct());
             return true;
         }
 
-        if (arguments.blank("otherPlayer")) {
-            player.teleport(player.getLocation().add(0, 1, 0));
-            sender.sendMessage(locale.t("pipe.command.teleport.player.success").arg("player", player.getName()).ct());
-        } else {
-            Player otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("otherPlayer"));
-            if (otherPlayer == null) {
-                sender.sendMessage(locale.t("pipe.command.teleport.player.notfound").arg("player", arguments.getString("otherPlayer")).ct());
-                return true;
-            }
-            player.teleport(otherPlayer.getLocation().add(0, 1, 0));
-            sender.sendMessage(locale.t("pipe.command.teleport.player.success").arg("player", player.getName()).arg("otherPlayer", otherPlayer.getName()).ct());
+        if (otherPlayer == null) {
+            sender.sendMessage(locale.t("global.player_not_found").arg("player", arguments.getString("otherPlayer")).ct());
+            return true;
         }
+
+        player.teleport(otherPlayer.getLocation().add(0, 1, 0));
+        sender.sendMessage(locale.t("pipe.command.tp.success").arg("player", player.getName()).arg("otherPlayer", otherPlayer.getName()).ct());
 
         return true;
     }

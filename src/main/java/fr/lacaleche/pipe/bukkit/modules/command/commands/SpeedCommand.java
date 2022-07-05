@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
+import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
@@ -13,9 +14,8 @@ import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
-@MinecraftCommand(label = "speed", description = "Speed command", arguments = {"speed", "player"})
+@MinecraftCommand(label = "speed", description = "pipe.command.speed.description", arguments = {"speed", "player"})
 public class SpeedCommand {
 
     @CommandExecutor
@@ -27,24 +27,17 @@ public class SpeedCommand {
             locale = client.getLocale();
         }
 
-        if (arguments.blank("player")) {
-            if (sender instanceof Player player) {
-                if (player.isFlying()) player.setFlySpeed(arguments.getFloat("speed"));
-                else player.setWalkSpeed(arguments.getFloat("speed"));
-                sender.sendMessage(locale.t("command.speed.set_%s.success".formatted(player.isFlying() ? "flying" : "walking")).ct());
-            } else {
-                sender.sendMessage(locale.t("command.speed.only_for_players").ct());
-            }
-        } else {
-            Player target = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
-            if (target == null) {
-                sender.sendMessage(locale.t("command.speed.player_not_found").arg("player", arguments.getString("player")).ct());
-                return true;
-            }
-            if (target.isFlying()) target.setFlySpeed(arguments.getFloat("speed"));
-            else target.setWalkSpeed(arguments.getFloat("speed"));
-            sender.sendMessage(locale.t("command.speed.set_%s.success".formatted(target.isFlying() ? "flying" : "walking")).arg("player", target.getName()).ct());
+        PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(sender, arguments, "player");
+        if (result.hasError()) {
+            sender.sendMessage(result.getError().ct());
+            return true;
         }
+
+        Player target = result.getPlayer();
+
+        if (target.isFlying()) target.setFlySpeed(arguments.getFloat("speed"));
+        else target.setWalkSpeed(arguments.getFloat("speed"));
+        sender.sendMessage(locale.ct("pipe.command.speed.success.enabled", "pipe.command.speed.success.disabled", target.isFlying()).ct());
 
         return true;
     }
@@ -55,7 +48,7 @@ public class SpeedCommand {
         manager.addArgument(new BukkitPlayerArgument("player").optional());
     }
 
-    @CommandChild(label = "get", description = "Get speed command", arguments = {"player"})
+    @CommandChild(label = "get", description = "pipe.command.speed.get.description", arguments = {"player"})
     public static class Get {
 
         @CommandExecutor
@@ -67,22 +60,15 @@ public class SpeedCommand {
                 locale = client.getLocale();
             }
 
-            if (arguments.blank("player")) {
-                if (sender instanceof Player player) {
-                    if (player.isFlying()) sender.sendMessage(locale.t("command.speed.get_flying.success").arg("speed", String.valueOf(player.getFlySpeed())).ct());
-                    else sender.sendMessage(locale.t("command.speed.get_walking.success").arg("speed", String.valueOf(player.getWalkSpeed())).ct());
-                } else {
-                    sender.sendMessage(locale.t("command.speed.only_for_players").ct());
-                }
-            } else {
-                Player target = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
-                if (target == null) {
-                    sender.sendMessage(locale.t("command.speed.player_not_found").arg("player", arguments.getString("player")).ct());
-                    return true;
-                }
-                if (target.isFlying()) sender.sendMessage(locale.t("command.speed.get_flying.success").arg("speed", String.valueOf(target.getFlySpeed())).arg("player", target.getName()).ct());
-                else sender.sendMessage(locale.t("command.speed.get_walking.success").arg("speed", String.valueOf(target.getWalkSpeed())).arg("player", target.getName()).ct());
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(sender, arguments, "player");
+            if (result.hasError()) {
+                sender.sendMessage(result.getError().ct());
+                return true;
             }
+
+            Player target = result.getPlayer();
+
+            sender.sendMessage(locale.ct("pipe.command.speed.target_speed.flying", "pipe.command.speed.target_speed.walking", target.isFlying()).arg("fly_speed", target.getFlySpeed()).arg("walk_speed", target.getWalkSpeed()).ct());
 
             return true;
         }
@@ -94,7 +80,7 @@ public class SpeedCommand {
 
     }
 
-    @CommandChild(label = "reset", description = "Reset speed command", arguments = {"player"})
+    @CommandChild(label = "reset", description = "pipe.command.speed.reset.description", arguments = {"player"})
     public static class Reset {
 
         @CommandExecutor
@@ -106,24 +92,17 @@ public class SpeedCommand {
                 locale = client.getLocale();
             }
 
-            if (arguments.blank("player")) {
-                if (sender instanceof Player player) {
-                    if (player.isFlying()) player.setFlySpeed(0.1F);
-                    else player.setWalkSpeed(0.1F);
-                    sender.sendMessage(locale.t("command.speed.reset_%s.success".formatted(player.isFlying() ? "flying" : "walking")).ct());
-                } else {
-                    sender.sendMessage(locale.t("command.speed.only_for_players").ct());
-                }
-            } else {
-                Player target = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
-                if (target == null) {
-                    sender.sendMessage(locale.t("command.speed.player_not_found").arg("player", arguments.getString("player")).ct());
-                    return true;
-                }
-                if (target.isFlying()) target.setFlySpeed(0.1F);
-                else target.setWalkSpeed(0.1F);
-                sender.sendMessage(locale.t("command.speed.reset_%s.success".formatted(target.isFlying() ? "flying" : "walking")).arg("player", target.getName()).ct());
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(sender, arguments, "player");
+            if (result.hasError()) {
+                sender.sendMessage(result.getError().ct());
+                return true;
             }
+
+            Player target = result.getPlayer();
+
+            if (target.isFlying()) target.setFlySpeed(0.1F);
+            else target.setWalkSpeed(0.1F);
+            sender.sendMessage(locale.ct("pipe.command.speed.reset.flying", "pipe.command.speed.reset.walking", target.isFlying()).arg("player", target.getName()).ct());
 
             return true;
         }

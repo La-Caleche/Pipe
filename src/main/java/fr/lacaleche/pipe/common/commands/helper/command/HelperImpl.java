@@ -60,14 +60,14 @@ public class HelperImpl implements Helper {
         TextComponent.Builder textBuilder = Component.text();
 
         if (this.coreCommand == null) {
-            textBuilder.append(this.locale.t("command.helper.not_found").arg("label", this.label).ct());
+            textBuilder.append(this.locale.t("pipe.helper.command_not_found").arg("label", this.label).ct());
             return textBuilder;
         }
 
-        textBuilder.append(this.locale.t("command.helper.command.header").arg("label", this.coreCommand.getLabel()).ct());
+        textBuilder.append(this.locale.t("pipe.helper.header").arg("label", this.coreCommand.getLabel()).ct());
         if (this.aliases.size() > 0) {
-            textBuilder.append(this.locale.t("command.helper.command.aliases").ct());
-            this.aliases.forEach(alias -> textBuilder.append(this.locale.t("command.helper.command.alias").arg("alias", alias).ct()));
+            textBuilder.append(this.locale.t("pipe.helper.aliases").ct());
+            this.aliases.forEach(alias -> textBuilder.append(this.locale.t("pipe.helper.alias").arg("alias", alias).ct()));
         }
         textBuilder.append(Component.newline());
         this.subCommands.forEach(subCommand -> textBuilder.append(subCommand.format()).append(Component.newline()));

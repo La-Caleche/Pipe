@@ -27,6 +27,24 @@ public interface Completer {
 
     void add(String value);
 
+    void add(int value);
+
+    void add(long value);
+
+    void add(float value);
+
+    void add(double value);
+
+    void add(boolean value);
+
+    void add(short value);
+
+    void add(byte value);
+
+    void add(char value);
+
+    void add(Object value);
+
     void addAll(Collection<? extends String> values);
 
     void addAll(String[] values);

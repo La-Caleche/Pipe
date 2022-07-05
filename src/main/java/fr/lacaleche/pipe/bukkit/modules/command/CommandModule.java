@@ -49,6 +49,7 @@ public class CommandModule extends Module {
         Pipe.get().getCommandManager().registerNewCommand(this, HelpCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, InvisibleCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, NightVisionCommand.class);
+        Pipe.get().getCommandManager().registerNewCommand(this, PipeDebugCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, SpeedCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, TeleportCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, TeleportPositionCommand.class);
