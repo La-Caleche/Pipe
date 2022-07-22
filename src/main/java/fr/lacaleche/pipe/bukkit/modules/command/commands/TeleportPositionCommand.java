@@ -18,6 +18,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 @MinecraftCommand(label = "teleportposition", aliases = {"tppos", "tpp", "tpposition", "teleportpos", "teleportp"}, description = "pipe.command.tpp.description", arguments = {"x", "y", "z", "yaw", "pitch", "world"})
 public class TeleportPositionCommand {
 
@@ -46,7 +49,10 @@ public class TeleportPositionCommand {
         }
 
         player.teleport(new Location(world, x, y, z, yaw, pitch));
-        sender.sendMessage(locale.t("pipe.command.tpp.success").ct());
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        sender.sendMessage(locale.t("pipe.command.tpp.success").arg("x", df.format(x)).arg("y", df.format(y)).arg("z", df.format(z)).arg("world", world.getName()).ct());
 
         return true;
     }

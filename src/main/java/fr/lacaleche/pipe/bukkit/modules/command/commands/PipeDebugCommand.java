@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
@@ -23,6 +24,9 @@ public class PipeDebugCommand {
             locale = client.getLocale();
         }
 
+        Logger.info("In dev: " + CalecheCore.get().inDev());
+
+        sender.sendMessage(locale.t("pipe.command.pipedebug.informations").arg("appname", CalecheCore.get().getAppName()).ct());
         sender.sendMessage(locale.ct("pipe.command.pipedebug.dev_status.enabled", "pipe.command.pipedebug.dev_status.disabled", CalecheCore.get().inDev()).ct());
         sender.sendMessage(locale.ct("pipe.command.pipedebug.debug_status.enabled", "pipe.command.pipedebug.debug_status.disabled", CalecheCore.get().debugEnabled()).ct());
 

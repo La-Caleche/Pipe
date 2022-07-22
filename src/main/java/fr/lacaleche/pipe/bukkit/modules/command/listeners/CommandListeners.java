@@ -11,6 +11,7 @@ import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.core.utils.colors.AsciiColors;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,6 +27,7 @@ public class CommandListeners implements Listener {
 
     @EventHandler
     public void onCommandExecute(PlayerCommandPreprocessEvent event) {
+        PipeDebug.eventCalled(event);
         Logger.customDebug(AsciiColors.YELLOW + "Command: " + event.getMessage());
         String message = event.getMessage().substring(1);
         CoreCommandImpl command = parseCommand(event, event.getPlayer(), message);
@@ -38,6 +40,9 @@ public class CommandListeners implements Listener {
         if (result != CommandResult.COMMAND_SUCESS) event.getPlayer().sendMessage("(missing HelpUtils %s)".formatted(result.toString()));
     }
 
+    /**
+     * No PipeDebug.eventCalled() for this event because of spam.
+     * */
     @EventHandler
     public void onConsoleExecute(ServerCommandEvent event) {
         String message = event.getCommand();
@@ -53,6 +58,7 @@ public class CommandListeners implements Listener {
 
     @EventHandler
     public void onCommandSend(PlayerCommandSendEvent event) {
+        PipeDebug.eventCalled(event);
         for (Class<MinecraftCommand> value : Pipe.get().getCommandManager().getCommands().values()) {
             MinecraftCommand command = CommandsUtils.validateCommand(value);
             event.getCommands().add(command.label());
@@ -62,6 +68,7 @@ public class CommandListeners implements Listener {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
+        PipeDebug.eventCalled(event);
         String message = event.getBuffer().substring(1);
         String[] splitted = message.split(" ");
         CoreCommandImpl command = parseCommand(event, event.getSender(), message);

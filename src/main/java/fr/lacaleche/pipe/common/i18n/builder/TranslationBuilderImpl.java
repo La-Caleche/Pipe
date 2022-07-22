@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.i18n.builder;
 
 import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
 import net.kyori.adventure.text.Component;
@@ -89,7 +90,6 @@ public class TranslationBuilderImpl implements TranslationBuilder {
         String translation = this.translation.getTranslation();
         for (TArg argument : this.arguments)
             translation = translation.replace("#{" + argument.getKey() + "}", argument.getValue());
-        translation = translation.replace("%n%", "\n");
         return translation;
     }
 

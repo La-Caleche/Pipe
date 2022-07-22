@@ -5,6 +5,7 @@ import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
+import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -14,6 +15,7 @@ public class LogoutListener implements Listener {
 
     @EventHandler
     public void onPlayerLeft(PlayerDisconnectEvent event) {
+        PipeDebug.eventCalled(event);
         ProxiedPlayer player = event.getPlayer();
 
         Client client = Pipe.get().getClient(player.getUniqueId());

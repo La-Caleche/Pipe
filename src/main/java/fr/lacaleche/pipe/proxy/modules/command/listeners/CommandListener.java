@@ -10,6 +10,7 @@ import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.events.annotations.CoreEventHandler;
 import fr.lacaleche.core.events.interfaces.Cancellable;
 import fr.lacaleche.core.events.interfaces.CoreListener;
+import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.proxy.modules.command.events.CommandEvent;
 import fr.lacaleche.pipe.proxy.modules.command.events.TabCompleteEvent;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -28,6 +29,7 @@ public class CommandListener implements CoreListener, Listener {
 
     @CoreEventHandler
     public void onTabComplete(TabCompleteEvent event) {
+        PipeDebug.eventCalled(event);
         String message = event.getBuffer();
         String[] splitted = message.split(" ");
         CoreCommandImpl command = parseCommand(event, event.getSender(), message);

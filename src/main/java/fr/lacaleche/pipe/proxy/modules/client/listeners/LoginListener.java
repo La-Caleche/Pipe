@@ -6,6 +6,7 @@ import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
+import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.kyori.adventure.text.Component;
@@ -21,6 +22,7 @@ public class LoginListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PostLoginEvent event) {
+        PipeDebug.eventCalled(event);
         ProxiedPlayer player = event.getPlayer();
 
         new ModelFilter<ClientImpl>()

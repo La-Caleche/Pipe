@@ -70,7 +70,7 @@ public class HelperImpl implements Helper {
             this.aliases.forEach(alias -> textBuilder.append(this.locale.t("pipe.helper.alias").arg("alias", alias).ct()));
         }
         textBuilder.append(Component.newline());
-        this.subCommands.forEach(subCommand -> textBuilder.append(subCommand.format()).append(Component.newline()));
+        this.subCommands.forEach(subCommand -> textBuilder.append(subCommand.format(this.locale)).append(Component.newline()));
 
         return textBuilder;
     }

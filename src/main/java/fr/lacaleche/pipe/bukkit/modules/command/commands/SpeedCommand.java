@@ -37,7 +37,7 @@ public class SpeedCommand {
 
         if (target.isFlying()) target.setFlySpeed(arguments.getFloat("speed"));
         else target.setWalkSpeed(arguments.getFloat("speed"));
-        sender.sendMessage(locale.ct("pipe.command.speed.success.enabled", "pipe.command.speed.success.disabled", target.isFlying()).ct());
+        sender.sendMessage(locale.ct("pipe.command.speed.success.fly", "pipe.command.speed.success.walk", target.isFlying()).arg("speed", arguments.getFloat("speed")).arg("player", target.getName()).ct());
 
         return true;
     }
@@ -68,7 +68,7 @@ public class SpeedCommand {
 
             Player target = result.getPlayer();
 
-            sender.sendMessage(locale.ct("pipe.command.speed.target_speed.flying", "pipe.command.speed.target_speed.walking", target.isFlying()).arg("fly_speed", target.getFlySpeed()).arg("walk_speed", target.getWalkSpeed()).ct());
+            sender.sendMessage(locale.t("pipe.command.speed.target_speed").arg("player", target.getName()).arg("fly_speed", target.getFlySpeed()).arg("walk_speed", target.getWalkSpeed()).ct());
 
             return true;
         }
@@ -101,7 +101,7 @@ public class SpeedCommand {
             Player target = result.getPlayer();
 
             if (target.isFlying()) target.setFlySpeed(0.1F);
-            else target.setWalkSpeed(0.1F);
+            else target.setWalkSpeed(0.2F);
             sender.sendMessage(locale.ct("pipe.command.speed.reset.flying", "pipe.command.speed.reset.walking", target.isFlying()).arg("player", target.getName()).ct());
 
             return true;

@@ -6,6 +6,7 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.CommandArgument;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.SubCommand;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -57,12 +58,12 @@ public class SubCommandImpl implements SubCommand {
     }
 
     @Override
-    public TextComponent.Builder format() {
+    public TextComponent.Builder format(Locale locale) {
         TextComponent.Builder textBuilder = Component.text();
         textBuilder.append(Component.text("/").append(Component.text(this.getCompleteCommand())).append(Component.text(" ")).color(TextColor.fromHexString(Colors.LC_LIGHT_BLUE)));
         this.getArguments().forEach(argument -> textBuilder.append(argument.format()).append(Component.text(" ")));
         textBuilder.append(Component.text(": ").color(TextColor.fromHexString(Colors.LC_ALT_WHITE_3)));
-        textBuilder.append(Component.text(this.getDescription()).color(TextColor.fromHexString(Colors.LC_MAIN_WHITE)));
+        textBuilder.append(locale.t(this.getDescription()).ct().color(TextColor.fromHexString(Colors.LC_MAIN_WHITE)));
         return textBuilder;
     }
 

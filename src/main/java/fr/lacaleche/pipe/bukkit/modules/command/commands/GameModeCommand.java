@@ -32,7 +32,7 @@ public class GameModeCommand {
         GameMode gameMode = GameMode.fromAlias(requiredGameMode);
 
         if (gameMode == null) {
-            sender.sendMessage(locale.t("pipe.command.gamemode.invalid_mode").ct());
+            sender.sendMessage(locale.t("pipe.command.gamemode.invalid_mode").arg("mode", requiredGameMode).ct());
             return true;
         }
 

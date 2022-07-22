@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.commands.helper.interfaces;
 
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -16,6 +17,6 @@ public interface SubCommand {
 
     String getDescription();
 
-    TextComponent.Builder format();
+    TextComponent.Builder format(Locale locale);
 
 }
