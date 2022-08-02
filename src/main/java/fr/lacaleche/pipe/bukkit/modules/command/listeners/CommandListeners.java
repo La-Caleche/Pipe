@@ -97,8 +97,8 @@ public class CommandListeners implements Listener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-            if (!manager.isNativeCommand(label)) event.setCancelled(true);
-            else if (client != null && client.getRank().getPermissionLevel() < 20) event.setCancelled(true);
+            if (!manager.isNativeCommand(label)) PipeDebug.setCancelled(event, true);
+            else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);
     }
