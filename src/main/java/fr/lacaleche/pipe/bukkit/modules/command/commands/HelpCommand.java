@@ -3,14 +3,12 @@ package fr.lacaleche.pipe.bukkit.modules.command.commands;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.colors.Colors;
 import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.argument.arguments.RegisteredCommandArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
-import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
-import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.packets.HelpPacket;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -28,44 +26,35 @@ public class HelpCommand {
     }
 
     @CommandExecutor
-    public boolean execute(CommandSender sender, Arguments arguments) {
-        Locale locale = Pipe.get().getDefaultLocale();
-
-        if (sender instanceof Player player) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
-            locale = client.getLocale();
-        }
-
-        if (arguments.blank("command")) {
+    public boolean execute(Command<CommandSender> command) {
+        if (command.args().blank("command")) {
             TextComponent.Builder builder = Component.text();
-            builder.append(locale.t("pipe.command.help.header").ct());
+            builder.append(command.locale().t("pipe.command.help.header").ct());
             builder.append(Component.newline());
-            Locale finalLocale = locale;
 
             Pipe.get().getCommandManager().getNetworkCommands().forEach((app, commands) ->
                     commands.forEach(label -> {
                         if (label.startsWith("∅")) return;
-                        builder.append(Component.text("  > ").color(TextColor.fromHexString(Colors.LC_MAIN_WHITE)).append(finalLocale.t("pipe.command.help.click_to_run").arg("command", "help %s".formatted(label)).arg("label", StringUtils.capitalize(label)).ct()).append(Component.newline()));
+                        builder.append(Component.text("  > ").color(TextColor.fromHexString(Colors.LC_MAIN_WHITE)).append(command.locale().t("pipe.command.help.click_to_run").arg("command", "help %s".formatted(label)).arg("label", StringUtils.capitalize(label)).ct()).append(Component.newline()));
                     })
             );
             builder.append(Component.newline());
-            builder.append(locale.t("pipe.command.help.footer").ct());
+            builder.append(command.locale().t("pipe.command.help.footer").ct());
 
-            sender.sendMessage(builder);
+            command.sender().sendMessage(builder);
             return true;
         }
 
-        if (!Pipe.get().getCommandManager().isRegisteredOnNetwork(arguments.getString("command"))) {
-            sender.sendMessage(locale.t("pipe.helper.command_not_found").arg("label", arguments.getString("command")).ct());
+        if (!Pipe.get().getCommandManager().isRegisteredOnNetwork(command.args().getString("command"))) {
+            command.sender().sendMessage(command.locale().t("pipe.helper.command_not_found").arg("label", command.args().getString("command")).ct());
             return true;
         }
 
-        Locale finalLocale1 = locale;
-        HelpPacket packet = new HelpPacket(arguments.getString("command"), locale, resolve -> {
+        HelpPacket packet = new HelpPacket(command.args().getString("command"), command.locale(), resolve -> {
             Component component = (Component) resolve;
-            sender.sendMessage(component);
+            command.sender().sendMessage(component);
         }, reject -> {
-            sender.sendMessage(finalLocale1.t("pipe.helper.command_not_found").arg("label", arguments.getString("command")).ct());
+            command.sender().sendMessage(command.locale().t("pipe.helper.command_not_found").arg("label", command.args().getString("command")).ct());
         });
         CalecheCore.get().getPacketManager().publish(packet);
 

@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.commands.argument.interfaces;
 
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,5 +57,4 @@ public interface Completer {
     void cancelValidation();
 
     void setValidation(boolean validation);
-
 }

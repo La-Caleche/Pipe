@@ -1,15 +1,12 @@
 package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
-import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
-import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.CustomArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
-import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
-import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,33 +16,26 @@ import java.util.Arrays;
 public class GameModeCommand {
 
     @CommandExecutor
-    public boolean executor(CommandSender sender, Arguments arguments) {
-        Locale locale = Pipe.get().getDefaultLocale();
-
-        if (sender instanceof Player player) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
-            locale = client.getLocale();
-        }
-
-        String requiredGameMode = arguments.getString("mode");
+    public boolean executor(Command<CommandSender> command) {
+        String requiredGameMode = command.args().getString("mode");
 
         GameMode gameMode = GameMode.fromAlias(requiredGameMode);
 
         if (gameMode == null) {
-            sender.sendMessage(locale.t("pipe.command.gamemode.invalid_mode").arg("mode", requiredGameMode).ct());
+            command.sender().sendMessage(command.locale().t("pipe.command.gamemode.invalid_mode").arg("mode", requiredGameMode).from("GameMode").ct());
             return true;
         }
 
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(sender, arguments, "player");
+        PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
         if (result.hasError()) {
-            sender.sendMessage(result.getError().ct());
+            command.sender().sendMessage(result.getError().from("GameMode").ct());
             return true;
         }
 
         Player target = result.getPlayer();
 
         target.setGameMode(gameMode.getBukkitGameMode());
-        sender.sendMessage(locale.t("pipe.command.gamemode.success").arg("mode", requiredGameMode).arg("player", target.getName()).ct());
+        command.sender().sendMessage(command.locale().t("pipe.command.gamemode.success").arg("mode", requiredGameMode).arg("player", target.getName()).from("GameMode").ct());
 
         return true;
     }
@@ -67,23 +57,16 @@ public class GameModeCommand {
     public static class Get {
 
         @CommandExecutor
-        public boolean execute(CommandSender sender, Arguments arguments) {
-            Locale locale = Pipe.get().getDefaultLocale();
-
-            if (sender instanceof Player player) {
-                Client client = Pipe.get().getClient(player.getUniqueId());
-                locale = client.getLocale();
-            }
-
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(sender, arguments, "player");
+        public boolean execute(Command<CommandSender> command) {
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {
-                sender.sendMessage(result.getError().ct());
+                command.sender().sendMessage(result.getError().from("GameMode").ct());
                 return true;
             }
 
             Player target = result.getPlayer();
 
-            sender.sendMessage(locale.t("pipe.command.gamemode.player_mode").arg("mode", target.getGameMode().name()).arg("player", target.getName()).ct());
+            command.sender().sendMessage(command.locale().t("pipe.command.gamemode.player_mode").arg("mode", target.getGameMode().name()).arg("player", target.getName()).from("GameMode").ct());
 
             return true;
         }

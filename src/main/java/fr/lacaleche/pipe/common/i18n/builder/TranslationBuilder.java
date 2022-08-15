@@ -28,6 +28,8 @@ public interface TranslationBuilder {
 
     TranslationBuilder arg(TArg argument);
 
+    TranslationBuilder from(String from);
+
     String t();
 
     Component ct();

@@ -4,16 +4,16 @@ import java.util.List;
 
 public interface ArgumentManager {
 
-    public Class<?> getCommand();
+    Class<?> getCommand();
 
-    public List<Argument> getArguments();
+    List<Argument> getArguments();
 
-    public Argument getArgument(int index);
+    Argument getArgument(int index);
 
-    public Argument getArgument(String key);
+    Argument getArgument(String key);
 
-    public void removeArgument(Argument argument);
+    void removeArgument(Argument argument);
 
-    public Argument addArgument(Argument argument);
+    Argument addArgument(Argument argument);
 
 }

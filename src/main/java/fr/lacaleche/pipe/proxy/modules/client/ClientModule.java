@@ -4,6 +4,8 @@ import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.modules.Module;
+import fr.lacaleche.core.modules.annotations.AModule;
+import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@AModule(target = ModuleTarget.BUNGEE)
 public class ClientModule extends Module {
 
     public ClientModule(IModuleHandler handler) {

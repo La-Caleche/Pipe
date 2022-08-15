@@ -277,7 +277,7 @@ public abstract class GlobalCommandManager implements CommandManager {
         for (Class<?> method : manager.getCommand().getDeclaredClasses()) {
             if (method.isAnnotationPresent(CommandChild.class)) {
                 CommandChild child = method.getAnnotation(CommandChild.class);
-                if (child.label().startsWith(currentArgument.getValue().toLowerCase()))
+                if (child.label().contains(currentArgument.getValue().toLowerCase()))
                     completer.add(child.label());
             }
         }
@@ -295,7 +295,7 @@ public abstract class GlobalCommandManager implements CommandManager {
                     continue;
                 }
 
-                if (completer.next() || parsed.toLowerCase().startsWith(argument.getValue().toLowerCase()))
+                if (completer.next() || parsed.toLowerCase().contains(argument.getValue().toLowerCase()))
                     completed.add(parsed);
             }
             completer.setCompleter(completed);

@@ -2,7 +2,6 @@ package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitWorldArgument;
-import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
@@ -11,10 +10,10 @@ import fr.lacaleche.pipe.common.commands.argument.arguments.CustomArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
+import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,25 +24,24 @@ import java.text.DecimalFormat;
 public class TeleportPositionCommand {
 
     @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER, CommandExecutor.Executor.COMMAND_BLOCK})
-    public boolean execute(CommandSender sender, Arguments arguments) {
-        Player player = (Player) sender;
-        Client client = Pipe.get().getClient(player.getUniqueId());
-        Locale locale = client.getLocale();
+    public boolean execute(Command<Player> command) {
+        Player player = command.sender();
+        Locale locale = command.locale();
         double x, y, z;
         float yaw, pitch;
         World world = player.getWorld();
 
-        x = this.parse(arguments, "x", player.getLocation().getX());
-        y = this.parse(arguments, "y", player.getLocation().getY());
-        z = this.parse(arguments, "z", player.getLocation().getZ());
-        yaw = (float) this.parse(arguments, "yaw", (double) player.getLocation().getYaw());
-        pitch = (float) this.parse(arguments, "pitch", (double) player.getLocation().getPitch());
+        x = this.parse(command.args(), "x", player.getLocation().getX());
+        y = this.parse(command.args(), "y", player.getLocation().getY());
+        z = this.parse(command.args(), "z", player.getLocation().getZ());
+        yaw = (float) this.parse(command.args(), "yaw", (double) player.getLocation().getYaw());
+        pitch = (float) this.parse(command.args(), "pitch", (double) player.getLocation().getPitch());
 
-        if (!arguments.blank("world")) {
-            world = Pipe.get().<JavaPlugin>getPlugin().getServer().getWorld(arguments.getString("world"));
+        if (!command.args().blank("world")) {
+            world = Pipe.get().<JavaPlugin>getPlugin().getServer().getWorld(command.args().getString("world"));
 
             if (world == null) {
-                sender.sendMessage(locale.t("global.world_not_found").arg("world", arguments.getString("world")).ct());
+                command.sender().sendMessage(locale.t("global.world_not_found").arg("world", command.args().getString("world")).from("Teleport").ct());
                 return true;
             }
         }
@@ -52,7 +50,7 @@ public class TeleportPositionCommand {
 
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
-        sender.sendMessage(locale.t("pipe.command.tpp.success").arg("x", df.format(x)).arg("y", df.format(y)).arg("z", df.format(z)).arg("world", world.getName()).ct());
+        command.sender().sendMessage(locale.t("pipe.command.tpp.success").arg("x", df.format(x)).arg("y", df.format(y)).arg("z", df.format(z)).arg("world", world.getName()).from("Teleport").ct());
 
         return true;
     }

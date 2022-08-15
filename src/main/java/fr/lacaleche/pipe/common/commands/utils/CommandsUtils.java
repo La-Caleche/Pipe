@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.commands.utils;
 
 import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.pipe.common.commands.CommandImpl;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
@@ -60,7 +61,7 @@ public class CommandsUtils {
      * */
     public static boolean invokeExecutor(Method executor, Object sender, Object instance, Arguments arguments) {
         try {
-            return (boolean) executor.invoke(instance, sender, arguments);
+            return (boolean) executor.invoke(instance, new CommandImpl<>(sender, arguments));
         } catch (IllegalAccessException | InvocationTargetException e) {
             SentryAPIImpl.getInstance().captureException(e);
             SentryAPIImpl.getInstance().captureMessage("Error on command invocation for instance %s with arguments : %s".formatted(instance, "Not implemented yet"));

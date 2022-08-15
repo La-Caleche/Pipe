@@ -1,12 +1,12 @@
-def minecraftVersion = '1.18.2-R0.1-SNAPSHOT'
-def commandApiVersion = '6.3.1'
-def waterfallVersion = '1.18-R0.1-SNAPSHOT'
+def minecraftVersion = '1.19.2-R0.1-SNAPSHOT'
+def commandApiVersion = '8.5.1'
+def waterfallVersion = '1.19-R0.1-SNAPSHOT'
 
 def joorVersion = '0.9.14'
-def jsonVersion = '20190722'
+def jsonVersion = '20200518'
 
-def miniMessageVersion = '4.10.1'
-def platformVersion = '4.1.0'
+def miniMessageVersion = '4.11.0'
+def platformVersion = '4.1.1'
 
 repositories {
     maven { url = "https://jitpack.io" }

@@ -1,6 +1,8 @@
 package fr.lacaleche.pipe.bukkit.modules.client;
 
 import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.modules.annotations.AModule;
+import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
@@ -13,12 +15,12 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerJoinListener;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerLeftListener;
 import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
-import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
+@AModule(target = ModuleTarget.BUKKIT)
 public class ClientModule extends Module {
 
     public ClientModule(IModuleHandler handler) {

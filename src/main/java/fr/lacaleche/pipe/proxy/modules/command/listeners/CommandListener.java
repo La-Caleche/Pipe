@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.proxy.modules.command.listeners;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;

@@ -18,10 +18,12 @@ public class TranslationBuilderImpl implements TranslationBuilder {
 
     private final Translation translation;
     private final List<TArg> arguments;
+    private String from;
 
     public TranslationBuilderImpl(Translation translation) {
         this.translation = translation;
         this.arguments = new ArrayList<>();
+        this.from = null;
     }
 
     @Override
@@ -86,6 +88,12 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     }
 
     @Override
+    public TranslationBuilder from(String from) {
+        this.from = from;
+        return this;
+    }
+
+    @Override
     public String t() {
         String translation = this.translation.getTranslation();
         for (TArg argument : this.arguments)
@@ -96,6 +104,9 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     @Override
     public Component ct() {
         String text = this.t();
+        if (this.from != null) {
+            text = "%s %s".formatted(CalecheCore.get().getPrefixFormat().replace("{{from}}", this.from), text);
+        }
         Component component = MiniMessage.miniMessage().deserialize(text);
 
         if (CalecheCore.get().inDev() && CalecheCore.get().debugEnabled()) {

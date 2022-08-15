@@ -8,7 +8,6 @@ import fr.lacaleche.pipe.Pipe;
 
 public class MinecraftModuleHandler extends ModuleHandler {
 
-
     @Override
     public void disableModule(IModule module) {
         super.disableModule(module);

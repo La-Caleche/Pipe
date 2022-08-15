@@ -2,13 +2,10 @@ package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
-import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
-import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,19 +13,12 @@ import org.bukkit.entity.Player;
 public class PipeDebugCommand {
 
     @CommandExecutor
-    public boolean execute(CommandSender sender, Arguments arguments) {
-        Locale locale = Pipe.get().getDefaultLocale();
-
-        if (sender instanceof Player player) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
-            locale = client.getLocale();
-        }
-
+    public boolean execute(Command<CommandSender> command) {
         Logger.info("In dev: " + CalecheCore.get().inDev());
 
-        sender.sendMessage(locale.t("pipe.command.pipedebug.informations").arg("appname", CalecheCore.get().getAppName()).ct());
-        sender.sendMessage(locale.ct("pipe.command.pipedebug.dev_status.enabled", "pipe.command.pipedebug.dev_status.disabled", CalecheCore.get().inDev()).ct());
-        sender.sendMessage(locale.ct("pipe.command.pipedebug.debug_status.enabled", "pipe.command.pipedebug.debug_status.disabled", CalecheCore.get().debugEnabled()).ct());
+        command.sender().sendMessage(command.locale().t("pipe.command.pipedebug.informations").arg("appname", CalecheCore.get().getAppName()).from("System").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.pipedebug.dev_status.enabled", "pipe.command.pipedebug.dev_status.disabled", CalecheCore.get().inDev()).from("System").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.pipedebug.debug_status.enabled", "pipe.command.pipedebug.debug_status.disabled", CalecheCore.get().debugEnabled()).from("System").ct());
 
         return true;
     }
@@ -37,16 +27,11 @@ public class PipeDebugCommand {
     public static class Switch {
 
         @CommandExecutor
-        public boolean execute(CommandSender sender, Arguments arguments) {
-            Locale locale = Pipe.get().getDefaultLocale();
+        public boolean execute(Command<CommandSender> command) {
 
-            if (sender instanceof Player player) {
-                Client client = Pipe.get().getClient(player.getUniqueId());
-                locale = client.getLocale();
-            }
 
             CalecheCore.get().setDebugEnabled(!CalecheCore.get().debugEnabled());
-            sender.sendMessage(locale.ct("pipe.command.pipedebug.debug_status.enabled", "pipe.command.pipedebug.debug_status.disabled", CalecheCore.get().debugEnabled()).ct());
+            command.sender().sendMessage(command.locale().ct("pipe.command.pipedebug.debug_status.enabled", "pipe.command.pipedebug.debug_status.disabled", CalecheCore.get().debugEnabled()).from("System").ct());
             return true;
         }
 

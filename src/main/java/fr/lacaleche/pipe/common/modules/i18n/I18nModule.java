@@ -3,6 +3,8 @@ package fr.lacaleche.pipe.common.modules.i18n;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.Module;
+import fr.lacaleche.core.modules.annotations.AModule;
+import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -17,6 +19,7 @@ import fr.lacaleche.pipe.common.i18n.interfaces.TranslationKey;
 import java.util.ArrayList;
 import java.util.List;
 
+@AModule(target = ModuleTarget.BUKKIT)
 public class I18nModule extends Module {
 
     public I18nModule(IModuleHandler handler) {

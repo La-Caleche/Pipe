@@ -2,6 +2,8 @@ package fr.lacaleche.pipe.bukkit.modules.command;
 
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.Module;
+import fr.lacaleche.core.modules.annotations.AModule;
+import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
@@ -20,6 +22,7 @@ import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
  * @author Malo ALLAIN
  * @since 1.0.0
  */
+@AModule(target = ModuleTarget.BUKKIT)
 public class CommandModule extends Module {
 
     public CommandModule(IModuleHandler handler) {
