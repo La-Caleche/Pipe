@@ -4,7 +4,6 @@ package fr.lacaleche.pipe.bukkit.modules.prmodule.commands;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.interfaces.ModuleFeature;
-import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.prmodule.ModsManagerModule;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.*;
@@ -13,7 +12,6 @@ import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.Collections;
 

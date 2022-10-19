@@ -1,9 +1,10 @@
-def minecraftVersion = '1.19.2-R0.1-SNAPSHOT'
+def minecraftVersion = '1.18.2-R0.1-SNAPSHOT'
 def commandApiVersion = '8.5.1'
 def waterfallVersion = '1.19-R0.1-SNAPSHOT'
 
 def joorVersion = '0.9.14'
 def jsonVersion = '20200518'
+def reflectionsVersion = '0.10.2'
 
 def miniMessageVersion = '4.11.0'
 def platformVersion = '4.1.1'
@@ -27,6 +28,7 @@ dependencies {
 
     implementation group: 'org.jooq', name: 'joor', version: joorVersion
     implementation group: 'org.json', name: 'json', version: jsonVersion
+    implementation group: 'org.reflections', name: 'reflections', version: reflectionsVersion
 
     implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
     implementation group: 'net.kyori', name: 'adventure-platform-bungeecord', version: platformVersion

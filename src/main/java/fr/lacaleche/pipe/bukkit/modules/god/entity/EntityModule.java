@@ -1,4 +1,4 @@
-package fr.lacaleche.pipe.bukkit.modules.god.damage;
+package fr.lacaleche.pipe.bukkit.modules.god.entity;
 
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
@@ -7,8 +7,8 @@ import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.modules.interfaces.ModuleFeature;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
-import fr.lacaleche.pipe.bukkit.modules.god.damage.commands.DamageCommand;
-import fr.lacaleche.pipe.bukkit.modules.god.damage.listeners.DamageListener;
+import fr.lacaleche.pipe.bukkit.modules.god.entity.commands.EntityCommand;
+import fr.lacaleche.pipe.bukkit.modules.god.entity.listeners.EntityListener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
@@ -16,11 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @AModule(target = ModuleTarget.BUKKIT)
-public class DamageModule extends Module {
+public class EntityModule extends Module {
 
     private final List<EntityDamageEvent.DamageCause> blackListDamageCauses;
 
-    public DamageModule(IModuleHandler handler) {
+    public EntityModule(IModuleHandler handler) {
         super(handler);
         this.blackListDamageCauses = new ArrayList<>();
 
@@ -31,12 +31,12 @@ public class DamageModule extends Module {
     @Override
     public void registerListeners() {
         BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
-        bukkitManager.registerBukkitListener(this, new DamageListener(this));
+        bukkitManager.registerBukkitListener(this, new EntityListener(this));
     }
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, DamageCommand.class);
+        Pipe.get().getCommandManager().registerNewCommand(this, EntityCommand.class);
     }
 
     public void blackListDamageCause(EntityDamageEvent.DamageCause cause) {

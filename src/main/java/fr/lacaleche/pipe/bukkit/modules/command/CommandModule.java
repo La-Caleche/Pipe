@@ -10,6 +10,7 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.command.commands.*;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
+import fr.lacaleche.pipe.bukkit.modules.god.health.commands.HealCommand;
 import fr.lacaleche.pipe.common.commands.listeners.HelpPacketListener;
 import fr.lacaleche.pipe.common.commands.listeners.RegisterNetworkCommandPacketListener;
 import fr.lacaleche.pipe.common.packets.FetchNetworkCommandsPacket;
@@ -48,7 +49,6 @@ public class CommandModule extends Module {
 
         Pipe.get().getCommandManager().registerNewCommand(this, FlyCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, GameModeCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, HealCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, HelpCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, InvisibleCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, NightVisionCommand.class);

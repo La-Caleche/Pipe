@@ -6,11 +6,11 @@ import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.pipe.bukkit.modules.god.damage.DamageModule;
-import fr.lacaleche.pipe.bukkit.modules.god.food.FoodModule;
+import fr.lacaleche.pipe.bukkit.modules.god.entity.EntityModule;
+import fr.lacaleche.pipe.bukkit.modules.god.health.HealthModule;
 import fr.lacaleche.pipe.bukkit.modules.god.redstone.RedstoneModule;
 import fr.lacaleche.pipe.bukkit.modules.god.spawn.SpawnModule;
-import fr.lacaleche.pipe.bukkit.modules.god.worldborder.WorldBorderModule;
+import fr.lacaleche.pipe.bukkit.modules.god.world.WorldModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +65,12 @@ public class GodModule extends Module {
     }
 
     public void enableAll() {
-        this.enableGodModule(new DamageModule(this.getHandler()));
-        this.enableGodModule(new FoodModule(this.getHandler()));
+        this.enableGodModule(new EntityModule(this.getHandler()));
+        this.enableGodModule(new HealthModule(this.getHandler()));
         this.enableGodModule(new RedstoneModule(this.getHandler()));
         this.enableGodModule(new SpawnModule(this.getHandler()));
-        this.enableGodModule(new WorldBorderModule(this.getHandler()));
+        this.enableGodModule(new WorldModule(this.getHandler()));
+        this.enableGodModule(new WorldModule(this.getHandler()));
     }
 
     public void disableAll() {
