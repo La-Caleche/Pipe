@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.common.commands.argument.arguments;
 
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.modules.features.interfaces.IFeature;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class ModuleFeaturesArgument extends DefaultArgument {
         IModule module = core.getCentralModuleManager().getAnyModule(completer.getArgumentManager().getArgument("module").getValue());
 
         if (module != null) {
-            completer.addAll(module.getFeatures().keySet().stream().map(Object::toString).collect(Collectors.toSet()));
+            completer.addAll(module.getFeatureManager().getFeatures().stream().map(IFeature::name).collect(Collectors.toSet()));
         }
 
     }

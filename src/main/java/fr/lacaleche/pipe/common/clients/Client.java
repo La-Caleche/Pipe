@@ -11,15 +11,15 @@ import java.util.UUID;
 @Entity("clients")
 public interface Client extends ISqlModel {
 
-    public UUID getUUID();
+    UUID getUUID();
 
-    public Rank getRank();
+    Rank getRank();
 
-    public Locale getLocale();
+    Locale getLocale();
 
-    public void setLocale(Locale locale);
+    void setLocale(Locale locale);
 
-    public void setRank(Rank rank);
+    void setRank(Rank rank);
 
-    public boolean hasPermission(Permission permission);
+    boolean hasPermission(Permission permission);
 }

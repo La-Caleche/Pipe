@@ -24,8 +24,10 @@ public class NightVisionCommand {
 
         Player target = result.getPlayer();
 
+        command.sender().sendMessage(target.getPlayerTime() + "");
+
         target.setPlayerTime(target.getPlayerTime() == 0 ? 1 : 0, false);
-        command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.success.enabled", "pipe.command.nightvision.success.disabled", target.getPlayerTime() == 0).from("Night Vision").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.success.enabled", "pipe.command.nightvision.success.disabled", target.getPlayerTime() == 0).arg("player", target.getName()).from("Night Vision").ct());
 
         return true;
     }

@@ -4,6 +4,7 @@ import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
@@ -21,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 @AModule(target = ModuleTarget.BUKKIT)
-public class ClientModule extends Module {
+public class ClientModule extends BukkitModule {
 
     public ClientModule(IModuleHandler handler) {
         super(handler);

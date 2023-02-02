@@ -1,7 +1,9 @@
 package fr.lacaleche.pipe;
 
+import com.comphenix.protocol.ProtocolManager;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.events.interfaces.IListenerManager;
+import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
@@ -23,11 +25,14 @@ public class PipeImpl implements Pipe {
     private CommandManager commandManager;
     private AudienceProvider adventure;
     private Runnable shutdownHook;
+    private ProtocolManager protocolManager;
 
+    private List<Class<? extends IModule>> cachedGodModules;
     private final List<Object> plugins;
 
     public PipeImpl() {
         this.plugins = new ArrayList<>();
+        this.cachedGodModules = new ArrayList<>();
     }
 
     public static Pipe get() {
@@ -112,6 +117,21 @@ public class PipeImpl implements Pipe {
     @Override
     public Runnable getShutdownHook() {
         return shutdownHook;
+    }
+
+    @Override
+    public void setProtocolManager(ProtocolManager protocolManager) {
+        this.protocolManager = protocolManager;
+    }
+
+    @Override
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
+
+    @Override
+    public List<Class<? extends IModule>> getCachedGodModules() {
+        return cachedGodModules;
     }
 
     @Override

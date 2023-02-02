@@ -2,6 +2,8 @@ package fr.lacaleche.pipe.common.commands.interfaces;
 
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 
+import java.util.function.BiConsumer;
+
 public interface Arguments {
 
     Argument get(String key);
@@ -33,5 +35,7 @@ public interface Arguments {
     Object getObject(String key);
 
     <T> T as(String key);
+
+    void forEach(BiConsumer<String, Argument> action);
 
 }

@@ -3,7 +3,9 @@ package fr.lacaleche.pipe.bukkit.modules.prmodule.commands;
 
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.interfaces.IModule;
-import fr.lacaleche.core.modules.interfaces.ModuleFeature;
+import fr.lacaleche.core.modules.features.interfaces.IFeature;
+import fr.lacaleche.pipe.bukkit.modules.god.ParentGodModule;
+import fr.lacaleche.pipe.bukkit.modules.god.annotations.AGodModule;
 import fr.lacaleche.pipe.bukkit.modules.prmodule.ModsManagerModule;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.*;
@@ -46,7 +48,7 @@ public class ModuleCommand {
             public void manager(ArgumentManager manager) {
                 manager.addArgument(new EnabledModuleArgument("module"));
                 manager.addArgument(new ModuleFeaturesArgument("feature"));
-                manager.addArgument(new BooleanArgument("status"));
+                manager.addArgument(new StringArgument("value").setMultiple(true));
             }
 
             @CommandExecutor
@@ -57,16 +59,16 @@ public class ModuleCommand {
                 IModule module = ModuleCommand.getModule(command.sender(), command.locale(), command.args());
                 if (module == null) return true;
 
-                ModuleFeature feature = module.getFeatureByName(command.args().getString("feature"));
+                IFeature feature = module.getFeatureManager().getFeatureByName(command.args().getString("feature"));
 
                 if (feature == null) {
                     command.sender().sendMessage(command.locale().t("pipe.command.module.features.invalid").arg("feature", command.args().getString("feature")).from("Module").ct());
                     return true;
                 }
 
-                module.toggleFeature(feature, command.args().getBoolean("status"));
+                feature.setValue(command.args().getString("value"));
 
-                command.sender().sendMessage(command.locale().ct("pipe.command.module.features.set.enabled", "pipe.command.module.features.set.disabled", command.args().getBoolean("status")).arg("module", module.getClass().getSimpleName()).arg("feature", feature.toString()).from("Module").ct());
+                command.sender().sendMessage(command.locale().t("pipe.command.module.features.set.updated").arg("new_value", command.args().getString("value")).arg("module", module.getClass().getSimpleName()).arg("feature", feature.name()).from("Module").ct());
 
                 return true;
             }
@@ -92,18 +94,18 @@ public class ModuleCommand {
 
                 if (command.args().blank("feature")) {
                     command.sender().sendMessage(command.locale().t("pipe.command.module.features.list").arg("module", module.getClass().getSimpleName()).from("Module").ct());
-                    module.getFeatures().forEach((moduleFeature, aBoolean) -> {
-                        command.sender().sendMessage(command.locale().ct("pipe.command.module.features.list.feature.enabled", "pipe.command.module.features.list.feature.disabled", aBoolean).arg("feature", moduleFeature).from("Module").ct());
+                    module.getFeatureManager().getFeatures().forEach((moduleFeature) -> {
+                        command.sender().sendMessage(command.locale().t("pipe.command.module.features.list.feature.value").arg("value", moduleFeature.value().getValue()).arg("feature", moduleFeature.name()).from("Module").ct());
                     });
                 } else {
-                    ModuleFeature feature = module.getFeatureByName(command.args().getString("feature"));
+                    IFeature feature = module.getFeatureManager().getFeatureByName(command.args().getString("feature"));
 
                     if (feature == null) {
                         command.sender().sendMessage(command.locale().t("pipe.command.module.features.invalid").arg("feature", command.args().getString("feature")).from("Module").ct());
                         return true;
                     }
 
-                    command.sender().sendMessage(command.locale().ct("pipe.command.module.features.get.enabled", "pipe.command.module.features.get.disabled", module.isFeatureEnabled(feature)).arg("module", module.getClass().getSimpleName()).arg("feature", feature).from("Module").ct());
+                    command.sender().sendMessage(command.locale().t("pipe.command.module.features.get.value").arg("value", feature.value().getValue()).arg("module", module.getClass().getSimpleName()).arg("feature", feature.name()).from("Module").ct());
                 }
 
                 return true;
@@ -130,7 +132,13 @@ public class ModuleCommand {
                 Class<? extends IModule> moduleClass = ModuleCommand.getClassModule(command.sender(), command.locale(), command.args());
                 if (moduleClass == null) return true;
 
-                core.getCentralModuleManager().enableModule(modManagerModule.getHandler(), moduleClass);
+                if (moduleClass.isAnnotationPresent(AGodModule.class)) {
+                    ParentGodModule godModule = core.getCentralModuleManager().getModule(ParentGodModule.class);
+                    godModule.getGodModuleManager().enableModule(moduleClass);
+                } else {
+                    core.getCentralModuleManager().enableModule(modManagerModule.getHandler(), moduleClass);
+                }
+
                 command.sender().sendMessage(command.locale().t("pipe.command.module.enabled").arg("module", moduleClass.getSimpleName()).from("Module").ct());
             } else {
                 core.getCentralModuleManager().enableModulesExcept(modManagerModule.getHandler(), Collections.singletonList(modManagerModule.getClass()));
@@ -159,7 +167,13 @@ public class ModuleCommand {
                 IModule module = ModuleCommand.getModule(command.sender(), command.locale(), command.args());
                 if (module == null) return true;
 
-                core.getCentralModuleManager().disableModule(module);
+                if (module.getClass().isAnnotationPresent(AGodModule.class)) {
+                    ParentGodModule godModule = core.getCentralModuleManager().getModule(ParentGodModule.class);
+                    godModule.getGodModuleManager().disableModule(module);
+                } else {
+                    core.getCentralModuleManager().disableModule(module);
+                }
+
                 command.sender().sendMessage(command.locale().t("pipe.command.module.disabled").arg("module", module.getClass().getSimpleName()).from("Module").ct());
             } else {
                 core.getCentralModuleManager().disableModulesExcept(modManagerModule);

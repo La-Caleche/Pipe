@@ -19,7 +19,7 @@ public class LogoutListener implements Listener {
         ProxiedPlayer player = event.getPlayer();
 
         Client client = Pipe.get().getClient(player.getUniqueId());
-        client.expireNow();
+        client.expireIn(5 * 60 * 1000);
     }
 
 }

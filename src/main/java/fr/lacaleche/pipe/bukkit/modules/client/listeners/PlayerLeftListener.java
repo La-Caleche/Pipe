@@ -18,7 +18,7 @@ public class PlayerLeftListener implements Listener {
         Player player = event.getPlayer();
 
         Client client = Pipe.get().getClient(player.getUniqueId());
-        client.expireNow();
+        client.expireIn(5 * 60 * 1000);
 
         event.quitMessage(null);
     }

@@ -5,6 +5,8 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 
+import java.util.function.BiConsumer;
+
 public class ArgumentsImpl implements Arguments {
 
     private ArgumentManager manager;
@@ -86,5 +88,10 @@ public class ArgumentsImpl implements Arguments {
     @Override
     public boolean mandatory(String key) {
         return this.exist(key) ? manager.getArgument(key).isMandatory() : false;
+    }
+
+    @Override
+    public void forEach(BiConsumer<String, Argument> action) {
+        this.manager.getArguments().forEach(argument -> action.accept(argument.getKey(), argument));
     }
 }

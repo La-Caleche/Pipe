@@ -9,6 +9,8 @@ def reflectionsVersion = '0.10.2'
 def miniMessageVersion = '4.11.0'
 def platformVersion = '4.1.1'
 
+def protocolLibVersion = '4.7.0'
+
 repositories {
     maven { url = "https://jitpack.io" }
     maven { url = "https://repo.codemc.org/repository/maven-public/" }
@@ -33,6 +35,8 @@ dependencies {
     implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
     implementation group: 'net.kyori', name: 'adventure-platform-bungeecord', version: platformVersion
     implementation group: 'net.kyori', name: 'adventure-platform-bukkit', version: platformVersion
+
+    implementation group: 'com.comphenix.protocol', name: 'ProtocolLib', version: protocolLibVersion
 }
 
 compileJava.options.encoding = 'UTF-8'

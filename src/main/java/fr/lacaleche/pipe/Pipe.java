@@ -1,5 +1,7 @@
 package fr.lacaleche.pipe;
 
+import com.comphenix.protocol.ProtocolManager;
+import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
@@ -70,6 +72,21 @@ public interface Pipe {
      * TODO
      * */
     void shutdown();
+
+    /**
+     * TODO
+     * */
+    void setProtocolManager(ProtocolManager protocolManager);
+
+    /**
+     * TODO
+     * */
+    ProtocolManager getProtocolManager();
+
+    /**
+     * TODO
+     * */
+    List<Class<? extends IModule>> getCachedGodModules();
 
     /**
      * TODO

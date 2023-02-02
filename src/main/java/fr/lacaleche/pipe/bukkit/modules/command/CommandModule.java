@@ -1,16 +1,15 @@
 package fr.lacaleche.pipe.bukkit.modules.command;
 
 import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.modules.command.commands.*;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
-import fr.lacaleche.pipe.bukkit.modules.god.health.commands.HealCommand;
 import fr.lacaleche.pipe.common.commands.listeners.HelpPacketListener;
 import fr.lacaleche.pipe.common.commands.listeners.RegisterNetworkCommandPacketListener;
 import fr.lacaleche.pipe.common.packets.FetchNetworkCommandsPacket;
@@ -24,7 +23,7 @@ import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
  * @since 1.0.0
  */
 @AModule(target = ModuleTarget.BUKKIT)
-public class CommandModule extends Module {
+public class CommandModule extends BukkitModule {
 
     public CommandModule(IModuleHandler handler) {
         super(handler);
