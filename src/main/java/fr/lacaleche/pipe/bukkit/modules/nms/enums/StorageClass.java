@@ -1,0 +1,17 @@
+package fr.lacaleche.pipe.bukkit.modules.nms.enums;
+
+public enum StorageClass {
+
+    CRAFT_WORLD,
+    WORLD,
+    ENTITY,
+    DATA_WATCHER,
+    ENTITY_LIVING,
+    ITEM_STACK,
+    PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING,
+    PACKET_PLAY_OUT_ENTITY_DESTROY,
+    PACKET_PLAY_OUT_ENTITY_METADATA,
+    PACKET_PLAY_OUT_ENTITY_TELEPORT,
+    SHULKER
+
+}

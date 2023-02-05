@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe;
 
-import com.comphenix.protocol.ProtocolManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
@@ -72,16 +71,6 @@ public interface Pipe {
      * TODO
      * */
     void shutdown();
-
-    /**
-     * TODO
-     * */
-    void setProtocolManager(ProtocolManager protocolManager);
-
-    /**
-     * TODO
-     * */
-    ProtocolManager getProtocolManager();
 
     /**
      * TODO

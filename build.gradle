@@ -3,13 +3,14 @@ def commandApiVersion = '8.5.1'
 def waterfallVersion = '1.19-R0.1-SNAPSHOT'
 
 def joorVersion = '0.9.14'
-def jsonVersion = '20200518'
 def reflectionsVersion = '0.10.2'
 
 def miniMessageVersion = '4.11.0'
 def platformVersion = '4.1.1'
 
 def protocolLibVersion = '4.7.0'
+
+def jacksonVersion = '2.13.3'
 
 repositories {
     maven { url = "https://jitpack.io" }
@@ -29,14 +30,14 @@ dependencies {
     implementation group: 'io.github.waterfallmc', name: 'waterfall-api', version: waterfallVersion
 
     implementation group: 'org.jooq', name: 'joor', version: joorVersion
-    implementation group: 'org.json', name: 'json', version: jsonVersion
     implementation group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
 
     implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
     implementation group: 'net.kyori', name: 'adventure-platform-bungeecord', version: platformVersion
     implementation group: 'net.kyori', name: 'adventure-platform-bukkit', version: platformVersion
-
-    implementation group: 'com.comphenix.protocol', name: 'ProtocolLib', version: protocolLibVersion
 }
 
 compileJava.options.encoding = 'UTF-8'
