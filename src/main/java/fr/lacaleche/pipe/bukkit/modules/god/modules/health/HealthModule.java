@@ -59,11 +59,11 @@ public class HealthModule extends BukkitModule {
     }
 
     private void registerFeatures() {
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_EAT_FOOD", false));
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_LOOSE_FOOD", false));
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_GAIN_FOOD", false));
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_GAIN_HEALTH", false));
-        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_GAIN_HEALTH", false));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_EAT_FOOD", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_LOOSE_FOOD", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_GAIN_FOOD", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_GAIN_HEALTH", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_GAIN_HEALTH", false, Boolean.class));
     }
 
 }

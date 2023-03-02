@@ -59,12 +59,12 @@ public class EntityModule extends BukkitModule {
     }
 
     private void registerFeatures() {
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_DAMAGE_PLAYER", false));
-        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE_PLAYER", false));
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_DAMAGE_ENTITY", false));
-        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE_ENTITY", false));
-        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE", false));
-        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_DAMAGE", false));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_DAMAGE_PLAYER", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE_PLAYER", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_DAMAGE_ENTITY", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE_ENTITY", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_DAMAGE", false, Boolean.class));
     }
 
 }

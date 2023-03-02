@@ -27,13 +27,13 @@ public class BlockModule extends BukkitModule {
     }
 
     private void registerFeatures() {
-        this.getFeatureManager().registerFeature(new Feature<>("FLUID_LEVEL_CHANGE", false));
-        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_GROW", false));
-        this.getFeatureManager().registerFeature(new Feature<>("LEAVES_DECAY", false));
-        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_PHYSICS", false));
-        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_DROP_ITEM", false));
-        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_FERTILIZE", false));
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_HARVEST_BLOCK", false));
+        this.getFeatureManager().registerFeature(new Feature<>("FLUID_LEVEL_CHANGE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_GROW", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("LEAVES_DECAY", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_PHYSICS", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_DROP_ITEM", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_FERTILIZE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_HARVEST_BLOCK", false, Boolean.class));
     }
 
 }

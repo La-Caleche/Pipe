@@ -1,11 +1,11 @@
 package fr.lacaleche.pipe.common.i18n.builder;
 
 import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.core.utils.CalecheDebug;
+import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
+import fr.lacaleche.pipe.common.utils.PipeComponent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -110,11 +110,20 @@ public class TranslationBuilderImpl implements TranslationBuilder {
         Component component = MiniMessage.miniMessage().deserialize(text);
 
         if (CalecheCore.get().inDev() && CalecheCore.get().debugEnabled()) {
-            Component hoverComponent = Component.text("Key : ").color(NamedTextColor.WHITE);
-            if (this.translation == null || this.translation.getKey() == null)
-                hoverComponent = hoverComponent.append(Component.text("null"));
-            else
-                hoverComponent = hoverComponent.append(Component.text(this.translation.getKey().getKey())).color(NamedTextColor.GOLD);
+            Component hoverComponent = Component.text("Key").color(TextColor.fromHexString("#a8d5ff")).append(PipeComponent.separator());
+
+            Component key = Component.text("<none>");
+            if (this.translation != null && this.translation.getKey() != null)
+                key = Component.text(this.translation.getKey().getKey());
+            hoverComponent = hoverComponent.append(key.color(TextColor.fromHexString("#f4f2e5")));
+
+            hoverComponent = hoverComponent.append(Component.newline()).append(Component.text("From").color(TextColor.fromHexString("#a8d5ff"))).append(PipeComponent.separator());
+
+            Component from = Component.text("<nowhere>");
+            String stackTrace = CalecheDebug.getFrom();
+            if (stackTrace != null)
+                from = Component.text(stackTrace);
+            hoverComponent = hoverComponent.append(from.color(TextColor.fromHexString("#f4f2e5")));
 
             component = component.hoverEvent(HoverEvent.showText(hoverComponent));
         }

@@ -1,21 +1,25 @@
 package fr.lacaleche.pipe.bukkit.modules.prmodule.commands;
 
 
+import com.google.common.collect.BiMap;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.bukkit.modules.god.ParentGodModule;
 import fr.lacaleche.pipe.bukkit.modules.god.annotations.AGodModule;
 import fr.lacaleche.pipe.bukkit.modules.prmodule.ModsManagerModule;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.*;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
+import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
+import java.util.function.BiConsumer;
 
 @MinecraftCommand(label = "module", aliases = {"m", "mod"}, description = "pipe.command.module.description", arguments = {"module"})
 public class ModuleCommand {
@@ -48,7 +52,17 @@ public class ModuleCommand {
             public void manager(ArgumentManager manager) {
                 manager.addArgument(new EnabledModuleArgument("module"));
                 manager.addArgument(new ModuleFeaturesArgument("feature"));
-                manager.addArgument(new StringArgument("value").setMultiple(true));
+                manager.addArgument(new CustomArgument("value").setMultiple(true));
+            }
+
+            @TabCompleter
+            public void completer(Completer completer) {
+                String moduleName = completer.getArgumentManager().getArgument(1).getValue();
+                IModule module = CalecheCore.get().getCentralModuleManager().getAnyModule(moduleName);
+                IFeature feature = module.getFeatureManager().getFeatureByName(completer.getArgumentManager().getArgument(2).getValue());
+                Class<?> type = feature.value().type();
+                BiConsumer<Class<?>, Completer> consumer = completer.getArgumentManager().getValues(type);
+                if (consumer != null) consumer.accept(type, completer);
             }
 
             @CommandExecutor
@@ -66,9 +80,13 @@ public class ModuleCommand {
                     return true;
                 }
 
-                feature.setValue(command.args().getString("value"));
-
-                command.sender().sendMessage(command.locale().t("pipe.command.module.features.set.updated").arg("new_value", command.args().getString("value")).arg("module", module.getClass().getSimpleName()).arg("feature", feature.name()).from("Module").ct());
+                try {
+                    feature.setValue(command.args().forFeature("value", feature));
+                    command.sender().sendMessage(command.locale().t("pipe.command.module.features.set.updated").arg("new_value", command.args().getString("value")).arg("module", module.getClass().getSimpleName()).arg("feature", feature.name()).from("Module").ct());
+                } catch (Exception e) {
+                    command.sender().sendMessage(command.locale().t("pipe.command.module.features.set.invalid").arg("feature", feature.name()).arg("value", command.args().getString("value")).from("Module").ct());
+                    return true;
+                }
 
                 return true;
             }
@@ -93,6 +111,10 @@ public class ModuleCommand {
                 if (module == null) return true;
 
                 if (command.args().blank("feature")) {
+                    if (module.getFeatureManager() == null) {
+                        command.sender().sendMessage(command.locale().t("pipe.command.module.features.list.empty").arg("module", module.getClass().getSimpleName()).from("Module").ct());
+                        return true;
+                    }
                     command.sender().sendMessage(command.locale().t("pipe.command.module.features.list").arg("module", module.getClass().getSimpleName()).from("Module").ct());
                     module.getFeatureManager().getFeatures().forEach((moduleFeature) -> {
                         command.sender().sendMessage(command.locale().t("pipe.command.module.features.list.feature.value").arg("value", moduleFeature.value().getValue()).arg("feature", moduleFeature.name()).from("Module").ct());

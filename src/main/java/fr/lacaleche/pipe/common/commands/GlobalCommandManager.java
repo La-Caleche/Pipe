@@ -272,7 +272,7 @@ public abstract class GlobalCommandManager implements CommandManager {
     @Override
     public void parseCompleter(Object sender, Completer completer) {
         ArgumentManager manager = completer.getArgumentManager();
-        Argument currentArgument = manager.getArgument(completer.index() >= manager.getArguments().size() ? manager.getArguments().size() - 1 : completer.index());
+        Argument currentArgument = manager.getAbsoluteArgument(completer.index() >= manager.getArguments().size() ? manager.getArguments().size() - 1 : completer.index());
 
         for (Class<?> method : manager.getCommand().getDeclaredClasses()) {
             if (method.isAnnotationPresent(CommandChild.class)) {
@@ -285,7 +285,7 @@ public abstract class GlobalCommandManager implements CommandManager {
         if (completer.next()) completer.incrementIndex();
         int argumentsSize = manager.getArguments().size() - 1;
         if (argumentsSize > 0 && completer.index() <= argumentsSize) {
-            Argument argument = manager.getArgument(completer.index() - 1);
+            Argument argument = manager.getArgument(completer.index());
             argument.completer(completer);
 
             List<String> completed = new ArrayList<>();
@@ -366,11 +366,11 @@ public abstract class GlobalCommandManager implements CommandManager {
         for (int index = 0; index < arguments.length; index++) {
             Argument argument;
             if (index < manager.getArguments().size() - 1) {
-                argument = manager.getArgument(index);
+                argument = manager.getAbsoluteArgument(index);
                 if (argument.getKey().equals("default")) continue;
                 argument.setValue(arguments[index]);
             } else {
-                argument = manager.getArgument(manager.getArguments().size() - 2);
+                argument = manager.getArgument(manager.getArguments().size() - 1);
                 if (argument.isMultiple()) argument.setValue(argument.getValue().concat(" " + arguments[index]));
             }
         }

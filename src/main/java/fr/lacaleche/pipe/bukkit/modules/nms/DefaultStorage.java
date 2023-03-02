@@ -1,18 +1,20 @@
-package fr.lacaleche.pipe.bukkit.modules.nms.entities;
+package fr.lacaleche.pipe.bukkit.modules.nms;
 
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
-import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
-import fr.lacaleche.pipe.bukkit.modules.nms.entities.interfaces.IStorage;
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass.*;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.*;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods.*;
 
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.NMSFinder;
+import net.minecraft.world.phys.Vec3D;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class DefaultStorage implements IStorage {
     private final Map<StorageClass, Class<?>> clazz;
     private final Map<StorageConstructor, Constructor<?>> constructors;
     private final Map<StorageMethods, Method> methods;
+    private final Map<StorageFields, Field> fields;
 
     public DefaultStorage(NMSManager nmsManager) {
         this.nmsManager = nmsManager;
@@ -31,6 +34,7 @@ public class DefaultStorage implements IStorage {
         this.clazz = new HashMap<>();
         this.constructors = new HashMap<>();
         this.methods = new HashMap<>();
+        this.fields = new HashMap<>();
 
         this.registerDefaults();
     }
@@ -51,6 +55,11 @@ public class DefaultStorage implements IStorage {
     }
 
     @Override
+    public Field field(StorageFields storageField) {
+        return this.fields.getOrDefault(storageField, null);
+    }
+
+    @Override
     public void registerClass(StorageClass storageClass, Class<?> clazz) {
         this.clazz.putIfAbsent(storageClass, clazz);
     }
@@ -63,6 +72,11 @@ public class DefaultStorage implements IStorage {
     @Override
     public void registerMethod(StorageMethods storageMethod, Method method) {
         this.methods.putIfAbsent(storageMethod, method);
+    }
+
+    @Override
+    public void registerField(StorageFields storageField, Field field) {
+        this.fields.putIfAbsent(storageField, field);
     }
 
     @Override
@@ -130,6 +144,41 @@ public class DefaultStorage implements IStorage {
         return null;
     }
 
+    @Override
+    public <T> Field getField(StorageClass storageClass, String name) {
+        return this.getField(this.clazz(storageClass), name);
+    }
+
+    @Override
+    public <T> Field getField(Class<?> clazz, String name) {
+        try {
+            return clazz.getField(name);
+        } catch (Exception exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T get(StorageFields storageField, Object instance) {
+        try {
+            return (T) this.field(storageField).get(instance);
+        } catch (Exception exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+        return null;
+    }
+
+    @Override
+    public <T> T get(StorageFields storageField, Class<?> clazz) {
+        try {
+            return (T) this.field(storageField).get(clazz);
+        } catch (Exception exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+        return null;
+    }
+
     private void registerDefaults() {
         NMSFinder nmsFinder = this.getNmsManager().getNmsFinder();
 
@@ -141,20 +190,33 @@ public class DefaultStorage implements IStorage {
         this.registerClass(ENTITY_LIVING, nmsFinder.worldClass("entity.EntityLiving"));
         this.registerClass(ITEM_STACK, nmsFinder.worldClass("item.ItemStack"));
 
+        this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY, nmsFinder.protocolClass("game.PacketPlayOutSpawnEntity"));
         this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, nmsFinder.protocolClass("game.PacketPlayOutSpawnEntityLiving"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_DESTROY, nmsFinder.protocolClass("game.PacketPlayOutEntityDestroy"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_METADATA, nmsFinder.protocolClass("game.PacketPlayOutEntityMetadata"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_TELEPORT, nmsFinder.protocolClass("game.PacketPlayOutEntityTeleport"));
+        this.registerClass(PACKET_PLAY_OUT_REL_ENTITY_MOVE, nmsFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutRelEntityMove"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_LOOK, nmsFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutEntityLook"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, nmsFinder.protocolClass("game.PacketPlayOutEntityHeadRotation"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_VELOCITY, nmsFinder.protocolClass("game.PacketPlayOutEntityVelocity"));
 
+        this.registerConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY, this.clazz(ENTITY)));
         this.registerConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, this.clazz(ENTITY_LIVING)));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_DESTROY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_DESTROY, int[].class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_METADATA_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_METADATA, int.class, this.clazz(DATA_WATCHER), boolean.class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_TELEPORT, this.clazz(ENTITY)));
+        this.registerConstructor(PACKET_PLAY_OUT_REL_ENTITY_MOVE_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_REL_ENTITY_MOVE, int.class, short.class, short.class, short.class, boolean.class));
+        this.registerConstructor(PACKET_PLAY_OUT_ENTITY_LOOK_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_LOOK, int.class, byte.class, byte.class, boolean.class));
+        this.registerConstructor(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, this.clazz(ENTITY), byte.class));
+        this.registerConstructor(PACKET_PLAY_OUT_ENTITY_VELOCITY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_VELOCITY, int.class, Vec3D.class));
 
-        this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "a", double.class, double.class, double.class, float.class, float.class));
         this.registerMethod(GET_DATA_WATCHER, this.getMethod(ENTITY, "ai"));
         this.registerMethod(GET_ID, this.getMethod(ENTITY, "hashCode"));
-
+        this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "a", double.class, double.class, double.class, float.class, float.class));
+        this.registerMethod(SET_INVISIBLE, this.getMethod(ENTITY, "j", boolean.class));
+        this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
+        this.registerMethod(TICK, this.getMethod(ENTITY_LIVING, "k"));
+        this.registerMethod(AI_STEP, this.getMethod(ENTITY_LIVING, "w_"));
     }
 
 }

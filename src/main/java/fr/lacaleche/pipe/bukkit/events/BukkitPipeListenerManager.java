@@ -9,20 +9,22 @@ public interface BukkitPipeListenerManager extends IListenerManager {
     /**
      * TODO
      * */
-    public void registerBukkitListener(IModule module, Listener listener);
+    void registerBukkitListener(IModule module, Listener listener);
 
     /**
      * TODO
      *
      * @since 1.0.0
      * */
-    public void unregisterBukkitListener(Listener listener);
+    void unregisterBukkitListener(Listener listener);
 
     /**
      * TODO
      *
      * @since 1.0.0
      * */
-    public void unregisterBukkitListeners(IModule module);
+    void unregisterBukkitListeners(IModule module);
+
+    void registerBoth(IModule module, BukkitPipeListener listener);
 
 }

@@ -4,6 +4,7 @@ import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
 import net.kyori.adventure.platform.AudienceProvider;
 
 import java.util.List;
@@ -80,7 +81,21 @@ public interface Pipe {
     /**
      * TODO
      * */
+    TaskManager getTaskManager();
+
+    /**
+     * TODO
+     * */
+    void setTaskManager(TaskManager taskManager);
+
+    /**
+     * TODO
+     * */
     void shutdown(String reason);
+
+    long serverTick();
+
+    void tick();
 
     static Pipe get() {
         return PipeImpl.get();

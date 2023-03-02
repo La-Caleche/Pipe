@@ -18,7 +18,7 @@ public class ModuleFeaturesArgument extends DefaultArgument {
         CalecheCore core = CalecheCore.get();
         IModule module = core.getCentralModuleManager().getAnyModule(completer.getArgumentManager().getArgument("module").getValue());
 
-        if (module != null) {
+        if (module != null && module.getFeatureManager() != null) {
             completer.addAll(module.getFeatureManager().getFeatures().stream().map(IFeature::name).collect(Collectors.toSet()));
         }
 

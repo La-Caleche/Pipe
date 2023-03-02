@@ -1,16 +1,15 @@
 package fr.lacaleche.pipe;
 
 import fr.lacaleche.core.databases.generic.ModelFilter;
-import fr.lacaleche.core.events.interfaces.IListenerManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
 import net.kyori.adventure.platform.AudienceProvider;
 
 import java.util.ArrayList;
@@ -25,11 +24,16 @@ public class PipeImpl implements Pipe {
     private AudienceProvider adventure;
     private Runnable shutdownHook;
     private List<Class<? extends IModule>> cachedGodModules;
+    private TaskManager taskManager;
     private final List<Object> plugins;
+
+    private long serverTick;
 
     public PipeImpl() {
         this.plugins = new ArrayList<>();
         this.cachedGodModules = new ArrayList<>();
+
+        this.serverTick = 0;
     }
 
     public static Pipe get() {
@@ -119,6 +123,26 @@ public class PipeImpl implements Pipe {
     @Override
     public List<Class<? extends IModule>> getCachedGodModules() {
         return cachedGodModules;
+    }
+
+    @Override
+    public TaskManager getTaskManager() {
+        return taskManager;
+    }
+
+    @Override
+    public void setTaskManager(TaskManager taskManager) {
+        this.taskManager = taskManager;
+    }
+
+    @Override
+    public long serverTick() {
+        return this.serverTick;
+    }
+
+    @Override
+    public void tick() {
+        this.serverTick++;
     }
 
     @Override

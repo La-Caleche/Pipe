@@ -64,6 +64,12 @@ public class BukkitPipeListenerManagerImpl extends GlobalListenerManager impleme
         bukkitListeners.remove(module).clear();
     }
 
+    @Override
+    public void registerBoth(IModule module, BukkitPipeListener listener) {
+        this.registerBukkitListener(module, listener);
+        this.registerCustomListener(module, listener);
+    }
+
     private List<Listener> getCustomListeners(IModule module) {
         List<Listener> listeners = bukkitListeners.get(module);
         if (listeners == null)

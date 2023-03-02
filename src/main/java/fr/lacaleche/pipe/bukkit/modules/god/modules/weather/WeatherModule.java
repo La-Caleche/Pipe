@@ -27,9 +27,9 @@ public class WeatherModule extends BukkitModule {
     }
 
     private void registerFeatures() {
-        this.getFeatureManager().registerFeature(new Feature<>("LIGHTNING_STRIKE", false));
-        this.getFeatureManager().registerFeature(new Feature<>("THUNDER_CHANGE", false));
-        this.getFeatureManager().registerFeature(new Feature<>("WEATHER_CHANGE", false));
+        this.getFeatureManager().registerFeature(new Feature<>("LIGHTNING_STRIKE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("THUNDER_CHANGE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("WEATHER_CHANGE", false, Boolean.class));
     }
 
 }

@@ -28,8 +28,8 @@ public class ExplosionModule extends BukkitModule {
 
 
     private void registerFeatures() {
-        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_EXPLODE", false));
-        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_EXPLODE", false));
+        this.getFeatureManager().registerFeature(new Feature<>("BLOCK_EXPLODE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_EXPLODE", false, Boolean.class));
     }
 
 }

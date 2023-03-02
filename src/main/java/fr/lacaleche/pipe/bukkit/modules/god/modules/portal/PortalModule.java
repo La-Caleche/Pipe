@@ -27,8 +27,8 @@ public class PortalModule extends BukkitModule {
     }
 
     private void registerFeatures() {
-        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_PORTAL", false));
-        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_PORTAL", false));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_PORTAL", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("PLAYER_PORTAL", false, Boolean.class));
     }
 
 }

@@ -2,8 +2,11 @@ package fr.lacaleche.pipe.bukkit.modules.nms.enums;
 
 public enum StorageMethods {
 
-    SET_LOCATION,
     GET_DATA_WATCHER,
-    GET_ID
-
+    GET_ID,
+    SET_LOCATION,
+    SET_INVISIBLE,
+    SET_GLOWING,
+    TICK,
+    AI_STEP
 }

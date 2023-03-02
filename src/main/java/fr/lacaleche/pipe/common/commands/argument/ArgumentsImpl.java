@@ -1,11 +1,19 @@
 package fr.lacaleche.pipe.common.commands.argument;
 
+import fr.lacaleche.core.modules.features.interfaces.IFeature;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.commands.argument.arguments.StringArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
+import org.bukkit.GameMode;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class ArgumentsImpl implements Arguments {
 
@@ -68,6 +76,14 @@ public class ArgumentsImpl implements Arguments {
     @Override
     public Object getObject(String key) {
         return this.get(key).getValue();
+    }
+
+    @Override
+    public Object forFeature(String key, IFeature feature) {
+        Class<?> type = feature.value().type();
+        BiFunction<Class<?>, String, ?> parser = this.manager.getParser(type);
+        if (parser == null) return null;
+        return parser.apply(type, this.getString(key));
     }
 
     @Override
