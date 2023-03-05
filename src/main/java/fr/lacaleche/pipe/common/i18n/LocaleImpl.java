@@ -18,7 +18,7 @@ public class LocaleImpl extends SqlModel implements Locale {
     @Property
     private boolean isDefault;
 
-    @HasMany(clazz = TranslationImpl.class, table = "translations", field = "locale", targetField = "id")
+    @HasMany(clazz = TranslationImpl.class, field = "locale")
     private List<TranslationImpl> translations;
 
     @Override

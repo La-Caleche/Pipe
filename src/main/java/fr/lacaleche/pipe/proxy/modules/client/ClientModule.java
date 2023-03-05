@@ -69,12 +69,6 @@ public class ClientModule extends Module {
     }
 
     @Override
-    public void onReload() {
-        this.onDisable();
-        this.onEnable();
-    }
-
-    @Override
     public void registerListeners() {
         ProxyPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
         bukkitManager.registerProxyListener(this, new LoginListener());

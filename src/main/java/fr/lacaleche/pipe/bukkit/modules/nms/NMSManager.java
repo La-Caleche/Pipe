@@ -3,7 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.nms;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.AbstractController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
-import fr.lacaleche.pipe.bukkit.modules.nms.utils.NMSFinder;
+import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -13,18 +13,18 @@ import java.lang.reflect.Method;
 
 public class NMSManager {
 
-    private NMSFinder nmsFinder;
+    private ClassFinder classFinder;
     private IStorage storage;
 
 
     public NMSManager() {
-        this.nmsFinder = new NMSFinder();
+        this.classFinder = new ClassFinder();
 
         this.storage = new DefaultStorage(this);
     }
 
-    public NMSFinder getNmsFinder() {
-        return nmsFinder;
+    public ClassFinder getClassFinder() {
+        return classFinder;
     }
 
     public <T extends AbstractController> T createEntity(Class<? extends AbstractController> entityClass, Location location) {
@@ -41,13 +41,13 @@ public class NMSManager {
     public void sendPacket(Player player, Object packet) {
         try {
 
-            Object handler = this.getNmsFinder().getHandle(player);
+            Object handler = this.getClassFinder().getHandle(player);
             assert handler != null;
 
             Object connection = handler.getClass().getField("b").get(handler);
             assert connection != null;
 
-            Method sendPackage =  connection.getClass().getMethod("a", this.getNmsFinder().protocolClass("Packet"));
+            Method sendPackage =  connection.getClass().getMethod("a", this.getClassFinder().protocolClass("Packet"));
 
             sendPackage.invoke(connection, packet);
         } catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException exception) {

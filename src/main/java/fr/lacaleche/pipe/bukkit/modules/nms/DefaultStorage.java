@@ -10,7 +10,9 @@ import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
-import fr.lacaleche.pipe.bukkit.modules.nms.utils.NMSFinder;
+import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
+import net.kyori.adventure.text.Component;
+import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.world.phys.Vec3D;
 
 import java.lang.reflect.Constructor;
@@ -127,7 +129,7 @@ public class DefaultStorage implements IStorage {
     @Override
     public <T> T handle(Object objet) {
         try {
-            return (T) this.getNmsManager().getNmsFinder().getHandle(objet);
+            return (T) this.getNmsManager().getClassFinder().getHandle(objet);
         } catch (Exception exception) {
             SentryAPIImpl.getInstance().captureException(exception);
         }
@@ -180,25 +182,27 @@ public class DefaultStorage implements IStorage {
     }
 
     private void registerDefaults() {
-        NMSFinder nmsFinder = this.getNmsManager().getNmsFinder();
+        ClassFinder classFinder = this.getNmsManager().getClassFinder();
 
-        this.registerClass(CRAFT_WORLD, nmsFinder.getOBCClass("CraftWorld"));
+        this.registerClass(CRAFT_WORLD, classFinder.getOBCClass("CraftWorld"));
 
-        this.registerClass(WORLD, nmsFinder.worldClass("level.World"));
-        this.registerClass(ENTITY, nmsFinder.worldClass("entity.Entity"));
-        this.registerClass(DATA_WATCHER, nmsFinder.networkClass("syncher.DataWatcher"));
-        this.registerClass(ENTITY_LIVING, nmsFinder.worldClass("entity.EntityLiving"));
-        this.registerClass(ITEM_STACK, nmsFinder.worldClass("item.ItemStack"));
+        this.registerClass(WORLD, classFinder.worldClass("level.World"));
+        this.registerClass(ENTITY, classFinder.worldClass("entity.Entity"));
+        this.registerClass(DATA_WATCHER, classFinder.networkClass("syncher.DataWatcher"));
+        this.registerClass(ENTITY_LIVING, classFinder.worldClass("entity.EntityLiving"));
+        this.registerClass(ITEM_STACK, classFinder.worldClass("item.ItemStack"));
 
-        this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY, nmsFinder.protocolClass("game.PacketPlayOutSpawnEntity"));
-        this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, nmsFinder.protocolClass("game.PacketPlayOutSpawnEntityLiving"));
-        this.registerClass(PACKET_PLAY_OUT_ENTITY_DESTROY, nmsFinder.protocolClass("game.PacketPlayOutEntityDestroy"));
-        this.registerClass(PACKET_PLAY_OUT_ENTITY_METADATA, nmsFinder.protocolClass("game.PacketPlayOutEntityMetadata"));
-        this.registerClass(PACKET_PLAY_OUT_ENTITY_TELEPORT, nmsFinder.protocolClass("game.PacketPlayOutEntityTeleport"));
-        this.registerClass(PACKET_PLAY_OUT_REL_ENTITY_MOVE, nmsFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutRelEntityMove"));
-        this.registerClass(PACKET_PLAY_OUT_ENTITY_LOOK, nmsFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutEntityLook"));
-        this.registerClass(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, nmsFinder.protocolClass("game.PacketPlayOutEntityHeadRotation"));
-        this.registerClass(PACKET_PLAY_OUT_ENTITY_VELOCITY, nmsFinder.protocolClass("game.PacketPlayOutEntityVelocity"));
+        this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY, classFinder.protocolClass("game.PacketPlayOutSpawnEntity"));
+        this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, classFinder.protocolClass("game.PacketPlayOutSpawnEntityLiving"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_DESTROY, classFinder.protocolClass("game.PacketPlayOutEntityDestroy"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_METADATA, classFinder.protocolClass("game.PacketPlayOutEntityMetadata"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_TELEPORT, classFinder.protocolClass("game.PacketPlayOutEntityTeleport"));
+        this.registerClass(PACKET_PLAY_OUT_REL_ENTITY_MOVE, classFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutRelEntityMove"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_LOOK, classFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutEntityLook"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, classFinder.protocolClass("game.PacketPlayOutEntityHeadRotation"));
+        this.registerClass(PACKET_PLAY_OUT_ENTITY_VELOCITY, classFinder.protocolClass("game.PacketPlayOutEntityVelocity"));
+
+        this.registerClass(ADVENTURE_COMPONENT, classFinder.getAbsoluteClass("io.papermc.paper.adventure.AdventureComponent"));
 
         this.registerConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY, this.clazz(ENTITY)));
         this.registerConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, this.clazz(ENTITY_LIVING)));
@@ -210,6 +214,8 @@ public class DefaultStorage implements IStorage {
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, this.clazz(ENTITY), byte.class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_VELOCITY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_VELOCITY, int.class, Vec3D.class));
 
+        this.registerConstructor(ADVENTURE_COMPONENT_CONSTRUCTOR, this.getConstructor(ADVENTURE_COMPONENT, Component.class));
+
         this.registerMethod(GET_DATA_WATCHER, this.getMethod(ENTITY, "ai"));
         this.registerMethod(GET_ID, this.getMethod(ENTITY, "hashCode"));
         this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "a", double.class, double.class, double.class, float.class, float.class));
@@ -217,6 +223,8 @@ public class DefaultStorage implements IStorage {
         this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
         this.registerMethod(TICK, this.getMethod(ENTITY_LIVING, "k"));
         this.registerMethod(AI_STEP, this.getMethod(ENTITY_LIVING, "w_"));
+        this.registerMethod(SET_CUSTOM_NAME, this.getMethod(ENTITY, "a", IChatBaseComponent.class));
+        this.registerMethod(SET_CUSTOM_NAME_VISIBLE, this.getMethod(ENTITY, "n", boolean.class));
     }
 
 }

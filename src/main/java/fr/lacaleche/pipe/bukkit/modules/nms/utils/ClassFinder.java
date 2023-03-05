@@ -1,20 +1,17 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.utils;
 
-import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NMSFinder {
+public class ClassFinder {
 
     private final String version;
     private final Map<String, Class> cache;
 
-    public NMSFinder() {
+    public ClassFinder() {
         String[] versionArray = Bukkit.getServer().getClass().getName().replace('.', ',').split(",");
         this.version = versionArray.length >= 4 ? versionArray[3] : "";
 
@@ -55,24 +52,22 @@ public class NMSFinder {
         return object.getClass().getMethod("getHandle").invoke(object);
     }
 
-    public Class<?> findWithoutVersion(String type, String unversionedPackage, String className) {
+    public Class<?> getAbsoluteClass(String className) {
         try {
-            Class<?> clazz = Class.forName("%s.%s".formatted(unversionedPackage, className));
+            Class<?> clazz = Class.forName(className);
             this.cache.put(className, clazz);
             return clazz;
         } catch (ClassNotFoundException exception) {
-            throw new RuntimeException("An error occurred while finding %s class.".formatted(type), exception);
+            throw new RuntimeException("An error occurred while finding %s class.".formatted(className), exception);
         }
     }
 
+    public Class<?> findWithoutVersion(String type, String unversionedPackage, String className) {
+        return this.getAbsoluteClass("%s.%s".formatted(unversionedPackage, className));
+    }
+
     private Class<?> find(String type, String unversionedPackage, String className) {
-        try {
-            Class<?> clazz = Class.forName("%s.%s.%s".formatted(unversionedPackage, this.version, className));
-            this.cache.put(className, clazz);
-            return clazz;
-        } catch (ClassNotFoundException exception) {
-            throw new RuntimeException("An error occurred while finding %s class.".formatted(type), exception);
-        }
+        return this.getAbsoluteClass("%s.%s.%s".formatted(unversionedPackage, this.version, className));
     }
 
 }

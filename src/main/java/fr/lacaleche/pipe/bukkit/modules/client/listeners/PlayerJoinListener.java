@@ -1,5 +1,9 @@
 package fr.lacaleche.pipe.bukkit.modules.client.listeners;
 
+import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.pipe.bukkit.modules.client.ClientModule;
+import fr.lacaleche.pipe.bukkit.modules.hologram.HologramModule;
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
@@ -16,7 +20,7 @@ public class PlayerJoinListener implements Listener {
         PipeDebug.eventCalled(event);
         Player player = event.getPlayer();
 
-        new ModelFilter<ClientImpl>()
+        Client client = new ModelFilter<ClientImpl>()
             .findOrDefault(
                 ClientImpl.class,
                 c -> c.getUUID().equals(player.getUniqueId()),
@@ -24,7 +28,7 @@ public class PlayerJoinListener implements Listener {
                 () -> new ClientImpl(player.getUniqueId())
             );
 
-        event.joinMessage(null);
+        CalecheCore.get().getCentralModuleManager().getModule(ClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

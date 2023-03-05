@@ -46,10 +46,4 @@ public class ParentGodModule extends BukkitModule {
         cached.clear();
     }
 
-    @Override
-    public void onReload() {
-        this.onDisable();
-        this.onEnable();
-    }
-
 }

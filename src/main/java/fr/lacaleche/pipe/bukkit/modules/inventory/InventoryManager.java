@@ -4,8 +4,7 @@ import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class InventoryManager {
 
@@ -34,6 +33,15 @@ public class InventoryManager {
         }
 
         if (reason == InventoryCloseEvent.Reason.PLAYER) pipeInventory.close();
+    }
+
+    public void disable() {
+        final Collection<PipeInventory> cache = new ArrayList<>(this.getInventories().values());
+        cache.forEach(PipeInventory::close);
+        cache.clear();
+
+        this.inventories.clear();
+        this.inventories = null;
     }
 
     public PipeInventory getInventory(Inventory inventory) {

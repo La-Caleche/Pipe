@@ -16,13 +16,22 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerJoinListener;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerLeftListener;
 import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
+import net.kyori.adventure.text.Component;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @AModule(target = ModuleTarget.BUKKIT)
 public class ClientModule extends BukkitModule {
+
+    private List<TriConsumer<PlayerJoinEvent, Player, Client>> joinCallbacks;
+    private List<TriConsumer<PlayerQuitEvent, Player, Client>> quitCallbacks;
 
     public ClientModule(IModuleHandler handler) {
         super(handler);
@@ -30,7 +39,19 @@ public class ClientModule extends BukkitModule {
 
     @Override
     public void onEnable() {
-        JavaPlugin plugin = (JavaPlugin) Pipe.get().getPlugin();
+        JavaPlugin plugin = Pipe.get().getPlugin();
+        this.joinCallbacks = new ArrayList<>();
+        this.quitCallbacks = new ArrayList<>();
+
+        this.addJoinCallback((listener, player, client) -> {
+            if (listener == null) return;
+            listener.joinMessage(client.getLocale().t("global.player_join").arg("player", player.getName()).arg("rank", client.getRank().getSlug()).arg("color", client.getRank().getColorCode()).ct());
+        });
+
+        this.addQuitCallbacks((listener, player, client) -> {
+            if (listener == null) return;
+            listener.quitMessage(client.getLocale().t("global.player_quit").arg("player", player.getName()).arg("rank", client.getRank().getSlug()).arg("color", client.getRank().getColorCode()).ct());
+        });
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
@@ -50,7 +71,7 @@ public class ClientModule extends BukkitModule {
 
     @Override
     public void onDisable() {
-        JavaPlugin plugin = (JavaPlugin) Pipe.get().getPlugin();
+        JavaPlugin plugin = Pipe.get().getPlugin();
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
@@ -59,18 +80,49 @@ public class ClientModule extends BukkitModule {
 
         for (Player player : players) {
             Client client = Pipe.get().getClient(player.getUniqueId());
+            this.quitCallbacks.forEach(callback -> callback.accept(null, player, client));
             client.expireNow();
         }
 
         List<RankImpl> cachedRanks = new ArrayList<RankImpl>(CalecheCore.get().getModelManager().get(RankImpl.class));
         Logger.customDebug("Removing %s ranks from cache...".formatted(cachedRanks.size()));
         cachedRanks.forEach(RankImpl::expireNow);
+
+        this.joinCallbacks.clear();
+        this.quitCallbacks.clear();
     }
 
     @Override
-    public void onReload() {
-        this.onDisable();
-        this.onEnable();
+    public void onEnableFinish() {
+        JavaPlugin plugin = Pipe.get().getPlugin();
+
+        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
+        if (players.size() == 0) return;
+
+        Logger.customDebug("Calling join callbacks for %d players...".formatted(players.size()));
+
+        for (Player player : players) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            this.joinCallbacks.forEach(callback -> callback.accept(null, player, client));
+        }
+
+        Logger.customDebug("Join callbacks called for %d players.".formatted(players.size()));
+    }
+
+    public void addJoinCallback(TriConsumer<PlayerJoinEvent, Player, Client> callback) {
+        this.joinCallbacks.add(callback);
+    }
+
+    public void addQuitCallbacks(TriConsumer<PlayerQuitEvent, Player, Client> callback) {
+        this.quitCallbacks.add(callback);
+    }
+
+    public List<TriConsumer<PlayerJoinEvent, Player, Client>> getJoinCallbacks() {
+        return joinCallbacks;
+    }
+
+    public List<TriConsumer<PlayerQuitEvent, Player, Client>> getQuitCallbacks() {
+        return quitCallbacks;
     }
 
     @Override

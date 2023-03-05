@@ -17,8 +17,17 @@ public class InventoryModule extends BukkitModule {
 
     public InventoryModule(IModuleHandler handler) {
         super(handler);
+    }
 
+    @Override
+    public void onEnable() {
         this.inventoryManager = new InventoryManager();
+    }
+
+    @Override
+    public void onDisable() {
+        this.inventoryManager.disable();
+        this.inventoryManager = null;
     }
 
     @Override

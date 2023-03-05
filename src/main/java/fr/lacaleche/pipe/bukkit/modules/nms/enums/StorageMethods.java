@@ -8,5 +8,7 @@ public enum StorageMethods {
     SET_INVISIBLE,
     SET_GLOWING,
     TICK,
-    AI_STEP
+    AI_STEP,
+    SET_CUSTOM_NAME,
+    SET_CUSTOM_NAME_VISIBLE
 }

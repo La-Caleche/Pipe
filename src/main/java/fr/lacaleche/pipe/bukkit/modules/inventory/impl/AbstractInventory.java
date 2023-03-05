@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 import de.tr7zw.nbtapi.NBT;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.modules.hologram.HologramModule;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryManager;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryModule;
 import fr.lacaleche.pipe.bukkit.modules.inventory.events.InventoryFillEvent;
@@ -42,9 +43,13 @@ public abstract class AbstractInventory implements PipeInventory {
     private boolean allowClose = true;
     private Map<UUID, Consumer<InventoryClickEvent>> clickEvents;
 
-    private final InventoryManager inventoryManager;
+    private InventoryManager inventoryManager;
 
     public AbstractInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
+        if (!CalecheCore.get().getCentralModuleManager().moduleEnabled(InventoryModule.class)) throw new IllegalStateException("Inventory module is not enabled !");
+
+        this.inventoryManager = CalecheCore.get().getCentralModuleManager().getModule(InventoryModule.class).getInventoryManager();
+
         this.player = player;
         this.client = Pipe.get().getClient(player.getUniqueId());
         this.inventoryStyle = inventoryStyle;
@@ -52,7 +57,6 @@ public abstract class AbstractInventory implements PipeInventory {
 
         this.clickEvents = new HashMap<>();
 
-        this.inventoryManager = CalecheCore.get().getCentralModuleManager().getModule(InventoryModule.class).getInventoryManager();
         final Plugin plugin = Pipe.get().getPlugin();
 
         if (this.getStyle().getType() == InventoryType.CHEST) this.inventory = plugin.getServer().createInventory(null, getStyle().getSize(), title);
@@ -101,7 +105,7 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void close() {
-        this.getPlayer().closeInventory(InventoryCloseEvent.Reason.UNLOADED);
+        if (this.getPlayer() != null && this.getPlayer().getInventory() != null) this.getPlayer().closeInventory(InventoryCloseEvent.Reason.UNLOADED);
         this.unregister();
     }
 
