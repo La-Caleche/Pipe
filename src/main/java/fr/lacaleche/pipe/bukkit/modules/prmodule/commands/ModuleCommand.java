@@ -29,7 +29,7 @@ public class ModuleCommand {
         manager.addArgument(new AvailableModuleArgument("module"));
     }
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.module")
     public boolean execute(Command<CommandSender> command) {
         CalecheCore core = CalecheCore.get();
         IModule modManagerModule = core.getCentralModuleManager().getModule(ModsManagerModule.class);
@@ -65,7 +65,7 @@ public class ModuleCommand {
                 if (consumer != null) consumer.accept(type, completer);
             }
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.module.features.set")
             public boolean execute(Command<CommandSender> command) {
                 CalecheCore core = CalecheCore.get();
                 IModule modManagerModule = core.getCentralModuleManager().getModule(ModsManagerModule.class);
@@ -102,7 +102,7 @@ public class ModuleCommand {
                 manager.addArgument(new ModuleFeaturesArgument("feature").optional());
             }
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.module.features.get")
             public boolean execute(Command<CommandSender> command) {
                 CalecheCore core = CalecheCore.get();
                 IModule modManagerModule = core.getCentralModuleManager().getModule(ModsManagerModule.class);
@@ -145,7 +145,7 @@ public class ModuleCommand {
             manager.addArgument(new DisabledModuleArgument("module").optional());
         }
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.module.enable")
         public boolean execute(Command<CommandSender> command) {
             CalecheCore core = CalecheCore.get();
             IModule modManagerModule = core.getCentralModuleManager().getModule(ModsManagerModule.class);
@@ -180,7 +180,7 @@ public class ModuleCommand {
             manager.addArgument(new EnabledModuleArgument("module").optional());
         }
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.module.disable")
         public boolean execute(Command<CommandSender> command) {
             CalecheCore core = CalecheCore.get();
             IModule modManagerModule = core.getCentralModuleManager().getModule(ModsManagerModule.class);
@@ -215,7 +215,7 @@ public class ModuleCommand {
             manager.addArgument(new EnabledModuleArgument("module").optional());
         }
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.module.reload")
         public boolean execute(Command<CommandSender> command) {
             CalecheCore core = CalecheCore.get();
             IModule modManagerModule = core.getCentralModuleManager().getModule(ModsManagerModule.class);

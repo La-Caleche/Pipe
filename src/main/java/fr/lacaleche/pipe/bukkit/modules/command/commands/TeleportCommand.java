@@ -14,9 +14,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 @MinecraftCommand(label = "teleport", aliases = {"tp"}, description = "pipe.command.tp.description", arguments = {"player", "otherPlayer"})
 public class TeleportCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.tp")
     public boolean execute(Command<CommandSender> command) {
         Player player, otherPlayer;
+        String playerArg, otherPlayerArg;
 
         if (command.args().blank("otherPlayer")) {
             if (command.sender() instanceof Player playerSender) player = playerSender;
@@ -24,19 +25,20 @@ public class TeleportCommand {
                 command.sender().sendMessage(command.locale().t("global.only_for_players").from("Teleport").ct());
                 return true;
             }
-            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(command.args().getString("player"));
+            playerArg = command.sender().getName();
+            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer((otherPlayerArg = command.args().getString("player")));
         } else {
-            player = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(command.args().getString("player"));
-            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(command.args().getString("otherPlayer"));
+            player = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer((playerArg = command.args().getString("player")));
+            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer((otherPlayerArg = command.args().getString("otherPlayer")));
         }
 
         if (player == null) {
-            command.sender().sendMessage(command.locale().t("global.player_not_found").arg("player", command.args().getString("player")).from("Teleport").ct());
+            command.sender().sendMessage(command.locale().t("global.player_not_found").arg("player", playerArg).from("Teleport").ct());
             return true;
         }
 
         if (otherPlayer == null) {
-            command.sender().sendMessage(command.locale().t("global.player_not_found").arg("player", command.args().getString("otherPlayer")).from("Teleport").ct());
+            command.sender().sendMessage(command.locale().t("global.player_not_found").arg("player", otherPlayerArg).from("Teleport").ct());
             return true;
         }
 

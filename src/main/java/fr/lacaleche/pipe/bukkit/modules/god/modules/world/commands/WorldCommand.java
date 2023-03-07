@@ -1,10 +1,12 @@
 package fr.lacaleche.pipe.bukkit.modules.god.modules.world.commands;
 
+import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
@@ -17,7 +19,7 @@ public class WorldCommand {
         @CommandChild(label = "get", description = "pipe.command.world.time.get.description")
         public static class Get {
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.world.time.get")
             public boolean execute(Command<CommandSender> command) {
                 Plugin plugin = Pipe.get().getPlugin();
                 plugin.getServer().getWorlds().forEach(world -> {

@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 @MinecraftCommand(label = "fly", description = "pipe.command.fly.description", arguments = {"player"})
 public class FlyCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.fly")
     public boolean execute(Command<CommandSender> command) {
         PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
         if (result.hasError()) {
@@ -38,7 +38,7 @@ public class FlyCommand {
     @CommandChild(label = "get", arguments = {"player"}, description = "pipe.command.fly.get.description")
     public static class Get {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.fly.get")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {

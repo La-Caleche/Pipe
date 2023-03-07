@@ -15,7 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 @MinecraftCommand(label = "invisible", aliases = {"invis"}, description = "pipe.command.invisible.description", arguments = {"player"})
 public class InvisibleCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.invisible")
     public boolean execute(Command<CommandSender> command) {
         PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
         if (result.hasError()) {
@@ -50,7 +50,7 @@ public class InvisibleCommand {
     @CommandChild(label = "get", description = "pipe.command.invisible.get.description", arguments = {"player"})
     public static class Get {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.invisible.get")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {
