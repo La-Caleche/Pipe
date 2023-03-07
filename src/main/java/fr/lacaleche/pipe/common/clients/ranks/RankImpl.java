@@ -1,11 +1,13 @@
 package fr.lacaleche.pipe.common.clients.ranks;
 
+import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.List;
@@ -65,6 +67,11 @@ public class RankImpl extends SqlModel implements Rank {
     @Override
     public Component getColoredRankName(Locale locale) {
         return this.colorize(this.translatedName(locale));
+    }
+
+    @Override
+    public TextColor colorAsColor() {
+        return MiniMessage.miniMessage().deserialize(colorCode).color();
     }
 
     @Override

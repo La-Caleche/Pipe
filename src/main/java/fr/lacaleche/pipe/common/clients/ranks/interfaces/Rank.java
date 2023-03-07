@@ -5,6 +5,7 @@ import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 
 import java.util.List;
 
@@ -26,5 +27,7 @@ public interface Rank extends ISqlModel {
     String translatedName(Locale locale);
 
     Component getColoredRankName(Locale locale);
+
+    TextColor colorAsColor();
 
 }
