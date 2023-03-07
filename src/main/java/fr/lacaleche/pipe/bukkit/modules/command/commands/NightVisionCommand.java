@@ -51,9 +51,7 @@ public class NightVisionCommand {
             }
 
             Player target = result.getPlayer();
-
-            nightPlayer(target);
-            command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.target_enabled", "pipe.command.nightvision.target_disabled", target.getPlayerTime() == 0).arg("player", target.getName()).from("Night Vision").ct());
+            command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.target_enabled", "pipe.command.nightvision.target_disabled", target.hasPotionEffect(PotionEffectType.NIGHT_VISION)).arg("player", target.getName()).from("Night Vision").ct());
 
             return true;
         }
