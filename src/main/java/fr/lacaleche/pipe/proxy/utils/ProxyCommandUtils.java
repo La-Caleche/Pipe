@@ -40,17 +40,6 @@ public class ProxyCommandUtils {
     }
 
     /**
-     * TODO
-     * */
-    public static boolean isPluginCommand(String label) {
-        Pipe pipe = Pipe.get();
-        ProxyServer proxy = pipe.<ProxyPlugin>getPlugin().getServer();
-        CommandManager commandManager = proxy.getCommandManager();
-
-        return commandManager.getAliases().stream().anyMatch(alias -> alias.equalsIgnoreCase(label));
-    }
-
-    /**
      * This function remove registered MinecraftCommand from
      * global Bukkit Command.
      *

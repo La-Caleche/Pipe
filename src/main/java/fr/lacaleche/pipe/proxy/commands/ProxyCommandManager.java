@@ -79,12 +79,4 @@ public class ProxyCommandManager extends GlobalCommandManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isPluginCommand(String label) {
-        return ProxyCommandUtils.isPluginCommand(label);
-    }
-
 }

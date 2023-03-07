@@ -36,7 +36,7 @@ public class CommandListeners implements Listener {
         CoreCommandImpl command = parseCommand(event, event.getPlayer(), message);
         if (command == null) {
             if (event.isCancelled()) {
-                event.getPlayer().sendMessage(client.getLocale().t("pipe.helper.command_not_found").arg("label", message).ct());
+                event.getPlayer().sendMessage(client.getLocale().t("pipe.helper.command_not_found").arg("label", message.split(" ")[0]).ct());
             }
             return;
         }
@@ -56,7 +56,7 @@ public class CommandListeners implements Listener {
         CoreCommandImpl command = parseCommand(event, event.getSender(), message);
         if (command == null) {
             if (event.isCancelled()) {
-                event.getSender().sendMessage(locale.t("pipe.helper.command_not_found").arg("label", message).ct());
+                event.getSender().sendMessage(locale.t("pipe.helper.command_not_found").arg("label", message.split(" ")[0]).ct());
             }
             return;
         }
@@ -107,8 +107,7 @@ public class CommandListeners implements Listener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-        if (manager.isPluginCommand(label)) PipeDebug.setCancelled(event, true);
-            else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
+            if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);
     }

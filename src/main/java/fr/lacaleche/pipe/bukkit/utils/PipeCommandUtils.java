@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.utils;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
@@ -95,23 +96,6 @@ public class PipeCommandUtils {
 
         public boolean hasError() {
             return error != null;
-        }
-    }
-
-    /**
-     * TODO
-     * */
-    public static boolean isPluginCommand(JavaPlugin parent, String label) {
-        try {
-            Server server = (Server) parent.getServer();
-            final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");
-
-            bukkitCommandMap.setAccessible(true);
-            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(server);
-            return commandMap.getKnownCommands().values().stream().anyMatch(command -> command.getName().equalsIgnoreCase(label) || command.getAliases().contains(label) || command.getLabel().equalsIgnoreCase(label));
-        } catch (Exception exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-            return false;
         }
     }
 

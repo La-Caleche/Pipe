@@ -88,12 +88,4 @@ public class BukkitCommandManager extends GlobalCommandManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isPluginCommand(String label) {
-        return PipeCommandUtils.isPluginCommand(Pipe.get().getPlugin(), label);
-    }
-
 }

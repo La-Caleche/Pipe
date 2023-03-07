@@ -215,11 +215,6 @@ public interface CommandManager {
     /**
      * TODO
      * */
-    boolean isPluginCommand(String label);
-
-    /**
-     * TODO
-     * */
     Map<String, List<String>> getNetworkCommands();
 
     /**

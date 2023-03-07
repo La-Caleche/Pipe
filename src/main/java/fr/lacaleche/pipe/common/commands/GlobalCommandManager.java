@@ -395,6 +395,8 @@ public abstract class GlobalCommandManager implements CommandManager {
     @Override
     public void addNetworkCommand(String label, String command) {
         if (!networkCommands.containsKey(label)) networkCommands.put(label, new ArrayList<>());
+        if (networkCommands.get(label).contains(command)) return;
+
         networkCommands.get(label).add(command);
     }
 

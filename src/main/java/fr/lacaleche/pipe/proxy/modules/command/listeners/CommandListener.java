@@ -60,10 +60,16 @@ public class CommandListener implements CoreListener {
 
     @CoreEventHandler
     public void onCommandEvent(CommandEvent event) {
+        Locale locale = Pipe.get().getDefaultLocale();
+        if (event.getSource() instanceof Player player) locale = Pipe.get().getClient(player.getUniqueId()).getLocale();
         String message = event.getCommand();
         CoreCommandImpl command = parseCommand(event, event.getSource(), message);
-        if (command == null)
+        if (command == null) {
+            if (event.isCancelled()) {
+                event.getSource ().sendMessage(locale.t("pipe.helper.command_not_found").arg("label", message.split(" ")[0]).ct());
+            }
             return;
+        }
         CommandResult result = command.execute();
         if (result != CommandResult.COMMAND_SUCESS) {
             Pipe.get().getCommandManager().parseCommandResult(command, command.getCommandSender(), result);
@@ -77,8 +83,7 @@ public class CommandListener implements CoreListener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-            if (manager.isPluginCommand(label)) PipeDebug.setCancelled(event, true);
-            else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
+            if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);
     }
