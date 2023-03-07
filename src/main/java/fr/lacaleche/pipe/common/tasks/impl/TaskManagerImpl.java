@@ -45,7 +45,7 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
 
             task.getCallback().execute(task);
 
-            if (!task.isLoop()) this.done.add(name);
+            if (!task.isLoop() && !task.retry()) this.done.add(name);
         });
 
         this.done.forEach(this.callbacks::remove);

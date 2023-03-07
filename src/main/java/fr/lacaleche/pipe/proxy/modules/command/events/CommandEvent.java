@@ -1,26 +1,26 @@
 package fr.lacaleche.pipe.proxy.modules.command.events;
 
+import com.velocitypowered.api.command.CommandSource;
 import fr.lacaleche.core.events.CoreEvent;
 import fr.lacaleche.core.events.interfaces.Cancellable;
-import net.md_5.bungee.api.CommandSender;
 
 public class CommandEvent extends CoreEvent implements Cancellable {
 
     private final String command;
-    private final CommandSender sender;
+    private final CommandSource source;
     private boolean cancelled;
 
-    public CommandEvent(final CommandSender sender, final String command) {
+    public CommandEvent(final CommandSource source, final String command) {
         this.command = command;
-        this.sender = sender;
+        this.source = source;
     }
 
     public String getCommand() {
         return command;
     }
 
-    public CommandSender getSender() {
-        return sender;
+    public CommandSource getSource() {
+        return source;
     }
 
     @Override

@@ -14,6 +14,7 @@ public class TaskImpl implements Task {
     private final TaskCallback callback;
     private final SimpleCallback stopCallback;
     private boolean loop;
+    private boolean retry;
 
     private int taskTick;
     private int externalTick;
@@ -33,6 +34,8 @@ public class TaskImpl implements Task {
 
         this.startedAt = -1;
         this.startedAtTick = -1;
+
+        this.retry = false;
     }
 
     @Override
@@ -120,6 +123,17 @@ public class TaskImpl implements Task {
 
         this.startedAt = System.currentTimeMillis();
         this.startedAtTick = Pipe.get().serverTick();
+    }
+
+    @Override
+    public void retryIn(int tick) {
+        this.retry = true;
+        this.countdown = tick;
+    }
+
+    @Override
+    public boolean retry() {
+        return this.retry;
     }
 
     @Override

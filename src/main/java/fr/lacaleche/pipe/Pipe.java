@@ -4,8 +4,8 @@ import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
-import net.kyori.adventure.platform.AudienceProvider;
 
 import java.util.List;
 import java.util.UUID;
@@ -51,12 +51,8 @@ public interface Pipe {
     /**
      * TODO
      * */
-    <T extends AudienceProvider> T adventure();
+    Client getClientById(int id);
 
-    /**
-     * TODO
-     * */
-    void setAdventure(AudienceProvider provider);
 
     /**
      * TODO
@@ -91,10 +87,26 @@ public interface Pipe {
     /**
      * TODO
      * */
+    TabManager getTabManager();
+
+    /**
+     * TODO
+     * */
+    void setTabManager(TabManager tabManager);
+
+    /**
+     * TODO
+     * */
     void shutdown(String reason);
 
+    /**
+     * TODO
+     * */
     long serverTick();
 
+    /**
+     * TODO
+     * */
     void tick();
 
     static Pipe get() {

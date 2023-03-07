@@ -9,8 +9,9 @@ import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
-import net.kyori.adventure.platform.AudienceProvider;
+import me.neznamy.tab.api.TabAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +22,10 @@ public class PipeImpl implements Pipe {
     public static Pipe instance;
     private Object plugin;
     private CommandManager commandManager;
-    private AudienceProvider adventure;
     private Runnable shutdownHook;
     private List<Class<? extends IModule>> cachedGodModules;
     private TaskManager taskManager;
+    private TabManager tabManager;
     private final List<Object> plugins;
 
     private long serverTick;
@@ -96,18 +97,13 @@ public class PipeImpl implements Pipe {
     }
 
     @Override
-    public void setAdventure(AudienceProvider adventure) {
-        this.adventure = adventure;
-    }
-
-    @Override
-    public <T extends AudienceProvider> T adventure() {
-        return (T) this.adventure;
-    }
-
-    @Override
     public Client getClient(UUID uuid) {
         return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getUUID().equals(uuid));
+    }
+
+    @Override
+    public Client getClientById(int id) {
+        return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getId() == id);
     }
 
     @Override
@@ -133,6 +129,16 @@ public class PipeImpl implements Pipe {
     @Override
     public void setTaskManager(TaskManager taskManager) {
         this.taskManager = taskManager;
+    }
+
+    @Override
+    public TabManager getTabManager() {
+        return this.tabManager;
+    }
+
+    @Override
+    public void setTabManager(TabManager tabManager) {
+        this.tabManager = tabManager;
     }
 
     @Override

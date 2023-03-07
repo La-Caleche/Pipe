@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.proxy.modules.client;
 
+import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
@@ -12,17 +13,16 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
+import fr.lacaleche.pipe.proxy.ProxyPlugin;
 import fr.lacaleche.pipe.proxy.events.ProxyPipeListenerManager;
 import fr.lacaleche.pipe.proxy.modules.client.listeners.LoginListener;
 import fr.lacaleche.pipe.proxy.modules.client.listeners.LogoutListener;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@AModule(target = ModuleTarget.BUNGEE)
+@AModule(target = ModuleTarget.PROXY)
 public class ClientModule extends Module {
 
     public ClientModule(IModuleHandler handler) {
@@ -31,14 +31,14 @@ public class ClientModule extends Module {
 
     @Override
     public void onEnable() {
-        Plugin plugin = Pipe.get().getPlugin();
+        ProxyPlugin plugin = Pipe.get().getPlugin();
 
-        Collection<? extends ProxiedPlayer> players = plugin.getProxy().getPlayers();
+        Collection<? extends Player> players = plugin.getServer().getAllPlayers();
         if (players.size() == 0) return;
 
         Logger.customDebug("Loading clients for %d players...".formatted(players.size()));
 
-        for (ProxiedPlayer player : players) {
+        for (Player player : players) {
             new ModelFilter<ClientImpl>()
                 .findOrDefault(
                         ClientImpl.class,
@@ -51,14 +51,14 @@ public class ClientModule extends Module {
 
     @Override
     public void onDisable() {
-        Plugin plugin = Pipe.get().getPlugin();
+        ProxyPlugin plugin = Pipe.get().getPlugin();
 
-        Collection<? extends ProxiedPlayer> players = plugin.getProxy().getPlayers();
+        Collection<? extends Player> players = plugin.getServer().getAllPlayers();
         if (players.size() == 0) return;
 
         Logger.customDebug("Removing clients for %d players...".formatted(players.size()));
 
-        for (ProxiedPlayer player : players) {
+        for (Player player : players) {
             Client client = Pipe.get().getClient(player.getUniqueId());
             client.expireNow();
         }

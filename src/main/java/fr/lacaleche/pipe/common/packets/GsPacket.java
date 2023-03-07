@@ -29,6 +29,7 @@ public class GsPacket extends PacketImpl {
         if (this.executor == CommandExecutor.Executor.PLAYER) {
             this.sender = UUID.fromString(data.next());
         } else {
+            data.next();
             this.sender = null;
         }
         this.message = data.next();

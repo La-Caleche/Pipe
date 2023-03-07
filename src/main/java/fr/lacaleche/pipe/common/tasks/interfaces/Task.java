@@ -28,6 +28,10 @@ public interface Task {
 
     void startNow();
 
+    void retryIn(int tick);
+
+    boolean retry();
+
     boolean canBeExecuted();
 
     TaskCallback getCallback();

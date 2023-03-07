@@ -6,12 +6,15 @@ import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.argument.CompleterImpl;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
+import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.core.utils.colors.AsciiColors;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.apache.commons.lang3.function.TriFunction;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,16 +31,19 @@ public class CommandListeners implements Listener {
     @EventHandler
     public void onCommandExecute(PlayerCommandPreprocessEvent event) {
         PipeDebug.eventCalled(event);
-        Logger.customDebugWCheck(AsciiColors.YELLOW + "Command: " + event.getMessage());
+        Client client = Pipe.get().getClient(event.getPlayer().getUniqueId());
         String message = event.getMessage().substring(1);
         CoreCommandImpl command = parseCommand(event, event.getPlayer(), message);
         if (command == null) {
-            if (event.isCancelled())
-                event.getPlayer().sendMessage("command_not_found (missing locale module)");
+            if (event.isCancelled()) {
+                event.getPlayer().sendMessage(client.getLocale().t("pipe.helper.command_not_found").arg("label", message).ct());
+            }
             return;
         }
         CommandResult result = command.execute();
-        if (result != CommandResult.COMMAND_SUCESS) event.getPlayer().sendMessage("(missing HelpUtils %s)".formatted(result.toString()));
+        if (result != CommandResult.COMMAND_SUCESS) {
+            Pipe.get().getCommandManager().parseCommandResult(command, command.getCommandSender(), result);
+        }
     }
 
     /**
@@ -45,15 +51,19 @@ public class CommandListeners implements Listener {
      * */
     @EventHandler
     public void onConsoleExecute(ServerCommandEvent event) {
+        Locale locale = Pipe.get().getDefaultLocale();
         String message = event.getCommand();
         CoreCommandImpl command = parseCommand(event, event.getSender(), message);
         if (command == null) {
-            if (event.isCancelled())
-                event.getSender().sendMessage("command_not_found (missing locale module)");
+            if (event.isCancelled()) {
+                event.getSender().sendMessage(locale.t("pipe.helper.command_not_found").arg("label", message).ct());
+            }
             return;
         }
         CommandResult result = command.execute();
-        if (result != CommandResult.COMMAND_SUCESS) event.getSender().sendMessage("(missing HelpUtils %s)".formatted(result.toString()));
+        if (result != CommandResult.COMMAND_SUCESS) {
+            Pipe.get().getCommandManager().parseCommandResult(command, command.getCommandSender(), result);
+        }
     }
 
     @EventHandler
@@ -97,7 +107,7 @@ public class CommandListeners implements Listener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-            if (!manager.isNativeCommand(label)) PipeDebug.setCancelled(event, true);
+        if (manager.isPluginCommand(label)) PipeDebug.setCancelled(event, true);
             else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);

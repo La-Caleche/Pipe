@@ -1,8 +1,8 @@
 package fr.lacaleche.pipe.proxy.utils;
 
+import com.velocitypowered.api.proxy.ProxyServer;
 import fr.lacaleche.pipe.Pipe;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
+import fr.lacaleche.pipe.proxy.ProxyPlugin;
 
 public class ProxyListenersUtils {
 
@@ -13,10 +13,10 @@ public class ProxyListenersUtils {
      *
      * @param listener the listener to register
      * */
-    public static void registerNewListener(Listener listener) {
+    public static void registerNewListener(Object listener) {
         Pipe pipe = Pipe.get();
-        Plugin server = pipe.getPlugin();
-        server.getProxy().getPluginManager().registerListener(server, listener);
+        ProxyServer server = pipe.<ProxyPlugin>getPlugin().getServer();
+        server.getEventManager().register(server, listener);
     }
 
 }

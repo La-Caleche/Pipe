@@ -17,6 +17,10 @@ public interface Locale extends ISqlModel {
 
     List<TranslationImpl> getTranslations();
 
+    boolean isTranslated(String key);
+
+    Translation getTranslation(String key);
+
     TranslationBuilder translate(String key);
 
     TranslationBuilder translate(Translation translation);

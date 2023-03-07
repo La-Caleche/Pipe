@@ -1,16 +1,20 @@
 package fr.lacaleche.pipe.proxy.utils;
 
 import com.google.common.collect.Multimap;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.plugin.PluginManager;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.PluginManager;
+import fr.lacaleche.pipe.proxy.ProxyPlugin;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
@@ -28,51 +32,22 @@ public class ProxyCommandUtils {
      * @param command the command to register as bukkit command
      * @since 1.0.0
      */
-    public static void registerCommandAsBungee(MinecraftCommand command, Command proxyCommand) {
+    public static void registerCommandAsBungee(MinecraftCommand command, SimpleCommand proxyCommand) {
         Pipe pipe = Pipe.get();
-        Plugin parent = pipe.getPlugin();
-
-        try {
-            PluginManager pluginManager = (PluginManager) parent.getProxy().getPluginManager();
-            final Field bungeeCommandMap = pluginManager.getClass().getDeclaredField("commandMap");
-            final Field commandByPlugin = pluginManager.getClass().getDeclaredField("commandsByPlugin");
-
-            bungeeCommandMap.setAccessible(true);
-            commandByPlugin.setAccessible(true);
-
-            Map<String, Command> commandMap = (Map<String, Command>) bungeeCommandMap.get(pluginManager);
-            Multimap<Plugin, Command> commandMultimap = (Multimap<Plugin, Command>) commandByPlugin.get(pluginManager);
-
-            commandMap.put(command.label().toLowerCase(java.util.Locale.ROOT), proxyCommand);
-            for (String alias : command.aliases()) {
-                commandMap.put(alias.toLowerCase(java.util.Locale.ROOT), proxyCommand);
-            }
-            commandMultimap.put(parent, proxyCommand);
-        } catch (Exception exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-        }
+        ProxyServer proxy = pipe.<ProxyPlugin>getPlugin().getServer();
+        CommandManager commandManager = proxy.getCommandManager();
+        proxy.getCommandManager().register(command.label(), proxyCommand, command.aliases());
     }
 
     /**
      * TODO
      * */
-    public static boolean isNativeCommand(String label) {
+    public static boolean isPluginCommand(String label) {
         Pipe pipe = Pipe.get();
-        Plugin parent = pipe.getPlugin();
+        ProxyServer proxy = pipe.<ProxyPlugin>getPlugin().getServer();
+        CommandManager commandManager = proxy.getCommandManager();
 
-        try {
-            PluginManager pluginManager = (PluginManager) parent.getProxy().getPluginManager();
-            final Field bungeeCommandMap = pluginManager.getClass().getDeclaredField("commandMap");
-
-            bungeeCommandMap.setAccessible(true);
-
-            Map<String, Command> commandMap = (Map<String, Command>) bungeeCommandMap.get(pluginManager);
-
-            return commandMap.containsKey(label.toLowerCase(java.util.Locale.ROOT));
-        } catch (Exception exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-            return false;
-        }
+        return commandManager.getAliases().stream().anyMatch(alias -> alias.equalsIgnoreCase(label));
     }
 
     /**
@@ -84,27 +59,10 @@ public class ProxyCommandUtils {
      */
     public static void unregisterBungeeCommand(MinecraftCommand command) {
         Pipe pipe = Pipe.get();
-        Plugin parent = pipe.getPlugin();
+        ProxyServer proxy = pipe.<ProxyPlugin>getPlugin().getServer();
+        CommandManager commandManager = proxy.getCommandManager();
 
-        try {
-            PluginManager pluginManager = (PluginManager) parent.getProxy().getPluginManager();
-            final Field bungeeCommandMap = pluginManager.getClass().getDeclaredField("commandMap");
-            final Field commandByPlugin = pluginManager.getClass().getDeclaredField("commandsByPlugin");
-
-            bungeeCommandMap.setAccessible(true);
-            commandByPlugin.setAccessible(true);
-
-            Map<String, Command> commandMap = (Map<String, Command>) bungeeCommandMap.get(pluginManager);
-            Multimap<Plugin, Command> commandMultimap = (Multimap<Plugin, Command>) commandByPlugin.get(pluginManager);
-
-            commandMap.remove(command.label().toLowerCase(java.util.Locale.ROOT));
-            for (String alias : command.aliases()) {
-                commandMap.remove(alias.toLowerCase(java.util.Locale.ROOT));
-            }
-            commandMultimap.removeAll(parent);
-        } catch (Exception exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-        }
+        commandManager.unregister(command.label());
     }
 
     /**
@@ -112,18 +70,18 @@ public class ProxyCommandUtils {
      * a sender. {@link CommandExecutor.Executor}
      *
      * @param executor executor of the command
-     * @param sender   the instance of the command sender
+     * @param source   the instance of the command source
      * @return true if the command can be executed by sender. Or false if not.
      * @since 1.0.0
      */
-    public static boolean validateSender(CommandExecutor executor, CommandSender sender) {
+    public static boolean validateSender(CommandExecutor executor, CommandSource source) {
         Pipe pipe = Pipe.get();
-        ProxyServer server = pipe.<Plugin>getPlugin().getProxy();
+        ProxyServer server = pipe.<ProxyPlugin>getPlugin().getServer();
 
         for (CommandExecutor.Executor executors : executor.executor()) {
             if (executors == CommandExecutor.Executor.EVERYONE ||
-                    (sender instanceof ProxiedPlayer && executors == CommandExecutor.Executor.PLAYER) ||
-                    (sender == server.getConsole() && executors == CommandExecutor.Executor.SERVER))
+                    (source instanceof Player && executors == CommandExecutor.Executor.PLAYER) ||
+                    (source instanceof ConsoleCommandSource && executors == CommandExecutor.Executor.SERVER))
                 return true;
         }
         return false;
@@ -132,13 +90,13 @@ public class ProxyCommandUtils {
     /**
      * TODO
      * */
-    public static CommandExecutor.Executor translateSender(CommandSender sender) {
+    public static CommandExecutor.Executor translateSender(CommandSource source) {
         Pipe pipe = Pipe.get();
-        ProxyServer server = pipe.<Plugin>getPlugin().getProxy();
+        ProxyServer server = pipe.<ProxyPlugin>getPlugin().getServer();
 
-        if (sender instanceof ProxiedPlayer)
+        if (source instanceof Player)
             return CommandExecutor.Executor.PLAYER;
-        else if (sender == server.getConsole())
+        else if (source instanceof ConsoleCommandSource)
             return CommandExecutor.Executor.SERVER;
         return null;
     }
@@ -147,11 +105,11 @@ public class ProxyCommandUtils {
      * Parse command help to sender if command not executed properly
      *
      * @param command the executed command
-     * @param sender  the instance of the command sender
+     * @param source  the instance of the command source
      * @since 1.0.0
      */
-    public static void parseHelpToSender(Class<?> command, CommandSender sender) {
-        sender.sendMessage("(missing HelpUtils)");
+    public static void parseHelpToSender(Class<?> command, CommandSource source) {
+        source.sendMessage(Component.text("(missing helputils proxy)"));
     }
 
     private static String joinExecutors(CommandExecutor.Executor[] executors) {

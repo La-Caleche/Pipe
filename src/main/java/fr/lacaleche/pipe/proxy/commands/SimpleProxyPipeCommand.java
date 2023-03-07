@@ -1,27 +1,30 @@
 package fr.lacaleche.pipe.proxy.commands;
 
+import com.velocitypowered.api.command.SimpleCommand;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.proxy.modules.command.events.CommandEvent;
 import fr.lacaleche.pipe.proxy.modules.command.events.TabCompleteEvent;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class SimpleProxyPipeCommand extends Command implements TabExecutor {
+import java.util.List;
+
+public class SimpleProxyPipeCommand implements SimpleCommand {
+
+    private String label;
 
     public SimpleProxyPipeCommand(MinecraftCommand command) {
-        super(command.label());
+        this.label = command.label();
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        CommandEvent event = new CommandEvent(sender, "%s %s".formatted(getName(), String.join(" ", args)));
+    public void execute(Invocation invocation) {
+        CommandEvent event = new CommandEvent(invocation.source(), "%s %s".formatted(invocation.alias(), String.join(" ", invocation.arguments())));
         event.call();
     }
 
     @Override
-    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        TabCompleteEvent event = new TabCompleteEvent(sender, "%s %s".formatted(getName(), String.join(" ", args)));
+    public List<String> suggest(Invocation invocation) {
+        TabCompleteEvent event = new TabCompleteEvent(invocation.source(), "%s %s".formatted(invocation.alias(), String.join(" ", invocation.arguments())));
         event.call();
 
         return event.getCompletions();

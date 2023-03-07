@@ -20,7 +20,6 @@ import fr.lacaleche.core.utils.serializer.annotations.Serializer;
 import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
-import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.IOException;
 import java.net.InetAddress;

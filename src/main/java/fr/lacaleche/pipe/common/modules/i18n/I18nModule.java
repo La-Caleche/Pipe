@@ -19,7 +19,7 @@ import fr.lacaleche.pipe.common.i18n.interfaces.TranslationKey;
 import java.util.ArrayList;
 import java.util.List;
 
-@AModule(target = ModuleTarget.BUKKIT)
+@AModule(target = ModuleTarget.ALL)
 public class I18nModule extends Module {
 
     public I18nModule(IModuleHandler handler) {

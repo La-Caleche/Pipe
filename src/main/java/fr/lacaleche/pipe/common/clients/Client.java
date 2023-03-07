@@ -5,6 +5,7 @@ import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import me.neznamy.tab.api.TabPlayer;
 
 import java.util.UUID;
 
@@ -22,4 +23,6 @@ public interface Client extends ISqlModel {
     void setRank(Rank rank);
 
     boolean hasPermission(Permission permission);
+
+    void loadTab(TabPlayer tabPlayer);
 }

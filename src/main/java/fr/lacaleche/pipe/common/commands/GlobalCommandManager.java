@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.commands;
 
 import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
@@ -25,6 +26,7 @@ import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class GlobalCommandManager implements CommandManager {
 
@@ -204,14 +206,7 @@ public abstract class GlobalCommandManager implements CommandManager {
 
         if (!this.validateArguments(manager)) return CommandResult.MISSING_ARGUMENT;
 
-        boolean result = CommandsUtils.invokeExecutor(method, sender, instance, new ArgumentsImpl(manager));
-
-        if (!result) {
-            MinecraftCommand coreCommand = CommandsUtils.validateCommand(command.getSuperclass());
-            if (coreCommand != null) this.parseHelpToSender(command, sender);
-        }
-
-        return result ? CommandResult.COMMAND_SUCESS : CommandResult.COMMAND_FAILED;
+        return CommandsUtils.invokeExecutor(method, sender, instance, new ArgumentsImpl(manager)) ? CommandResult.COMMAND_SUCESS : CommandResult.COMMAND_FAILED;
     }
 
     /**
@@ -340,11 +335,20 @@ public abstract class GlobalCommandManager implements CommandManager {
      */
     @Override
     public boolean validateArguments(ArgumentManager argumentManager) {
+        return this.getMissingArguments(argumentManager).isEmpty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Argument> getMissingArguments(ArgumentManager argumentManager) {
+        Set<Argument> missing = new HashSet<>();
         for (Argument argument : argumentManager.getArguments()) {
             String value = argument.getValue();
-            if (argument.isMandatory() && value.isBlank()) return false;
+            if (argument.isMandatory() && value.isBlank()) missing.add(argument);
         }
-        return true;
+        return missing;
     }
 
     /**

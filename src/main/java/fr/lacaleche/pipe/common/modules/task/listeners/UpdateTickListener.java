@@ -9,7 +9,6 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.tasks.events.UpdateTickEvent;
 import fr.lacaleche.pipe.proxy.modules.command.events.TabCompleteEvent;
-import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.stream.Collectors;
 

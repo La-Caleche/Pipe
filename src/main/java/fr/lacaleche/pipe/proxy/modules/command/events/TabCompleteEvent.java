@@ -1,33 +1,31 @@
 package fr.lacaleche.pipe.proxy.modules.command.events;
 
+import com.velocitypowered.api.command.CommandSource;
 import fr.lacaleche.core.events.CoreEvent;
 import fr.lacaleche.core.events.interfaces.Cancellable;
-import net.md_5.bungee.api.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TabCompleteEvent extends CoreEvent implements Cancellable {
 
-    private final CommandSender sender;
+    private final CommandSource source;
     private final String buffer;
     private List<String> completions;
     private boolean cancelled;
 
-    public TabCompleteEvent(CommandSender sender, String buffer) {
-        this.sender = sender;
-        this.buffer = buffer;
-        this.completions = new ArrayList<>();
+    public TabCompleteEvent(final CommandSource source, String buffer) {
+        this(source, buffer, new ArrayList<>());
     }
 
-    public TabCompleteEvent(CommandSender sender, String buffer, List<String> completions) {
-        this.sender = sender;
+    public TabCompleteEvent(final CommandSource source, String buffer, List<String> completions) {
+        this.source = source;
         this.buffer = buffer;
         this.completions = completions;
     }
 
-    public CommandSender getSender() {
-        return sender;
+    public CommandSource getSource() {
+        return source;
     }
 
     public List<String> getCompletions() {

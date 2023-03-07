@@ -1,6 +1,6 @@
 def minecraftVersion = '1.18.2-R0.1-SNAPSHOT'
 def commandApiVersion = '8.5.1'
-def waterfallVersion = '1.19-R0.1-SNAPSHOT'
+def velocityVersion = '3.1.1'
 
 def joorVersion = '0.9.14'
 def reflectionsVersion = '0.10.2'
@@ -14,6 +14,8 @@ def jacksonVersion = '2.13.3'
 
 def nbtApiVersion = '2.11.1'
 def anvilGuiVersion = '1.6.3-SNAPSHOT'
+
+def tabApiVersion = '3.2.4'
 
 repositories {
     maven { url = "https://jitpack.io" }
@@ -33,7 +35,7 @@ dependencies {
     implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion
     implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion, classifier: 'remapped-mojang'
 
-    implementation group: 'io.github.waterfallmc', name: 'waterfall-api', version: waterfallVersion
+    implementation group: 'com.velocitypowered', name: 'velocity-api', version: velocityVersion
 
     implementation group: 'org.jooq', name: 'joor', version: joorVersion
     implementation group: 'org.reflections', name: 'reflections', version: reflectionsVersion
@@ -42,11 +44,11 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
 
     implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
-    implementation group: 'net.kyori', name: 'adventure-platform-bungeecord', version: platformVersion
-    implementation group: 'net.kyori', name: 'adventure-platform-bukkit', version: platformVersion
 
     implementation group: 'de.tr7zw', name: 'item-nbt-api-plugin', version: nbtApiVersion
     implementation group: 'net.wesjd', name: 'anvilgui', version: anvilGuiVersion
+
+    implementation group: 'me.neznamy', name: 'tab-api', version: tabApiVersion
 
     testImplementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion, classifier: 'remapped-mojang'
 }

@@ -14,7 +14,7 @@ import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
 import fr.lacaleche.pipe.proxy.events.ProxyPipeListenerManager;
 import fr.lacaleche.pipe.proxy.modules.command.listeners.CommandListener;
 
-@AModule(target = ModuleTarget.BUNGEE)
+@AModule(target = ModuleTarget.PROXY)
 public class CommandModule extends Module {
 
     public CommandModule(IModuleHandler handler) {

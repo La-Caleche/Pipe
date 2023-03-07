@@ -16,6 +16,9 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerJoinListener;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.PlayerLeftListener;
 import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
+import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
+import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
+import me.neznamy.tab.api.TabPlayer;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
@@ -45,12 +48,26 @@ public class ClientModule extends BukkitModule {
 
         this.addJoinCallback((listener, player, client) -> {
             if (listener == null) return;
-            listener.joinMessage(client.getLocale().t("global.player_join").arg("player", player.getName()).arg("rank", client.getRank().getSlug()).arg("color", client.getRank().getColorCode()).ct());
+            listener.joinMessage(client.getLocale().t("global.player_join").arg("player", player.getName()).arg("rank", client.getRank().translatedName(client.getLocale())).arg("color", client.getRank().getColorCode()).ct());
+        });
+
+        this.addJoinCallback((listener, player, client) -> {
+            Pipe.get().getTaskManager().newTask(new TaskBuilder().callback(task -> {
+                TabManager tabManager = Pipe.get().getTabManager();
+                TabPlayer tabPlayer = tabManager.getTabAPI().getPlayer(player.getUniqueId());
+
+                if (tabPlayer == null) {
+                    task.retryIn(5);
+                    return;
+                }
+
+                client.loadTab(tabPlayer);
+            }));
         });
 
         this.addQuitCallbacks((listener, player, client) -> {
             if (listener == null) return;
-            listener.quitMessage(client.getLocale().t("global.player_quit").arg("player", player.getName()).arg("rank", client.getRank().getSlug()).arg("color", client.getRank().getColorCode()).ct());
+            listener.quitMessage(client.getLocale().t("global.player_quit").arg("player", player.getName()).arg("rank", client.getRank().translatedName(client.getLocale())).arg("color", client.getRank().getColorCode()).ct());
         });
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();

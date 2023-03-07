@@ -3,8 +3,7 @@ package fr.lacaleche.pipe.proxy.events;
 import fr.lacaleche.core.events.GlobalListenerManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.Pipe;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
+import fr.lacaleche.pipe.proxy.ProxyPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,35 +12,35 @@ import java.util.Map;
 
 public class ProxyPipeListenerManagerImpl extends GlobalListenerManager implements ProxyPipeListenerManager {
 
-    private static final Map<IModule, List<Listener>> proxyListeners = new HashMap<>();
+    private static final Map<IModule, List<Object>> proxyListeners = new HashMap<>();
 
     @Override
-    public void registerProxyListener(IModule module, Listener listener) {
+    public void registerProxyListener(IModule module, Object listener) {
         Pipe pipe = Pipe.get();
-        Plugin plugin = pipe.getPlugin();
-        List<Listener> listeners = proxyListeners.get(module);
+        ProxyPlugin plugin = pipe.getPlugin();
+        List<Object> listeners = proxyListeners.get(module);
 
         if (listeners == null)
             listeners = new ArrayList<>();
 
-        plugin.getProxy().getPluginManager().registerListener(plugin, listener);
+        plugin.getServer().getEventManager().register(plugin, listener);
 
         listeners.add(listener);
         proxyListeners.put(module, listeners);
     }
 
     @Override
-    public void unregisterProxyListener(Listener listener) {
+    public void unregisterProxyListener(Object listener) {
         Pipe pipe = Pipe.get();
-        Plugin plugin = pipe.getPlugin();
+        ProxyPlugin plugin = pipe.getPlugin();
         IModule module = this.getModuleFor(listener);
         if (module != null) {
-            List<Listener> listeners = proxyListeners.get(module);
+            List<Object> listeners = proxyListeners.get(module);
             if (listeners != null) {
                 listeners.remove(listener);
             }
 
-            plugin.getProxy().getPluginManager().unregisterListener(listener);
+            plugin.getServer().getEventManager().unregisterListener(plugin, listener);
 
             proxyListeners.put(module, listeners);
         }
@@ -50,25 +49,25 @@ public class ProxyPipeListenerManagerImpl extends GlobalListenerManager implemen
     @Override
     public void unregisterProxyListeners(IModule module) {
         Pipe pipe = Pipe.get();
-        Plugin plugin = pipe.getPlugin();
-        List<Listener> listeners = this.getCustomListeners(module);
+        ProxyPlugin plugin = pipe.getPlugin();
+        List<Object> listeners = this.getCustomListeners(module);
         if (listeners.isEmpty()) return;
 
-        for (Listener listener : listeners) {
-            plugin.getProxy().getPluginManager().unregisterListener(listener);
+        for (Object listener : listeners) {
+            plugin.getServer().getEventManager().unregisterListener(plugin, listener);
         }
 
         proxyListeners.remove(module).clear();
     }
 
-    private List<Listener> getCustomListeners(IModule module) {
-        List<Listener> listeners = proxyListeners.get(module);
+    private List<Object> getCustomListeners(IModule module) {
+        List<Object> listeners = proxyListeners.get(module);
         if (listeners == null)
             listeners = new ArrayList<>();
         return listeners;
     }
 
-    private IModule getModuleFor(Listener listener) {
+    private IModule getModuleFor(Object listener) {
         IModule module = null;
         for (IModule m : proxyListeners.keySet()) {
             if (proxyListeners.get(m).contains(listener)) {

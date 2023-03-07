@@ -1,5 +1,7 @@
 package fr.lacaleche.pipe.common.clients;
 
+import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
@@ -8,9 +10,15 @@ import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.core.databases.mysql.models.annotations.BelongsTo;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
+import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilder;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
+import me.neznamy.tab.api.TabPlayer;
+import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ClientImpl extends SqlModel implements Client {
 
@@ -62,6 +70,22 @@ public class ClientImpl extends SqlModel implements Client {
     @Override
     public boolean hasPermission(Permission permission) {
         return this.rank.getPermissions().contains(permission);
+    }
+
+    @Override
+    public void loadTab(TabPlayer tabPlayer) {
+        TabManager tabManager = Pipe.get().getTabManager();
+
+        this.setTabValue(tabPlayer, "pipe.player.display_name", tabManager::setName);
+        this.setTabValue(tabPlayer, "pipe.player.tab_name", tabManager::setTabName);
+        this.setTabValue(tabPlayer, "pipe.player.tab_prefix", tabManager::setTabPrefix);
+        this.setTabValue(tabPlayer, "pipe.player.tab_suffix", tabManager::setTabSuffix);
+    }
+
+    private void setTabValue(TabPlayer tabPlayer, String key, BiConsumer<TabPlayer, Component> consumer) {
+        TabManager tabManager = Pipe.get().getTabManager();
+        if (!this.locale.isTranslated(key)) return;
+        consumer.accept(tabPlayer, this.getLocale().t(key).arg("name", tabPlayer.getName()).arg("rank", this.getRank().translatedName(this.getLocale())).arg("color", this.getRank().getColorCode()).ct());
     }
 
     @Override

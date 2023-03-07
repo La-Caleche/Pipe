@@ -1,10 +1,11 @@
 package fr.lacaleche.pipe.proxy.commands.arguments;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.argument.arguments.DefaultArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Plugin;
+import fr.lacaleche.pipe.proxy.ProxyPlugin;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.stream.Collectors;
@@ -17,6 +18,6 @@ public class ProxyPlayerArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        completer.addAll(Pipe.get().<Plugin>getPlugin().getProxy().getPlayers().stream().map(CommandSender::getName).collect(Collectors.toList()));
+        completer.addAll(Pipe.get().<ProxyPlugin>getPlugin().getServer().getAllPlayers().stream().map(Player::getUsername).collect(Collectors.toList()));
     }
 }

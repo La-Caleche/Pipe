@@ -101,7 +101,7 @@ public class PipeCommandUtils {
     /**
      * TODO
      * */
-    public static boolean isNativeCommand(JavaPlugin parent, String label) {
+    public static boolean isPluginCommand(JavaPlugin parent, String label) {
         try {
             Server server = (Server) parent.getServer();
             final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");

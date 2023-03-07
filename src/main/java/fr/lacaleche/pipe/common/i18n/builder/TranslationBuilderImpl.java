@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.common.i18n.builder;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.CalecheDebug;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
 import fr.lacaleche.pipe.common.utils.PipeComponent;
 import net.kyori.adventure.text.Component;
@@ -19,11 +20,13 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     private final Translation translation;
     private final List<TArg> arguments;
     private String from;
+    private Locale locale;
 
-    public TranslationBuilderImpl(Translation translation) {
+    public TranslationBuilderImpl(Translation translation, Locale locale) {
         this.translation = translation;
         this.arguments = new ArrayList<>();
         this.from = null;
+        this.locale = locale;
     }
 
     @Override
@@ -96,8 +99,10 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     @Override
     public String t() {
         String translation = this.translation.getTranslation();
-        for (TArg argument : this.arguments)
+        for (TArg argument : this.arguments) {
+            // #{joined_arguments:, :<dark_green>{{argument}}</dark_green>}
             translation = translation.replace("#{" + argument.getKey() + "}", argument.getValue());
+        }
         return translation;
     }
 

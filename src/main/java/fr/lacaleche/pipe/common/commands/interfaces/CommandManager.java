@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.commands.interfaces;
 
 import fr.lacaleche.pipe.common.clients.Client;
+import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
@@ -11,6 +12,7 @@ import fr.lacaleche.core.modules.interfaces.IModule;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for Command Manager.
@@ -68,7 +70,7 @@ public interface CommandManager {
     /**
      * TODO
      * */
-    void parseHelpToSender(Class<?> command, Object object);
+    void parseCommandResult(CoreCommandImpl command, Object sender, CommandResult result);
 
     /**
      * Function that handle Minecraft Command
@@ -208,7 +210,12 @@ public interface CommandManager {
     /**
      * TODO
      * */
-    boolean isNativeCommand(String label);
+    Set<Argument> getMissingArguments(ArgumentManager manager);
+
+    /**
+     * TODO
+     * */
+    boolean isPluginCommand(String label);
 
     /**
      * TODO

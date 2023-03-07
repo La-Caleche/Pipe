@@ -1,5 +1,8 @@
 package fr.lacaleche.pipe.proxy.modules.command.listeners;
 
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.PlayerChatEvent;
+import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -7,25 +10,28 @@ import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.argument.CompleterImpl;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
+import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.events.annotations.CoreEventHandler;
 import fr.lacaleche.core.events.interfaces.Cancellable;
 import fr.lacaleche.core.events.interfaces.CoreListener;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.proxy.ProxyPlugin;
 import fr.lacaleche.pipe.proxy.modules.command.events.CommandEvent;
 import fr.lacaleche.pipe.proxy.modules.command.events.TabCompleteEvent;
-import net.md_5.bungee.api.event.ChatEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.event.EventHandler;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.md_5.bungee.chat.BaseComponentSerializer;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class CommandListener implements CoreListener, Listener {
+public class CommandListener implements CoreListener {
 
-    @EventHandler
-    public void onChat(ChatEvent event) {
+    @Subscribe
+    public void onChat(PlayerChatEvent event) {
     }
 
     @CoreEventHandler
@@ -33,7 +39,7 @@ public class CommandListener implements CoreListener, Listener {
         PipeDebug.eventCalled(event);
         String message = event.getBuffer();
         String[] splitted = message.split(" ");
-        CoreCommandImpl command = parseCommand(event, event.getSender(), message);
+        CoreCommandImpl command = parseCommand(event, event.getSource(), message);
 
         if (command == null) {
             event.getCompletions().clear();
@@ -44,22 +50,24 @@ public class CommandListener implements CoreListener, Listener {
         String buffer = command.getUserInput().endsWith(" ") ? command.getUserInput().trim() + " " : command.getUserInput();
         if (userArgumentsLength == 0 && !buffer.endsWith(" ")) return;
 
-        Completer completer = new CompleterImpl(command, event.getSender());
+        Completer completer = new CompleterImpl(command, event.getSource());
         completer.setIndex(command.getUserArguments().length);
         completer.setNext(userArgumentsLength == 0 || buffer.endsWith(command.getUserArguments()[userArgumentsLength - 1] + " "));
 
-        Pipe.get().getCommandManager().parseCompleter((Plugin) Pipe.get().getPlugin(), completer);
+        Pipe.get().getCommandManager().parseCompleter(event.getSource(), completer);
         event.setCompletions(completer.getCompleter().stream().sorted().collect(Collectors.toList()));
     }
 
     @CoreEventHandler
     public void onCommandEvent(CommandEvent event) {
         String message = event.getCommand();
-        CoreCommandImpl command = parseCommand(event, event.getSender(), message);
+        CoreCommandImpl command = parseCommand(event, event.getSource(), message);
         if (command == null)
             return;
         CommandResult result = command.execute();
-        if (result != CommandResult.COMMAND_SUCESS) event.getSender().sendMessage("(missing HelpUtils %s)".formatted(result.toString()));
+        if (result != CommandResult.COMMAND_SUCESS) {
+            Pipe.get().getCommandManager().parseCommandResult(command, command.getCommandSender(), result);
+        }
     }
 
     private CoreCommandImpl parseCommand(Cancellable event, Object sender, String message) {
@@ -69,7 +77,7 @@ public class CommandListener implements CoreListener, Listener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-            if (!manager.isNativeCommand(label)) PipeDebug.setCancelled(event, true);
+            if (manager.isPluginCommand(label)) PipeDebug.setCancelled(event, true);
             else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);

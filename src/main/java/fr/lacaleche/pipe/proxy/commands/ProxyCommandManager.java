@@ -1,17 +1,21 @@
 package fr.lacaleche.pipe.proxy.commands;
 
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
+import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.GlobalCommandManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
+import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
+import fr.lacaleche.pipe.common.commands.enums.CommandResult;
 import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.proxy.utils.ProxyCommandUtils;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,32 +48,43 @@ public class ProxyCommandManager extends GlobalCommandManager {
     }
 
     @Override
-    public CommandExecutor.Executor translateSender(Object sender) {
-        return ProxyCommandUtils.translateSender((CommandSender) sender);
+    public CommandExecutor.Executor translateSender(Object source) {
+        return ProxyCommandUtils.translateSender((CommandSource) source);
     }
 
     @Override
     public Client getClient(Object sender) {
-        if (!(sender instanceof ProxiedPlayer)) return null;
-        return Pipe.get().getClient(((ProxiedPlayer) sender).getUniqueId());
+        if (!(sender instanceof Player player)) return null;
+        return Pipe.get().getClient(player.getUniqueId());
     }
 
     @Override
-    public boolean validateSender(CommandExecutor executor, Object sender) {
-        return ProxyCommandUtils.validateSender(executor, (CommandSender) sender);
+    public boolean validateSender(CommandExecutor executor, Object source) {
+        return ProxyCommandUtils.validateSender(executor, (CommandSource) source);
     }
 
     @Override
-    public void parseHelpToSender(Class<?> command, Object object) {
-        ProxyCommandUtils.parseHelpToSender(command, (CommandSender) object);
+    public void parseCommandResult(CoreCommandImpl command, Object objectSender, CommandResult result) {
+        if (!(objectSender instanceof CommandSource source)) return;
+        Locale locale = Pipe.get().getDefaultLocale();
+        if (source instanceof Player player) locale = Pipe.get().getClient(player.getUniqueId()).getLocale();
+
+        switch (result) {
+            case MISSING_ARGUMENT -> {
+                source.sendMessage(locale.t("pipe.helper.missing_arguments")
+                        .arg("command", command.getLabel())
+                        .arg("arguments", String.join(", ", this.getMissingArguments(command.getManager()).stream().map(Argument::getKey).toArray(String[]::new))).ct());
+                return;
+            }
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isNativeCommand(String label) {
-        return ProxyCommandUtils.isNativeCommand(label);
+    public boolean isPluginCommand(String label) {
+        return ProxyCommandUtils.isPluginCommand(label);
     }
 
 }

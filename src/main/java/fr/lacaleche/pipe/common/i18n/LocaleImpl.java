@@ -37,16 +37,26 @@ public class LocaleImpl extends SqlModel implements Locale {
     }
 
     @Override
-    public TranslationBuilder translate(String key) {
-        TranslationImpl translation = translations.stream().filter(t -> t.getKey().getKey().equals(key)).findFirst().orElse(null);
-        if (translation != null) return this.translate(translation);
+    public boolean isTranslated(String key) {
+        return translations.stream().anyMatch(t -> t.getKey().getKey().equals(key));
+    }
 
-        return new TranslationBuilderImpl(new TranslationImpl(key));
+    @Override
+    public Translation getTranslation(String key) {
+        TranslationImpl translation = translations.stream().filter(t -> t.getKey().getKey().equals(key)).findFirst().orElse(null);
+        if (translation != null) return translation;
+
+        return new TranslationImpl(key);
+    }
+
+    @Override
+    public TranslationBuilder translate(String key) {
+        return this.translate(this.getTranslation(key));
     }
 
     @Override
     public TranslationBuilder translate(Translation translation) {
-        return new TranslationBuilderImpl(translation);
+        return new TranslationBuilderImpl(translation, this);
     }
 
     @Override

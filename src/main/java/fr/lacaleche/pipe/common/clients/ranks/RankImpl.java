@@ -4,6 +4,7 @@ import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -54,6 +55,16 @@ public class RankImpl extends SqlModel implements Rank {
     @Override
     public int getPermissionLevel() {
         return permLevel;
+    }
+
+    @Override
+    public String translatedName(Locale locale) {
+        return locale.t("global.ranks.%s".formatted(this.slug)).t();
+    }
+
+    @Override
+    public Component getColoredRankName(Locale locale) {
+        return this.colorize(this.translatedName(locale));
     }
 
     @Override
