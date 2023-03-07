@@ -20,11 +20,6 @@ public class EntityCommand {
     @CommandChild(label = "damage-causes", description = "pipe.command.entity.damage_causes.description")
     public static class DamageCauses {
 
-        @CommandExecutor
-        public boolean execute(Command<CommandSender> command) {
-            return true;
-        }
-
         @CommandChild(label = "add", description = "pipe.command.entity.damage_causes.add.description")
         public static class Add {
 
@@ -42,7 +37,7 @@ public class EntityCommand {
                 }
             }
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.entity.damage_causes.add")
             public boolean execute(Command<CommandSender> command) {
                 EntityModule module = CalecheCore.get().getCentralModuleManager().getModule(EntityModule.class);
                 String causeName = command.args().getString("cause");
@@ -79,7 +74,7 @@ public class EntityCommand {
                 }
             }
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.entity.damage_causes.remove")
             public boolean execute(Command<CommandSender> command) {
                 EntityModule module = CalecheCore.get().getCentralModuleManager().getModule(EntityModule.class);
                 String causeName = command.args().getString("cause");

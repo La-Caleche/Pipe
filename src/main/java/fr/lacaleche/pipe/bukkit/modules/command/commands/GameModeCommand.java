@@ -15,7 +15,7 @@ import java.util.Arrays;
 @MinecraftCommand(label = "gamemode", aliases = {"gm"}, arguments = {"mode", "player"}, description = "pipe.command.gamemode.description")
 public class GameModeCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.gamemode")
     public boolean executor(Command<CommandSender> command) {
         String requiredGameMode = command.args().getString("mode");
 
@@ -56,7 +56,7 @@ public class GameModeCommand {
     @CommandChild(label = "get", arguments = {"player"}, description = "pipe.command.gamemode.get.description")
     public static class Get {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.gamemode.get")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {

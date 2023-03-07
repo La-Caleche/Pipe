@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @MinecraftCommand(label = "heal", description = "pipe.command.heal.description", arguments = {"player"})
 public class HealCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal")
     public boolean execute(Command<CommandSender> command) {
         PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
         if (result.hasError()) {
@@ -47,7 +47,7 @@ public class HealCommand {
     @CommandChild(label = "get", arguments = {"player"}, description = "pipe.command.heal.get.description")
     public static class Get {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.get")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {
@@ -72,11 +72,6 @@ public class HealCommand {
     @CommandChild(label = "reasons", description = "pipe.command.heal.reasons.description")
     public static class Reasons {
 
-        @CommandExecutor
-        public boolean execute(Command<CommandSender> command) {
-            return true;
-        }
-
         @CommandChild(label = "add", description = "pipe.command.heal.reasons.add.description")
         public static class Add {
 
@@ -94,7 +89,7 @@ public class HealCommand {
                 }
             }
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.reasons.add")
             public boolean execute(Command<CommandSender> command) {
                 HealthModule module = CalecheCore.get().getCentralModuleManager().getModule(HealthModule.class);
                 String reasonName = command.args().getString("reason");
@@ -131,7 +126,7 @@ public class HealCommand {
                 }
             }
 
-            @CommandExecutor
+            @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.reasons.remove")
             public boolean execute(Command<CommandSender> command) {
                 HealthModule module = CalecheCore.get().getCentralModuleManager().getModule(HealthModule.class);
                 String reasonName = command.args().getString("reason");

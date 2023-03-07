@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 @MinecraftCommand(label = "pipedebug", description = "pipe.command.pipedebug.description")
 public class PipeDebugCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.pipedebug")
     public boolean execute(Command<CommandSender> command) {
         Logger.info("In dev: " + CalecheCore.get().inDev());
 
@@ -26,10 +26,8 @@ public class PipeDebugCommand {
     @CommandChild(label = "switch", description = "pipe.command.pipedebug.switch.description")
     public static class Switch {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 100, permissions = "pipe.command.pipedebug.switch")
         public boolean execute(Command<CommandSender> command) {
-
-
             CalecheCore.get().setDebugEnabled(!CalecheCore.get().debugEnabled());
             command.sender().sendMessage(command.locale().ct("pipe.command.pipedebug.debug_status.enabled", "pipe.command.pipedebug.debug_status.disabled", CalecheCore.get().debugEnabled()).from("System").ct());
             return true;

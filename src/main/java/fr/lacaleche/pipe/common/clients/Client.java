@@ -24,5 +24,7 @@ public interface Client extends ISqlModel {
 
     boolean hasPermission(Permission permission);
 
+    boolean hasPermission(String permission);
+
     void loadTab(TabPlayer tabPlayer);
 }

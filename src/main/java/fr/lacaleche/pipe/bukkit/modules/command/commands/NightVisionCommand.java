@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 @MinecraftCommand(label = "nightvision", aliases = {"nv"}, description = "pipe.command.nightvision.description", arguments = {"player"})
 public class NightVisionCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.nightvision")
     public boolean execute(Command<CommandSender> command) {
         PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
         if (result.hasError()) {
@@ -42,7 +42,7 @@ public class NightVisionCommand {
     @CommandChild(label = "get", arguments = {"player"}, description = "pipe.command.nightvision.get.description")
     public static class Get {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.nightvision.get")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {

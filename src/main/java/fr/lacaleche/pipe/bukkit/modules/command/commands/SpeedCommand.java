@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 @MinecraftCommand(label = "speed", description = "pipe.command.speed.description", arguments = {"speed", "player"})
 public class SpeedCommand {
 
-    @CommandExecutor
+    @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.speed")
     public boolean execute(Command<CommandSender> command) {
         PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
         if (result.hasError()) {
@@ -47,7 +47,7 @@ public class SpeedCommand {
     @CommandChild(label = "get", description = "pipe.command.speed.get.description", arguments = {"player"})
     public static class Get {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.speed.get")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {
@@ -72,7 +72,7 @@ public class SpeedCommand {
     @CommandChild(label = "reset", description = "pipe.command.speed.reset.description", arguments = {"player"})
     public static class Reset {
 
-        @CommandExecutor
+        @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.speed.reset")
         public boolean execute(Command<CommandSender> command) {
             PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
             if (result.hasError()) {

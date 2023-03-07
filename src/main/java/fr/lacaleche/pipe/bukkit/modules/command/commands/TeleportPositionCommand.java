@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 @MinecraftCommand(label = "teleportposition", aliases = {"tppos", "tpp", "tpposition", "teleportpos", "teleportp"}, description = "pipe.command.tpp.description", arguments = {"x", "y", "z", "yaw", "pitch", "world"})
 public class TeleportPositionCommand {
 
-    @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER, CommandExecutor.Executor.COMMAND_BLOCK})
+    @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER, CommandExecutor.Executor.COMMAND_BLOCK}, minPermLevel = 20, permissions = "pipe.command.tpp")
     public boolean execute(Command<Player> command) {
         Player player = command.sender();
         Locale locale = command.locale();
