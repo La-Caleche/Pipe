@@ -10,6 +10,8 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 @MinecraftCommand(label = "nightvision", aliases = {"nv"}, description = "pipe.command.nightvision.description", arguments = {"player"})
 public class NightVisionCommand {
@@ -26,8 +28,8 @@ public class NightVisionCommand {
 
         command.sender().sendMessage(target.getPlayerTime() + "");
 
-        target.setPlayerTime(target.getPlayerTime() == 0 ? 1 : 0, false);
-        command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.success.enabled", "pipe.command.nightvision.success.disabled", target.getPlayerTime() == 0).arg("player", target.getName()).from("Night Vision").ct());
+        nightPlayer(target);
+        command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.success.enabled", "pipe.command.nightvision.success.disabled", target.hasPotionEffect(PotionEffectType.NIGHT_VISION)).arg("player", target.getName()).from("Night Vision").ct());
 
         return true;
     }
@@ -50,6 +52,7 @@ public class NightVisionCommand {
 
             Player target = result.getPlayer();
 
+            nightPlayer(target);
             command.sender().sendMessage(command.locale().ct("pipe.command.nightvision.target_enabled", "pipe.command.nightvision.target_disabled", target.getPlayerTime() == 0).arg("player", target.getName()).from("Night Vision").ct());
 
             return true;
@@ -59,7 +62,13 @@ public class NightVisionCommand {
         public void manager(ArgumentManager manager) {
             manager.addArgument(new BukkitPlayerArgument("player").optional());
         }
+    }
 
+    private static void nightPlayer(Player player) {
+        if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION))
+            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        else
+            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 20, false, false));
     }
 
 }
