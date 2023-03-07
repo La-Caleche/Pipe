@@ -33,7 +33,6 @@ dependencies {
 
     implementation group: 'io.papermc.paper', name: 'paper-api', version: minecraftVersion
     implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion
-    implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion, classifier: 'remapped-mojang'
 
     implementation group: 'com.velocitypowered', name: 'velocity-api', version: velocityVersion
 
@@ -49,8 +48,6 @@ dependencies {
     implementation group: 'net.wesjd', name: 'anvilgui', version: anvilGuiVersion
 
     implementation group: 'me.neznamy', name: 'tab-api', version: tabApiVersion
-
-    testImplementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion, classifier: 'remapped-mojang'
 }
 
 compileJava.options.encoding = 'UTF-8'

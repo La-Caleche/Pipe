@@ -32,7 +32,7 @@ public class HologramController extends LivingController {
     }
 
     public void setTitle(Component title) {
-        net.minecraft.network.chat.Component vanillaComponent = this.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
+        net.minecraft.network.chat.IChatBaseComponent vanillaComponent = this.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
         this.getStorage().invoke(StorageMethods.SET_CUSTOM_NAME, this.getEntity(), vanillaComponent);
         this.getStorage().invoke(StorageMethods.SET_CUSTOM_NAME_VISIBLE, this.getEntity(), true);
     }
