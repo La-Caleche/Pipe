@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.commands;
 
 import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -21,7 +22,6 @@ import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
-import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,14 +34,12 @@ public abstract class GlobalCommandManager implements CommandManager {
     private final Map<String, Class<MinecraftCommand>> aliases;
     private final Map<String, Object> commandsCache;
     private final Map<IModule, List<Class<MinecraftCommand>>> moduleCommands;
-    private final Map<String, List<String>> networkCommands;
 
     public GlobalCommandManager() {
         this.commands = new HashMap<>();
         this.aliases = new HashMap<>();
         this.commandsCache = new HashMap<>();
         this.moduleCommands = new HashMap<>();
-        this.networkCommands = new HashMap<>();
     }
 
     /**
@@ -60,9 +58,6 @@ public abstract class GlobalCommandManager implements CommandManager {
             return null;
 
         if (!this.isRegistered(command.label())) {
-            RegisterNetworkCommandPacket packet = new RegisterNetworkCommandPacket(CalecheCore.get().getAppName(), command.label());
-            CalecheCore.get().getPacketManager().publish(packet);
-
             commands.put(command.label(), classCommand);
 
             moduleCommandsList.add(classCommand);
@@ -70,9 +65,6 @@ public abstract class GlobalCommandManager implements CommandManager {
 
             for (String alias : command.aliases()) {
                 if (!aliases.containsKey(alias)) {
-                    packet = new RegisterNetworkCommandPacket(CalecheCore.get().getAppName(), "∅" + alias);
-                    CalecheCore.get().getPacketManager().publish(packet);
-
                     aliases.put(alias, classCommand);
                 }
             }
@@ -181,7 +173,7 @@ public abstract class GlobalCommandManager implements CommandManager {
 
         if (commandExecutor.permissions().length > 0) {
             for (String permName : commandExecutor.permissions()) {
-                Permission permission = new ModelFilter<PermissionImpl>().find(PermissionImpl.class, (perm -> perm.getSlug().equalsIgnoreCase(permName)));
+                Permission permission = new ModelFilter<PermissionImpl>().find(PermissionImpl.class, perm -> perm.getSlug().equalsIgnoreCase(permName), sql -> sql.where(new Where("slug", permName)));
                 if (client.hasPermission(permission)) check = true;
             }
         }
@@ -215,17 +207,6 @@ public abstract class GlobalCommandManager implements CommandManager {
     @Override
     public boolean isRegistered(String label) {
         return commands.containsKey(label) || aliases.containsKey(label);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isRegisteredOnNetwork(String label) {
-        for (String s : networkCommands.keySet()) {
-            if (networkCommands.get(s).contains(label) || networkCommands.get(s).contains("∅" + label)) return true;
-        }
-        return false;
     }
 
     /**
@@ -379,33 +360,6 @@ public abstract class GlobalCommandManager implements CommandManager {
             }
         }
         return manager;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String, List<String>> getNetworkCommands() {
-        return networkCommands;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addNetworkCommand(String label, String command) {
-        if (!networkCommands.containsKey(label)) networkCommands.put(label, new ArrayList<>());
-        if (networkCommands.get(label).contains(command)) return;
-
-        networkCommands.get(label).add(command);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clearNetworkCommands(String app) {
-        networkCommands.remove(app);
     }
 }
 

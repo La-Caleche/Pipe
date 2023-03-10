@@ -1,0 +1,80 @@
+package fr.lacaleche.pipe.bukkit.modules.command.listeners;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.events.interfaces.CoreListener;
+import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
+import fr.lacaleche.core.utils.redis.packet.events.PacketReadEvent;
+import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
+import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
+import fr.lacaleche.core.utils.redis.reader.PacketReader;
+import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
+import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.Client;
+import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
+import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
+import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
+import fr.lacaleche.pipe.common.packets.HelpPacket;
+import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
+
+public class HelpListener implements CoreListener {
+
+    @PacketReader(packet = HelpPacket.class)
+    public void onHelpPacket(PacketReadEvent event, HelpPacket packet) {
+        if (packet.getPacketType() == PacketType.REQUEST && packet.getHost().equals(CalecheCore.get().getHost())) {
+            if (Pipe.get().getCommandManager().isRegistered(packet.getCommand())) {
+                JavaPlugin plugin = Pipe.get().getPlugin();
+                Player player = plugin.getServer().getPlayer(packet.getPlayer());
+                if (player == null) return;
+
+                TextComponent.Builder formatted = new HelperImpl(packet.getLocale(), packet.getCommand()).format(player);
+
+                HelpPacket responsePacket = new HelpPacket(packet.getHost(), packet.getPlayer(), packet.getCommand(), packet.getLocale(), packet.getToken());
+                responsePacket.setResult(TransactionResult.ACCEPT);
+                responsePacket.setResponse(GsonComponentSerializer.gson().serialize(formatted.asComponent()));
+
+                CalecheCore.get().getPacketManager().publish(responsePacket);
+            }
+        }
+    }
+
+    @PacketReader(packet = CheckPermissionsPacket.class)
+    public void onCheckPermissionsPacket(PacketReadEvent event, CheckPermissionsPacket packet) {
+        if (packet.getPacketType() == PacketType.REQUEST) {
+            Pipe.get().getTaskManager().newTask(new TaskBuilder().callback(task -> {
+                JavaPlugin plugin = Pipe.get().getPlugin();
+                Player player = plugin.getServer().getPlayer(packet.getPlayer());
+                Client client = Pipe.get().getClient(packet.getPlayer());
+                if (player == null || client == null) return;
+
+                List<CheckPermissionsPacket.AllowedCommand> commands = packet.getResponse();
+                ObjectNode commandsNode = new ObjectMapper().createObjectNode();
+                ArrayNode array = commandsNode.putArray("commands");
+
+                commands.forEach(command -> {
+                    String label = command.getCommand().replace("∅", "");
+                    if (Pipe.get().getCommandManager().isRegistered(label)) {
+                        Helper helper = new HelperImpl(client.getLocale(), label);
+                        command.setAllowed(helper.senderCanUseCommand(player));
+                        array.add(CoreSerializer.get().serialize(command).getJsonNode());
+                    }
+                });
+
+                CheckPermissionsPacket responsePacket = new CheckPermissionsPacket(packet.getPlayer(), packet.getToken());
+                responsePacket.setResult(TransactionResult.ACCEPT);
+                responsePacket.setResponse(commandsNode.toString());
+                CalecheCore.get().getPacketManager().publish(responsePacket);
+            }).startAfter(10));
+        }
+    }
+
+}

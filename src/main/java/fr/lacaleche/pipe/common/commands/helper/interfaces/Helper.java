@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.commands.helper.interfaces;
 
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.TextComponent;
@@ -14,7 +15,11 @@ public interface Helper {
 
     List<SubCommand> getCommands();
 
-    TextComponent.Builder format();
+    List<SubCommand> filterCommandsByPermissions(Object sender);
+
+    boolean senderCanUseCommand(Object sender);
+
+    TextComponent.Builder format(Object sender);
 
     Locale getLocale();
 

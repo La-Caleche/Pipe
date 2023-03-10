@@ -107,7 +107,8 @@ public class CommandListeners implements Listener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-            if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
+            if (!manager.commandExist(label)) PipeDebug.setCancelled(event, true);
+            else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);
     }

@@ -120,6 +120,25 @@ public class PipeCommandUtils {
     }
 
     /**
+     * TODO
+     * */
+
+    public static boolean commandExist(JavaPlugin parent, String label) {
+        try {
+            Server server = parent.getServer();
+            final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");
+
+            bukkitCommandMap.setAccessible(true);
+            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(server);
+            return commandMap.getKnownCommands().values().stream().anyMatch(command -> command.getName().equalsIgnoreCase(label) || command.getAliases().contains(label) || command.getLabel().equalsIgnoreCase(label));
+        } catch (Exception exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+            return false;
+        }
+    }
+
+
+    /**
      * Check if command executor can be executed by
      * a sender. {@link CommandExecutor.Executor}
      *

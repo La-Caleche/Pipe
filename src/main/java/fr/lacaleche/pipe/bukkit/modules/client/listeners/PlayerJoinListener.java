@@ -1,17 +1,12 @@
 package fr.lacaleche.pipe.bukkit.modules.client.listeners;
 
 import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.bukkit.modules.client.ClientModule;
-import fr.lacaleche.pipe.bukkit.modules.hologram.HologramModule;
+import fr.lacaleche.pipe.bukkit.modules.client.BukkitClientModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
-import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
-import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
-import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,7 +27,7 @@ public class PlayerJoinListener implements Listener {
                 () -> new ClientImpl(player.getUniqueId())
             );
 
-        CalecheCore.get().getCentralModuleManager().getModule(ClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
+        CalecheCore.get().getCentralModuleManager().getModule(BukkitClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

@@ -1,38 +1,28 @@
 package fr.lacaleche.pipe.proxy.modules.command.listeners;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.argument.CompleterImpl;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
-import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.events.annotations.CoreEventHandler;
 import fr.lacaleche.core.events.interfaces.Cancellable;
 import fr.lacaleche.core.events.interfaces.CoreListener;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import fr.lacaleche.pipe.proxy.ProxyPlugin;
 import fr.lacaleche.pipe.proxy.modules.command.events.CommandEvent;
 import fr.lacaleche.pipe.proxy.modules.command.events.TabCompleteEvent;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.md_5.bungee.chat.BaseComponentSerializer;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class CommandListener implements CoreListener {
-
-    @Subscribe
-    public void onChat(PlayerChatEvent event) {
-    }
+public class CommandListeners implements CoreListener {
 
     @CoreEventHandler
     public void onTabComplete(TabCompleteEvent event) {
@@ -83,7 +73,8 @@ public class CommandListener implements CoreListener {
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
         if (!(event instanceof TabCompleteEvent)) {
             Client client = manager.getClient(sender);
-            if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
+            if (!manager.commandExist(label)) PipeDebug.setCancelled(event, true);
+            else if (client != null && client.getRank().getPermissionLevel() < 20) PipeDebug.setCancelled(event, true);
         }
         return manager.handleCommand(sender, label, message, arguments);
     }

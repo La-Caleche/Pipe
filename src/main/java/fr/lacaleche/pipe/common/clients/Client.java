@@ -7,6 +7,7 @@ import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import me.neznamy.tab.api.TabPlayer;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity("clients")
@@ -26,5 +27,7 @@ public interface Client extends ISqlModel {
 
     boolean hasPermission(String permission);
 
-    void loadTab(TabPlayer tabPlayer);
+    List<String> allowedCommands();
+
+    void addAllowedCommand(String command);
 }

@@ -16,9 +16,8 @@ import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilder;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
-import me.neznamy.tab.api.TabPlayer;
-import net.kyori.adventure.text.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -41,6 +40,8 @@ public class ClientImpl extends SqlModel implements Client {
     @HasMany(clazz = PermissionImpl.class, table = "client_permissions", field = "client_id", targetField = "permission_id")
     private List<PermissionImpl> permissions;
 
+    private List<String> allowedCommands;
+
     public ClientImpl(UUID uuid) {
         this.uuid = uuid.toString();
         this.rank = new ModelFilter<RankImpl>().find(RankImpl.class, RankImpl::isDefault);
@@ -48,6 +49,11 @@ public class ClientImpl extends SqlModel implements Client {
 
         this.save();
         this.insert();
+    }
+
+    @Override
+    public void loaded() {
+        this.allowedCommands = new ArrayList<>();
     }
 
     @Override
@@ -92,19 +98,13 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
-    public void loadTab(TabPlayer tabPlayer) {
-        TabManager tabManager = Pipe.get().getTabManager();
-
-        this.setTabValue(tabPlayer, "pipe.player.display_name", tabManager::setName);
-        this.setTabValue(tabPlayer, "pipe.player.tab_name", tabManager::setTabName);
-        this.setTabValue(tabPlayer, "pipe.player.tab_prefix", tabManager::setTabPrefix);
-        this.setTabValue(tabPlayer, "pipe.player.tab_suffix", tabManager::setTabSuffix);
+    public List<String> allowedCommands() {
+        return this.allowedCommands;
     }
 
-    private void setTabValue(TabPlayer tabPlayer, String key, BiConsumer<TabPlayer, Component> consumer) {
-        TabManager tabManager = Pipe.get().getTabManager();
-        if (!this.locale.isTranslated(key)) return;
-        consumer.accept(tabPlayer, this.getLocale().t(key).arg("name", tabPlayer.getName()).arg("rank", this.getRank().translatedName(this.getLocale())).arg("color", this.getRank().getColorCode()).ct());
+    @Override
+    public void addAllowedCommand(String command) {
+        this.allowedCommands.add(command);
     }
 
     @Override

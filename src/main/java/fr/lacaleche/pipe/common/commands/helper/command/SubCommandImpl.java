@@ -21,6 +21,7 @@ public class SubCommandImpl implements SubCommand {
     private final String name;
     private final List<CommandArgument> arguments;
     private final String description;
+    private final Class<?> command;
 
     public SubCommandImpl(Helper helper, String fullLabel, String description, Class<?> command) {
         String[] split = fullLabel.split(" ");
@@ -30,6 +31,12 @@ public class SubCommandImpl implements SubCommand {
         this.name = split[split.length - 1];
         this.description = description;
         this.arguments = this.loadArguments(command);
+        this.command = command;
+    }
+
+    @Override
+    public Class<?> getCommand() {
+        return command;
     }
 
     @Override

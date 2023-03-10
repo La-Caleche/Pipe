@@ -9,6 +9,7 @@ import com.velocitypowered.api.plugin.PluginManager;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
@@ -74,6 +75,17 @@ public class ProxyCommandUtils {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * TODO
+     * */
+    public static boolean commandExist(String label) {
+        Pipe pipe = Pipe.get();
+        ProxyServer proxy = pipe.<ProxyPlugin>getPlugin().getServer();
+        CommandManager commandManager = proxy.getCommandManager();
+        commandManager.getAliases().forEach(Logger::info);
+        return commandManager.getAliases().stream().anyMatch(alias -> alias.equalsIgnoreCase(label));
     }
 
     /**

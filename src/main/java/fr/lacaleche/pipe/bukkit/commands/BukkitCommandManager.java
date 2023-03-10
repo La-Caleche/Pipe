@@ -10,6 +10,8 @@ import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
+import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
+import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
 import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
@@ -73,6 +75,11 @@ public class BukkitCommandManager extends GlobalCommandManager {
     }
 
     @Override
+    public boolean commandExist(String label) {
+        return PipeCommandUtils.commandExist(Pipe.get().getPlugin(), label);
+    }
+
+    @Override
     public void parseCommandResult(CoreCommandImpl command, Object objectSender, CommandResult result) {
         if (!(objectSender instanceof CommandSender sender)) return;
         Locale locale = Pipe.get().getDefaultLocale();
@@ -81,8 +88,25 @@ public class BukkitCommandManager extends GlobalCommandManager {
         switch (result) {
             case MISSING_ARGUMENT -> {
                 sender.sendMessage(locale.t("pipe.helper.missing_arguments")
-                        .arg("command", command.getLabel())
+                        .arg("label", command.getLabel())
                         .arg("arguments", String.join(", ", this.getMissingArguments(command.getManager()).stream().map(Argument::getKey).toArray(String[]::new))).ct());
+                return;
+            }
+            case MISSING_PERMISSION, BAD_EXECUTOR -> {
+                sender.sendMessage(locale.t("pipe.helper.permission_denied").arg("label", command.getLabel()).ct());
+                return;
+            }
+            case MISSING_EXECUTOR -> {
+                Helper helper = new HelperImpl(locale, command.getLabel());
+                sender.sendMessage(helper.format(sender).asComponent());
+                return;
+            }
+            case COMMAND_NOT_FOUND -> {
+                sender.sendMessage(locale.t("pipe.helper.command_not_found").arg("label", command.getLabel()).ct());
+                return;
+            }
+            case COMMAND_FAILED -> {
+                sender.sendMessage(locale.t("pipe.helper.command_failed").arg("label", command.getLabel()).ct());
                 return;
             }
         }

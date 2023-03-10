@@ -10,11 +10,15 @@ import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.modules.command.commands.*;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
-import fr.lacaleche.pipe.common.commands.listeners.HelpPacketListener;
-import fr.lacaleche.pipe.common.commands.listeners.RegisterNetworkCommandPacketListener;
-import fr.lacaleche.pipe.common.packets.FetchNetworkCommandsPacket;
+import fr.lacaleche.pipe.bukkit.modules.command.listeners.HelpListener;
+import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
+import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
 import fr.lacaleche.pipe.common.packets.HelpPacket;
-import fr.lacaleche.pipe.common.packets.RegisterNetworkCommandPacket;
+import fr.lacaleche.pipe.common.packets.ProxyUpPacket;
+import fr.lacaleche.pipe.common.packets.RegisterNewServerPacket;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Module to manage Minecraft Commands
@@ -37,15 +41,11 @@ public class CommandModule extends BukkitModule {
     public void registerListeners() {
         BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
         bukkitManager.registerBukkitListener(this, new CommandListeners());
-        bukkitManager.registerCustomListener(this, new HelpPacketListener());
-        bukkitManager.registerCustomListener(this, new RegisterNetworkCommandPacketListener());
+        bukkitManager.registerCustomListener(this, new HelpListener());
     }
 
     @Override
     public void registerCommands() {
-        FetchNetworkCommandsPacket packet = new FetchNetworkCommandsPacket();
-        CalecheCore.get().getPacketManager().publish(packet);
-
         Pipe.get().getCommandManager().registerNewCommand(this, FlyCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, GameModeCommand.class);
         Pipe.get().getCommandManager().registerNewCommand(this, HelpCommand.class);
@@ -60,7 +60,7 @@ public class CommandModule extends BukkitModule {
     @Override
     public void registerPackets() {
         CalecheCore.get().getPacketManager().registerPacket(HelpPacket.class);
-        CalecheCore.get().getPacketManager().registerPacket(RegisterNetworkCommandPacket.class);
-        CalecheCore.get().getPacketManager().registerPacket(FetchNetworkCommandsPacket.class);
+        CalecheCore.get().getPacketManager().registerPacket(CheckPermissionsPacket.class);
     }
+
 }

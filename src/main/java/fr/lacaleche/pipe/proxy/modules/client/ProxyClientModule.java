@@ -2,9 +2,12 @@ package fr.lacaleche.pipe.proxy.modules.client;
 
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.databases.generic.ModelFilter;
+import fr.lacaleche.core.databases.mysql.models.packets.ModelSavedPacket;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
@@ -15,13 +18,17 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
-import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
-import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
+import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
+import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
+import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
+import fr.lacaleche.pipe.common.packets.ServerListPacket;
 import fr.lacaleche.pipe.proxy.ProxyPlugin;
+import fr.lacaleche.pipe.proxy.commands.ProxyCommandManager;
 import fr.lacaleche.pipe.proxy.events.ProxyPipeListenerManager;
 import fr.lacaleche.pipe.proxy.modules.client.listeners.LoginListener;
 import fr.lacaleche.pipe.proxy.modules.client.listeners.LogoutListener;
-import me.neznamy.tab.api.TabPlayer;
+import fr.lacaleche.pipe.proxy.modules.client.listeners.ModelSavedListener;
+import fr.lacaleche.pipe.proxy.modules.client.listeners.PermissionsPacketListener;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.ArrayList;
@@ -29,12 +36,14 @@ import java.util.Collection;
 import java.util.List;
 
 @AModule(target = ModuleTarget.PROXY)
-public class ClientModule extends Module {
+public class ProxyClientModule extends Module {
 
     private List<TriConsumer<PostLoginEvent, Player, Client>> joinCallbacks;
     private List<TriConsumer<DisconnectEvent, Player, Client>> quitCallbacks;
 
-    public ClientModule(IModuleHandler handler) {
+    private List<TriConsumer<ServerConnectedEvent, Player, Client>> joinServerCallbacks;
+
+    public ProxyClientModule(IModuleHandler handler) {
         super(handler);
     }
 
@@ -42,7 +51,10 @@ public class ClientModule extends Module {
     public void onEnable() {
         ProxyPlugin plugin = Pipe.get().getPlugin();
         this.joinCallbacks = new ArrayList<>();
+        this.joinServerCallbacks = new ArrayList<>();
         this.quitCallbacks = new ArrayList<>();
+
+        this.addJoinServerCallback(this::loadCommandsFor);
 
         Collection<? extends Player> players = plugin.getServer().getAllPlayers();
         if (players.size() == 0) return;
@@ -80,18 +92,54 @@ public class ClientModule extends Module {
         cachedRanks.forEach(RankImpl::expireNow);
 
         this.joinCallbacks.clear();
+        this.joinServerCallbacks.clear();
         this.quitCallbacks.clear();
     }
 
     @Override
     public void registerListeners() {
-        ProxyPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
-        bukkitManager.registerProxyListener(this, new LoginListener());
-        bukkitManager.registerProxyListener(this, new LogoutListener());
+        ProxyPipeListenerManager proxyManager = Pipe.get().getListenerManager();
+        proxyManager.registerProxyListener(this, new LoginListener());
+        proxyManager.registerProxyListener(this, new LogoutListener());
+        proxyManager.registerCustomListener(this, new PermissionsPacketListener());
+        proxyManager.registerCustomListener(this, new ModelSavedListener(this));
+    }
+
+    @Override
+    public void registerPackets() {
+        CalecheCore.get().getPacketManager().registerPacket(CheckPermissionsPacket.class);
+        CalecheCore.get().getPacketManager().registerPacket(ModelSavedPacket.class);
+    }
+
+    public void loadCommandsFor(ServerConnectedEvent event, Player player, Client client) {
+        ProxyCommandManager proxyCommandManager = (ProxyCommandManager) Pipe.get().getCommandManager();
+        client.allowedCommands().clear();
+
+        ServerInfo info = null;
+        if (event != null) info = event.getServer().getServerInfo();
+
+        CheckPermissionsPacket packet = new CheckPermissionsPacket(proxyCommandManager.getNetworkCommandsForPlayer(player, info), player.getUniqueId(), response -> {
+            List<CheckPermissionsPacket.AllowedCommand> commands = (List<CheckPermissionsPacket.AllowedCommand>) response;
+            commands.forEach(allowedCommand -> {
+                if (allowedCommand.isAllowed()) client.addAllowedCommand(allowedCommand.getCommand());
+            });
+        }, reject -> {});
+        CalecheCore.get().getPacketManager().publish(packet);
+
+        proxyCommandManager.getCommands().forEach((s, minecraftCommandClass) -> {
+            Helper helper = new HelperImpl(client.getLocale(), s);
+            if (helper.senderCanUseCommand(player)) {
+                client.addAllowedCommand(s);
+            }
+        });
     }
 
     public void addJoinCallback(TriConsumer<PostLoginEvent, Player, Client> callback) {
         this.joinCallbacks.add(callback);
+    }
+
+    public void addJoinServerCallback(TriConsumer<ServerConnectedEvent, Player, Client> callback) {
+        this.joinServerCallbacks.add(callback);
     }
 
     public void addQuitCallbacks(TriConsumer<DisconnectEvent, Player, Client> callback) {
@@ -100,6 +148,10 @@ public class ClientModule extends Module {
 
     public List<TriConsumer<PostLoginEvent, Player, Client>> getJoinCallbacks() {
         return joinCallbacks;
+    }
+
+    public List<TriConsumer<ServerConnectedEvent, Player, Client>> getJoinServerCallbacks() {
+        return joinServerCallbacks;
     }
 
     public List<TriConsumer<DisconnectEvent, Player, Client>> getQuitCallbacks() {

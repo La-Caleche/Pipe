@@ -1,11 +1,14 @@
 package fr.lacaleche.pipe.common.commands.helper.command;
 
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
+import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.SubCommand;
+import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
@@ -56,7 +59,31 @@ public class HelperImpl implements Helper {
     }
 
     @Override
-    public TextComponent.Builder format() {
+    public List<SubCommand> filterCommandsByPermissions(Object sender) {
+        List<SubCommand> filtered = new ArrayList<>();
+        CommandManager commandManager = Pipe.get().getCommandManager();
+
+        this.subCommands.forEach(subCommand -> {
+            Class<?> command = subCommand.getCommand();
+            Object[] executors = CommandsUtils.validateExecutor(command);
+            if (executors == null || executors.length == 0) return;
+            CommandExecutor executor = (CommandExecutor) executors[0];
+
+            if (commandManager.validatePermissions(executor, sender) && commandManager.validateSender(executor, sender)) {
+                filtered.add(subCommand);
+            }
+        });
+
+        return filtered;
+    }
+
+    @Override
+    public boolean senderCanUseCommand(Object sender) {
+        return this.filterCommandsByPermissions(sender).size() > 0;
+    }
+
+    @Override
+    public TextComponent.Builder format(Object sender) {
         TextComponent.Builder textBuilder = Component.text();
 
         if (this.coreCommand == null) {
@@ -70,7 +97,7 @@ public class HelperImpl implements Helper {
             this.aliases.forEach(alias -> textBuilder.append(this.locale.t("pipe.helper.alias").arg("alias", alias).ct()));
         }
         textBuilder.append(Component.newline());
-        this.subCommands.forEach(subCommand -> textBuilder.append(subCommand.format(this.locale)).append(Component.newline()));
+        this.filterCommandsByPermissions(sender).forEach(subCommand -> textBuilder.append(subCommand.format(this.locale)).append(Component.newline()));
 
         return textBuilder;
     }

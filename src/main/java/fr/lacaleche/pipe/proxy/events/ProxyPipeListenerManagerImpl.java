@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.proxy.events;
 
 import fr.lacaleche.core.events.GlobalListenerManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.proxy.ProxyPlugin;
 

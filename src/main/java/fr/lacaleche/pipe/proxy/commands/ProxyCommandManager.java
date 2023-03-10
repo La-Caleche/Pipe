@@ -1,10 +1,14 @@
 package fr.lacaleche.pipe.proxy.commands;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.server.ServerInfo;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
 import fr.lacaleche.pipe.common.clients.Client;
-import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.GlobalCommandManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
@@ -12,15 +16,23 @@ import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
 import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
-import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.proxy.commands.interfaces.IProxyCommandManager;
+import fr.lacaleche.pipe.proxy.commands.interfaces.NetworkCommand;
 import fr.lacaleche.pipe.proxy.utils.ProxyCommandUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class ProxyCommandManager extends GlobalCommandManager {
+public class ProxyCommandManager extends GlobalCommandManager implements IProxyCommandManager {
+
+    private Map<String, List<NetworkCommand>> networkCommands;
+
+    public ProxyCommandManager() {
+        super();
+
+        this.networkCommands = new HashMap<>();
+    }
 
     @Override
     public MinecraftCommand registerNewCommand(IModule module, Class<?> newCommand) {
@@ -79,4 +91,59 @@ public class ProxyCommandManager extends GlobalCommandManager {
         }
     }
 
+    @Override
+    public Map<String, List<NetworkCommand>> getNetworkCommands() {
+        return networkCommands;
+    }
+
+    @Override
+    public void registerNetworkCommand(String app, String host, String command) {
+        List<NetworkCommand> commands = this.networkCommands.getOrDefault(host, new ArrayList<>());
+        if (commands.stream().anyMatch(networkCommand -> networkCommand.label().equalsIgnoreCase(command))) return;
+        commands.add(new NetworkCommandImpl(app, host, command));
+        this.networkCommands.put(host, commands);
+    }
+
+    @Override
+    public boolean isNetworkCommand(String host, String command) {
+        if (!this.networkCommands.containsKey(host)) return false;
+        return this.networkCommands.get(host).stream().anyMatch(networkCommand -> networkCommand.label().equalsIgnoreCase(command));
+    }
+
+    @Override
+    public List<String> getCommandsFor(CommandSource commandSource) {
+        if (commandSource instanceof ConsoleCommandSource) {
+            return this.getCommands().keySet().stream().toList();
+        } else if (commandSource instanceof Player player) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            if (client == null) return new ArrayList<>();
+            return client.allowedCommands().stream().sorted().toList();
+        }
+
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<String> getNetworkCommandsForPlayer(Player player) {
+        Optional<ServerConnection> serverConnection = player.getCurrentServer();
+        if (serverConnection.isEmpty()) return new ArrayList<>();
+        return this.getNetworkCommandsForPlayer(player, serverConnection.get().getServerInfo());
+    }
+
+    @Override
+    public List<String> getNetworkCommandsForPlayer(Player player, ServerInfo info) {
+        if (info == null) return this.getNetworkCommandsForPlayer(player);
+        return new ArrayList<>(this.networkCommands.get(info.getName()).stream().map(NetworkCommand::label).toList());
+    }
+
+    @Override
+    public String getHostForPlayer(Player player) {
+        Optional<ServerConnection> serverConnection = player.getCurrentServer();
+        return serverConnection.map(connection -> connection.getServerInfo().getName()).orElse(null);
+    }
+
+    @Override
+    public boolean commandExist(String label) {
+        return ProxyCommandUtils.commandExist(label);
+    }
 }

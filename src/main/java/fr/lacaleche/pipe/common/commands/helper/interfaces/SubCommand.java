@@ -17,6 +17,8 @@ public interface SubCommand {
 
     String getDescription();
 
+    Class<?> getCommand();
+
     TextComponent.Builder format(Locale locale);
 
 }
