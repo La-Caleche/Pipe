@@ -1,10 +1,18 @@
 package fr.lacaleche.pipe.common.tasks.interfaces;
 
+import java.util.UUID;
+
 public interface Task {
+
+    UUID uuid();
 
     boolean isLoop();
 
+    boolean runAsync();
+
     void stop();
+
+    void run();
 
     int getDelay();
 

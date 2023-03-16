@@ -9,6 +9,9 @@ import me.neznamy.tab.api.scoreboard.ScoreboardManager;
 import me.neznamy.tab.api.team.UnlimitedNametagManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.util.UUID;
 
 public class TabManagerImpl implements TabManager {
 

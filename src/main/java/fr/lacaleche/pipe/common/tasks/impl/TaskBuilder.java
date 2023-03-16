@@ -14,10 +14,13 @@ public class TaskBuilder {
     private TaskCallback callback;
     private SimpleCallback stopCallback;
 
+    private boolean async;
+
     public TaskBuilder() {
         this.delay = 0;
         this.everyXTick = 1;
         this.loop = false;
+        this.async = false;
         this.callback = (t) -> {};
         this.stopCallback = () -> {};
     }
@@ -52,8 +55,13 @@ public class TaskBuilder {
         return this;
     }
 
+    public TaskBuilder async(boolean async) {
+        this.async = async;
+        return this;
+    }
+
     public Task build() {
-        return new TaskImpl(delay, everyXTick, loop, callback, stopCallback);
+        return new TaskImpl(delay, everyXTick, loop, async, callback, stopCallback);
     }
 
 }

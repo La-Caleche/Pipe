@@ -36,7 +36,7 @@ public class PipeCommandUtils {
      */
     public static void registerCommandAsBukkit(JavaPlugin parent, MinecraftCommand command, BukkitCommand bukkitCommand) {
         try {
-            Server server = (Server) parent.getServer();
+            Server server = parent.getServer();
             final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");
 
             bukkitCommandMap.setAccessible(true);

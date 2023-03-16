@@ -5,7 +5,12 @@ import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import fr.lacaleche.pipe.common.tasks.interfaces.SimpleCallback;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskCallback;
 
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 public class TaskImpl implements Task {
+
+    private final UUID uuid;
 
     private final int delay;
     private int countdown;
@@ -15,18 +20,23 @@ public class TaskImpl implements Task {
     private final SimpleCallback stopCallback;
     private boolean loop;
     private boolean retry;
+    private boolean async;
 
     private int taskTick;
     private int externalTick;
     private long startedAt;
     private long startedAtTick;
+    private boolean stopped;
 
-    public TaskImpl(int delay, int everyXTick, boolean loop, TaskCallback callback, SimpleCallback stopCallback) {
+    public TaskImpl(int delay, int everyXTick, boolean loop, boolean async, TaskCallback callback, SimpleCallback stopCallback) {
+        this.uuid = UUID.randomUUID();
+
         this.delay = delay;
         this.countdown = delay;
 
         this.everyXTick = everyXTick;
         this.loop = loop;
+        this.async = async;
         this.callback = callback;
         this.stopCallback = stopCallback;
 
@@ -36,6 +46,12 @@ public class TaskImpl implements Task {
         this.startedAtTick = -1;
 
         this.retry = false;
+        this.stopped = false;
+    }
+
+    @Override
+    public UUID uuid() {
+        return this.uuid;
     }
 
     @Override
@@ -44,7 +60,13 @@ public class TaskImpl implements Task {
     }
 
     @Override
+    public boolean runAsync() {
+        return async;
+    }
+
+    @Override
     public void stop() {
+        this.stopped = true;
         this.loop = false;
         getStopCallback().execute();
     }
@@ -88,14 +110,20 @@ public class TaskImpl implements Task {
     public void tick(int tick) {
         if (this.countdown > 0) {
             if (this.countdown == 1) this.startNow();
-            this.countdown --;
+            this.countdown--;
             return;
         }
 
         this.externalTick = tick;
 
         if (this.taskTick == 19) this.taskTick = 0;
-        else this.taskTick ++;
+        else this.taskTick++;
+    }
+
+    @Override
+    public void run() {
+        if (async) CompletableFuture.runAsync(() -> this.getCallback().execute(this));
+        else this.getCallback().execute(this);
     }
 
     @Override
@@ -110,6 +138,7 @@ public class TaskImpl implements Task {
 
     @Override
     public boolean canBeExecuted() {
+        if (this.stopped) return false;
         if (this.countdown > 0) return false;
         if (!this.loop) return true;
 

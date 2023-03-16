@@ -1,14 +1,12 @@
-package fr.lacaleche.pipe.bukkit.modules.prmodule.commands;
+package fr.lacaleche.pipe.bukkit.modules.modsmanager.commands;
 
 
-import com.google.common.collect.BiMap;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.bukkit.modules.god.ParentGodModule;
 import fr.lacaleche.pipe.bukkit.modules.god.annotations.AGodModule;
-import fr.lacaleche.pipe.bukkit.modules.prmodule.ModsManagerModule;
+import fr.lacaleche.pipe.bukkit.modules.modsmanager.ModsManagerModule;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.*;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;

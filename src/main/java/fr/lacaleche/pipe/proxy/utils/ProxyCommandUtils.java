@@ -84,7 +84,6 @@ public class ProxyCommandUtils {
         Pipe pipe = Pipe.get();
         ProxyServer proxy = pipe.<ProxyPlugin>getPlugin().getServer();
         CommandManager commandManager = proxy.getCommandManager();
-        commandManager.getAliases().forEach(Logger::info);
         return commandManager.getAliases().stream().anyMatch(alias -> alias.equalsIgnoreCase(label));
     }
 
