@@ -23,11 +23,11 @@ public class PipeRenderer extends AbstractRenderer {
             if (audience instanceof Player player) {
                 Client client = Pipe.get().getClient(player.getUniqueId());
 
-                textBuilder.append(client.getRank().colorize(player.getName()));
+                textBuilder.append(sourceDisplayName.color(client.getRank().colorAsColor()));
+
                 hoverBuilder.content("Rank : ").append(client.getRank().getColoredRankName(client.getLocale()));
                 textBuilder.hoverEvent(hoverBuilder.asComponent().asHoverEvent());
-            } else
-                textBuilder.append(Component.text("Console", NamedTextColor.GREEN));
+            } else textBuilder.append(sourceDisplayName.color(NamedTextColor.GREEN));
 
             textBuilder.append(Component.text(" > "));
             textBuilder.append(message.color(NamedTextColor.GRAY));
