@@ -12,16 +12,10 @@ import fr.lacaleche.pipe.bukkit.modules.chat.listeners.ChatListener;
 @AModule(target = ModuleTarget.BUKKIT)
 public class ChatModule extends BukkitModule  {
 
-    private ChatManager chatManager;
-
     public ChatModule(IModuleHandler handler) {
         super(handler);
     }
 
-    @Override
-    public void onEnable() {
-        this.chatManager = new ChatManager();
-    }
     @Override
     public void registerListeners() {
         BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
@@ -33,7 +27,4 @@ public class ChatModule extends BukkitModule  {
         Pipe.get().getCommandManager().registerNewCommand(this, ChatCommand.class);
     }
 
-    public ChatManager getChatManager() {
-        return chatManager;
-    }
 }

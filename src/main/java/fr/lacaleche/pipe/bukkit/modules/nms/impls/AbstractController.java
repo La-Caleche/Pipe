@@ -4,6 +4,7 @@ import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.EntityZombie;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

@@ -53,20 +53,20 @@ public abstract class CalecheLiving extends EntityLiving {
 
     @Override
     public float getBukkitYaw() {
-        return this.dn();
+        return this.dw();
     }
 
     /**
-     * refreshDimensions z_
+     * refreshDimensions c_
      * */
     @Override
-    public void z_() {}
+    public void c_() {}
 
     /**
-     * isEffectiveAi eI
+     * isEffectiveAi cU
      * */
     @Override
-    public boolean eI() {
+    public boolean cU() {
         return false;
     }
 
@@ -79,26 +79,26 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * getHandSlots bB
+     * getHandSlots bH
      * */
     @Override
-    public Iterable<ItemStack> bB() {
+    public Iterable<ItemStack> bH() {
         return NonNullList.a();
     }
 
     /**
-     * getArmorSlots bC
+     * getArmorSlots bI
      * */
     @Override
-    public Iterable<ItemStack> bC() {
+    public Iterable<ItemStack> bI() {
         return NonNullList.a();
     }
 
     /**
-     * getItemBySlot b
+     * getItemBySlot c
      * */
     @Override
-    public ItemStack b(EnumItemSlot enumitemslot) {
+    public ItemStack c(EnumItemSlot enumitemslot) {
         return ItemStack.b;
     }
 
@@ -117,10 +117,10 @@ public abstract class CalecheLiving extends EntityLiving {
     public void setItemSlot(EnumItemSlot enumitemslot, ItemStack itemstack, boolean silent) {}
 
     /**
-     * canTakeItem g
+     * canTakeItem f
      * */
     @Override
-    public boolean g(ItemStack itemstack) {
+    public boolean f(ItemStack itemstack) {
         return false;
     }
 
@@ -141,10 +141,10 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * isPushable bi
+     * isCollidable bn
      * */
     @Override
-    public boolean bi() {
+    public boolean bn() {
         return false;
     }
 
@@ -155,10 +155,10 @@ public abstract class CalecheLiving extends EntityLiving {
     protected void A(Entity entity) {}
 
     /**
-     * pushEntities eG
+     * pushEntities eZ
      * */
     @Override
-    protected void eG() {}
+    protected void eZ() {}
 
     /**
      * interactAt a
@@ -177,10 +177,10 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * handleEntityEvent a
+     * handleEntityEvent b
      * */
     @Override
-    public void a(byte b0) {
+    public void b(byte b0) {
         super.a(b0);
     }
 
@@ -207,10 +207,10 @@ public abstract class CalecheLiving extends EntityLiving {
     protected abstract float b(EntityPose entitypose, EntitySize entitysize);
 
     /**
-     * getMyRidingOffset bp
+     * getMyRidingOffset bu
      * */
     @Override
-    public abstract double bp();
+    public abstract double bu();
 
     /**
      * travel h
@@ -219,23 +219,23 @@ public abstract class CalecheLiving extends EntityLiving {
     public void h(Vec3D vec3d) {}
 
     /**
-     * setYBodyRot m
+     * setYBodyRot s
      * */
     @Override
-    public void m(float f) {}
+    public void s(float f) {}
 
     /**
-     * setYHeadRot l
+     * setYHeadRot r
      * */
     @Override
-    public void l(float f) {}
+    public void r(float f) {}
 
     /**
-     * tick k
+     * tick l
      * */
     @Override
-    public void k() {
-        super.k();
+    public void l() {
+        super.l();
         this.lastTick = MinecraftServer.currentTick;
     }
 
@@ -265,42 +265,42 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * shouldDropExperience dI
+     * shouldDropExperience dV
      * */
     @Override
-    protected boolean dI() {
+    public boolean dV() {
         return false;
     }
 
     /**
-     * kill ag
+     * kill ah
      * */
     @Override
-    public void ag() {
-        super.ag();
+    public void ah() {
+        super.ah();
     }
 
     /**
-     * ignoreExplosion cC
+     * ignoreExplosion cI
      * */
     @Override
-    public boolean cC() {
+    public boolean cI() {
         return true;
     }
 
     /**
-     * getPistonPushReaction c_
+     * getPistonPushReaction C_
      * */
     @Override
-    public EnumPistonReaction c_() {
+    public EnumPistonReaction C_() {
         return EnumPistonReaction.d;
     }
 
     /**
-     * isPickable bh
+     * isPickable bm
      * */
     @Override
-    public boolean bh() {
+    public boolean bm() {
         return false;
     }
 
@@ -313,28 +313,28 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * getMainArm eL
+     * getMainArm fd
      * */
     @Override
-    public EnumMainHand eL() {
+    public EnumMainHand fd() {
         return EnumMainHand.b;
     }
 
     /**
-     * getFallSounds eg
+     * getFallSounds ey
      * */
     @Nullable
     @Override
-    public EntityLiving.a eg() {
+    public EntityLiving.a ey() {
         return null;
     }
 
     /**
-     * getHurtSound c
+     * getHurtSound d
      * */
     @Nullable
     @Override
-    protected SoundEffect c(DamageSource damagesource) {
+    protected SoundEffect d(DamageSource damagesource) {
         return null;
     }
 
@@ -370,10 +370,10 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * attackable eY
+     * attackable fq
      * */
     @Override
-    public boolean eY() {
+    public boolean fq() {
         return false;
     }
 
@@ -386,26 +386,26 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * getLightProbePosition j
+     * getLightProbePosition o
      * */
     @Override
-    public Vec3D j(float f) {
+    public Vec3D o(float f) {
         return super.j(f);
     }
 
     /**
-     * getPickResult dk
+     * getPickResult dt
      * */
     @Override
-    public ItemStack dk() {
+    public ItemStack dt() {
         return ItemStack.b;
     }
 
     /**
-     * canBeSeenByAnyone dU
+     * canBeSeenByAnyone ei
      * */
     @Override
-    public boolean dU() {
+    public boolean ei() {
         return !this.bU();
     }
 

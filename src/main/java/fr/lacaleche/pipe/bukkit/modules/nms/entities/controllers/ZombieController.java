@@ -34,7 +34,7 @@ public class ZombieController extends LivingController {
         }
 
         @Override
-        public EnumMonsterType er() {
+        public EnumMonsterType eJ() {
             return EnumMonsterType.b;
         }
 
@@ -44,7 +44,7 @@ public class ZombieController extends LivingController {
         }
 
         @Override
-        public double bp() {
+        public double bu() {
             return this.y_() ? 0.0 : -0.45;
         }
     }

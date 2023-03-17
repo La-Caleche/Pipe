@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEffect;
 import net.minecraft.sounds.SoundEffects;
 import net.minecraft.tags.TagsFluid;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyDamageScaler;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.animal.EntityChicken;
 import net.minecraft.world.entity.animal.EntityIronGolem;
 import net.minecraft.world.entity.animal.EntityTurtle;
 import net.minecraft.world.entity.monster.EntityMonster;
+import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.npc.EntityVillager;
 import net.minecraft.world.entity.npc.EntityVillagerAbstract;
 import net.minecraft.world.entity.player.EntityHuman;
@@ -64,10 +66,10 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * registerGoals u
+     * registerGoals x
      */
     @Override
-    protected void u() {
+    protected void x() {
     }
 
     /**
@@ -87,11 +89,11 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * getExperienceReward d
+     * getExperienceReward dX
      */
     @Override
-    protected int d(EntityHuman entityhuman) {
-        return super.d(entityhuman);
+    public int dX() {
+        return super.dX();
     }
 
     /**
@@ -109,20 +111,20 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * tick k
+     * tick l
      */
     @Override
-    public void k() {
-        super.k();
+    public void l() {
+        super.l();
         this.lastTick = MinecraftServer.currentTick;
     }
 
     /**
-     * aiStep w_
+     * aiStep b_
      */
     @Override
-    public void w_() {
-        super.w_();
+    public void b_() {
+        super.b_();
     }
 
     /**
@@ -142,18 +144,18 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * getAmbientSound r
+     * getAmbientSound s
      */
     @Override
-    protected SoundEffect r() {
+    protected SoundEffect s() {
         return null;
     }
 
     /**
-     * getHurtSound c
+     * getHurtSound d
      */
     @Override
-    protected SoundEffect c(DamageSource damagesource) {
+    protected SoundEffect d(DamageSource damagesource) {
         return null;
     }
 
@@ -172,16 +174,16 @@ public abstract class CalecheMonster extends EntityMonster {
     protected void b(BlockPosition blockposition, IBlockData iblockdata) {}
 
     /**
-     * getMobType er
+     * getMobType eJ
      */
-    public abstract EnumMonsterType er();
+    public abstract EnumMonsterType eJ();
 
     /**
      * populateDefaultEquipmentSlots a
      */
     @Override
-    protected void a(DifficultyDamageScaler difficultydamagescaler) {
-        super.a(difficultydamagescaler);
+    protected void a(RandomSource randomsource, DifficultyDamageScaler difficultydamagescaler) {
+        super.a(randomsource, difficultydamagescaler);
     }
 
     /**
@@ -201,11 +203,11 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * killed a
+     * wasKilled a
      */
     @Override
-    public void a(WorldServer worldserver, EntityLiving entityliving) {
-        super.a(worldserver, entityliving);
+    public boolean a(WorldServer worldserver, EntityLiving entityliving) {
+        return super.a(worldserver, entityliving);
     }
 
     /**
@@ -223,10 +225,10 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * wantsToPickUp l
+     * wantsToPickUp j
      */
     @Override
-    public boolean l(ItemStack itemstack) {
+    public boolean j(ItemStack itemstack) {
         return false;
     }
 
@@ -240,10 +242,10 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * getMyRidingOffset bp
+     * getMyRidingOffset bu
      */
     @Override
-    public abstract double bp();
+    public abstract double bu();
 
     /**
      * dropCustomDeathLoot a

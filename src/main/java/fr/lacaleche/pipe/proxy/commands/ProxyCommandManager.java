@@ -133,6 +133,8 @@ public class ProxyCommandManager extends GlobalCommandManager implements IProxyC
     @Override
     public List<String> getNetworkCommandsForPlayer(Player player, ServerInfo info) {
         if (info == null) return this.getNetworkCommandsForPlayer(player);
+        List<NetworkCommand> commands = this.networkCommands.get(info.getName());
+        if (commands == null || commands.isEmpty()) return new ArrayList<>();
         return new ArrayList<>(this.networkCommands.get(info.getName()).stream().map(NetworkCommand::label).toList());
     }
 

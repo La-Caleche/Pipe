@@ -1,18 +1,14 @@
-def minecraftVersion = '1.18.2-R0.1-SNAPSHOT'
-def commandApiVersion = '8.5.1'
+def minecraftVersion = '1.19.4-R0.1-SNAPSHOT'
 def velocityVersion = '3.1.1'
 
 def joorVersion = '0.9.14'
 def reflectionsVersion = '0.10.2'
 
-def miniMessageVersion = '4.11.0'
-def platformVersion = '4.1.1'
-
-def protocolLibVersion = '4.7.0'
+def miniMessageVersion = '4.13.0'
 
 def jacksonVersion = '2.13.3'
 
-def nbtApiVersion = '2.11.1'
+def nbtApiVersion = '2.11.2'
 def anvilGuiVersion = '1.6.3-SNAPSHOT'
 
 def tabApiVersion = '3.2.4'
@@ -28,8 +24,6 @@ repositories {
 
 dependencies {
     implementation project(":library:CalecheCore")
-
-    implementation group: 'dev.jorel.CommandAPI', name: 'commandapi-core', version: commandApiVersion
 
     implementation group: 'io.papermc.paper', name: 'paper-api', version: minecraftVersion
     implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion

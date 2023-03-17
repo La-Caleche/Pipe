@@ -5,6 +5,7 @@ import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass.*;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.*;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods.*;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields.*;
 
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
@@ -13,12 +14,16 @@ import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3D;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultStorage implements IStorage {
@@ -58,7 +63,9 @@ public class DefaultStorage implements IStorage {
 
     @Override
     public Field field(StorageFields storageField) {
-        return this.fields.getOrDefault(storageField, null);
+        Field field = this.fields.getOrDefault(storageField, null);
+        if (field != null) field.setAccessible(true);
+        return field;
     }
 
     @Override
@@ -154,7 +161,7 @@ public class DefaultStorage implements IStorage {
     @Override
     public <T> Field getField(Class<?> clazz, String name) {
         try {
-            return clazz.getField(name);
+            return clazz.getDeclaredField(name);
         } catch (Exception exception) {
             SentryAPIImpl.getInstance().captureException(exception);
         }
@@ -193,7 +200,6 @@ public class DefaultStorage implements IStorage {
         this.registerClass(ITEM_STACK, classFinder.worldClass("item.ItemStack"));
 
         this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY, classFinder.protocolClass("game.PacketPlayOutSpawnEntity"));
-        this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, classFinder.protocolClass("game.PacketPlayOutSpawnEntityLiving"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_DESTROY, classFinder.protocolClass("game.PacketPlayOutEntityDestroy"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_METADATA, classFinder.protocolClass("game.PacketPlayOutEntityMetadata"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_TELEPORT, classFinder.protocolClass("game.PacketPlayOutEntityTeleport"));
@@ -205,9 +211,8 @@ public class DefaultStorage implements IStorage {
         this.registerClass(ADVENTURE_COMPONENT, classFinder.getAbsoluteClass("io.papermc.paper.adventure.AdventureComponent"));
 
         this.registerConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY, this.clazz(ENTITY)));
-        this.registerConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING, this.clazz(ENTITY_LIVING)));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_DESTROY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_DESTROY, int[].class));
-        this.registerConstructor(PACKET_PLAY_OUT_ENTITY_METADATA_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_METADATA, int.class, this.clazz(DATA_WATCHER), boolean.class));
+        this.registerConstructor(PACKET_PLAY_OUT_ENTITY_METADATA_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_METADATA, int.class, List.class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_TELEPORT, this.clazz(ENTITY)));
         this.registerConstructor(PACKET_PLAY_OUT_REL_ENTITY_MOVE_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_REL_ENTITY_MOVE, int.class, short.class, short.class, short.class, boolean.class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_LOOK_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_LOOK, int.class, byte.class, byte.class, boolean.class));
@@ -216,15 +221,18 @@ public class DefaultStorage implements IStorage {
 
         this.registerConstructor(ADVENTURE_COMPONENT_CONSTRUCTOR, this.getConstructor(ADVENTURE_COMPONENT, Component.class));
 
-        this.registerMethod(GET_DATA_WATCHER, this.getMethod(ENTITY, "ai"));
+        this.registerMethod(GET_DATA_WATCHER, this.getMethod(ENTITY, "aj"));
+        this.registerMethod(PACK_DIRTY, this.getMethod(DATA_WATCHER, "b"));
         this.registerMethod(GET_ID, this.getMethod(ENTITY, "hashCode"));
-        this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "a", double.class, double.class, double.class, float.class, float.class));
+        this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "b", double.class, double.class, double.class, float.class, float.class));
         this.registerMethod(SET_INVISIBLE, this.getMethod(ENTITY, "j", boolean.class));
         this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
-        this.registerMethod(TICK, this.getMethod(ENTITY_LIVING, "k"));
-        this.registerMethod(AI_STEP, this.getMethod(ENTITY_LIVING, "w_"));
-        this.registerMethod(SET_CUSTOM_NAME, this.getMethod(ENTITY, "a", IChatBaseComponent.class));
+        this.registerMethod(TICK, this.getMethod(ENTITY_LIVING, "l"));
+        this.registerMethod(AI_STEP, this.getMethod(ENTITY_LIVING, "b_"));
+        this.registerMethod(SET_CUSTOM_NAME, this.getMethod(ENTITY, "b", IChatBaseComponent.class));
         this.registerMethod(SET_CUSTOM_NAME_VISIBLE, this.getMethod(ENTITY, "n", boolean.class));
+
+        this.registerField(MDP_ITEMS_BY_ID, this.getField(DATA_WATCHER, "e"));
     }
 
 }

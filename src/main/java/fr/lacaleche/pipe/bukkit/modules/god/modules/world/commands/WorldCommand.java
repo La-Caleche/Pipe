@@ -6,7 +6,6 @@ import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 

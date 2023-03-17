@@ -2,7 +2,6 @@ package fr.lacaleche.pipe.proxy.modules.command.listeners;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;

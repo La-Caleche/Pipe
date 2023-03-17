@@ -13,7 +13,7 @@ import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.tasks.events.UpdateTickEvent;
 import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.TimeSkipEvent;

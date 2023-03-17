@@ -1,7 +1,9 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.impls;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.ICalecheEntity;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.tracker.EntityTracker;
@@ -11,10 +13,19 @@ import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods.*;
 
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.world.entity.Entity;
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class BaseController implements ICalecheEntity {
 
@@ -61,7 +72,26 @@ public abstract class BaseController implements ICalecheEntity {
 
     @Override
     public PacketPlayOutEntityMetadata getMetadataPacket() {
-        return this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_METADATA_CONSTRUCTOR, this.getId(), this.getStorage().invoke(GET_DATA_WATCHER, this.getEntity()), true);
+        DataWatcher dataWatcher = this.getStorage().invoke(GET_DATA_WATCHER, this.getEntity());
+        Field f = this.getStorage().field(StorageFields.MDP_ITEMS_BY_ID);
+        Int2ObjectMap<DataWatcher.Item<?>> itemsById = this.getStorage().get(StorageFields.MDP_ITEMS_BY_ID, dataWatcher);
+        return this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_METADATA_CONSTRUCTOR, this.getId(), this.getTrackedValues(itemsById));
+    }
+
+    private List<?> getTrackedValues(Int2ObjectMap<DataWatcher.Item<?>> itemsById) {
+        List<DataWatcher.b<?>> list = null;
+        ObjectIterator objectiterator = itemsById.values().iterator();
+
+        while(objectiterator.hasNext()) {
+            DataWatcher.Item<?> datawatcher_item = (DataWatcher.Item)objectiterator.next();
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+
+            list.add(datawatcher_item.e());
+        }
+
+        return list;
     }
 
     @Override
@@ -100,7 +130,7 @@ public abstract class BaseController implements ICalecheEntity {
     }
 
     public void constructPackets() {
-        this.packetPlayOutSpawnEntity = this.getStorage().construct(PACKET_PLAY_OUT_SPAWN_ENTITY_LIVING_CONSTRUCTOR, this.getEntity());
+        this.packetPlayOutSpawnEntity = this.getStorage().construct(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR, this.getEntity());
         this.packetPlayOutEntityDestroy = this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_DESTROY_CONSTRUCTOR, new int [] {this.getId()});
     }
 

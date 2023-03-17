@@ -5,7 +5,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketListenerPlayOut;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.phys.Vec3D;
