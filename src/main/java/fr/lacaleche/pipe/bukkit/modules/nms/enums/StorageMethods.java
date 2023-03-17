@@ -12,4 +12,5 @@ public enum StorageMethods {
     AI_STEP,
     SET_CUSTOM_NAME,
     SET_CUSTOM_NAME_VISIBLE
+
 }

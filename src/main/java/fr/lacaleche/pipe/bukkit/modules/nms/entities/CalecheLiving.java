@@ -44,9 +44,6 @@ import java.util.function.Predicate;
 
 public abstract class CalecheLiving extends EntityLiving {
 
-    private int lastTick = MinecraftServer.currentTick;
-    private boolean ce;
-
     public CalecheLiving(EntityTypes<? extends EntityArmorStand> entitytypes, World world) {
         super(entitytypes, world);
     }
@@ -128,17 +125,13 @@ public abstract class CalecheLiving extends EntityLiving {
      * addAdditionalSaveData b
      * */
     @Override
-    public void b(NBTTagCompound nbttagcompound) {
-        super.b(nbttagcompound);
-    }
+    public void b(NBTTagCompound nbttagcompound) {}
 
     /**
      * readAdditionalSaveData a
      * */
     @Override
-    public void a(NBTTagCompound nbttagcompound) {
-        super.a(nbttagcompound);
-    }
+    public void a(NBTTagCompound nbttagcompound) {}
 
     /**
      * isCollidable bn
@@ -236,24 +229,6 @@ public abstract class CalecheLiving extends EntityLiving {
     @Override
     public void l() {
         super.l();
-        this.lastTick = MinecraftServer.currentTick;
-    }
-
-    /**
-     * updateInvisibilityStatus F
-     * */
-    @Override
-    protected void F() {
-        this.j(this.ce);
-    }
-
-    /**
-     * setInvisible j
-     * */
-    @Override
-    public void j(boolean flag) {
-        this.ce = flag;
-        super.j(flag);
     }
 
     /**
@@ -365,9 +340,7 @@ public abstract class CalecheLiving extends EntityLiving {
      * onSyncedDataUpdated a
      * */
     @Override
-    public void a(DataWatcherObject<?> datawatcherobject) {
-        super.a(datawatcherobject);
-    }
+    public void a(DataWatcherObject<?> datawatcherobject) {}
 
     /**
      * attackable fq
@@ -375,22 +348,6 @@ public abstract class CalecheLiving extends EntityLiving {
     @Override
     public boolean fq() {
         return false;
-    }
-
-    /**
-     * getDimensions a
-     * */
-    @Override
-    public EntitySize a(EntityPose entitypose) {
-        return super.a(entitypose);
-    }
-
-    /**
-     * getLightProbePosition o
-     * */
-    @Override
-    public Vec3D o(float f) {
-        return super.j(f);
     }
 
     /**

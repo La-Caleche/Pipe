@@ -2,15 +2,20 @@ package fr.lacaleche.pipe.bukkit.modules.hologram.impl;
 
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.maths.Vector3;
 import fr.lacaleche.pipe.bukkit.modules.hologram.HologramManager;
 import fr.lacaleche.pipe.bukkit.modules.hologram.HologramModule;
 import fr.lacaleche.pipe.bukkit.modules.hologram.interfaces.Hologram;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSModule;
+import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheDisplay;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.controllers.HologramController;
 import net.kyori.adventure.text.Component;
+import net.minecraft.world.entity.Display;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Transformation;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,16 +25,32 @@ public class HologramImpl implements Hologram {
 
     private HologramController controller;
     private Component title;
+    private Vector3f scale;
+    private CalecheDisplay.BillboardConstraints billboard;
     private Collection<Player> viewers;
 
     private HologramManager hologramManager;
 
     public HologramImpl(Location location, Component title) {
+        this(location, title, new Vector3f(1f, 1f, 1f), CalecheDisplay.BillboardConstraints.CENTER);
+    }
+
+    public HologramImpl(Location location, Component title, Vector3f scale) {
+        this(location, title, scale, CalecheDisplay.BillboardConstraints.CENTER);
+    }
+
+    public HologramImpl(Location location, Component title, CalecheDisplay.BillboardConstraints constraints) {
+        this(location, title, new Vector3f(1f, 1f, 1f), constraints);
+    }
+
+    public HologramImpl(Location location, Component title, Vector3f scale, CalecheDisplay.BillboardConstraints constraints) {
         if (!CalecheCore.get().getCentralModuleManager().moduleEnabled(HologramModule.class)) throw new IllegalStateException("Hologram module is not enabled !");
 
         this.hologramManager = CalecheCore.get().getCentralModuleManager().getModule(HologramModule.class).getHologramManager();
 
         this.title = title;
+        this.scale = scale;
+        this.billboard = constraints;
         this.viewers = new ArrayList<>();
 
         this.controller = CalecheCore.get().getCentralModuleManager().getModule(NMSModule.class).getNmsManager().createEntity(HologramController.class, location);
@@ -50,7 +71,19 @@ public class HologramImpl implements Hologram {
     @Override
     public void title(Component title) {
         this.title = title;
-        this.controller.setTitle(title);
+        this.controller.text(title);
+    }
+
+    @Override
+    public void scale(Vector3f scale) {
+        this.scale = scale;
+        this.controller.scale(scale);
+    }
+
+    @Override
+    public void setBillboard(CalecheDisplay.BillboardConstraints billboard) {
+        this.billboard = billboard;
+        this.controller.setBillboard(billboard);
     }
 
     @Override
@@ -74,7 +107,10 @@ public class HologramImpl implements Hologram {
     @Override
     public void create() {
         this.controller.spawn();
-        this.controller.setTitle(title);
+
+        this.title(this.title);
+        this.scale(this.scale);
+        this.setBillboard(this.billboard);
     }
 
 }

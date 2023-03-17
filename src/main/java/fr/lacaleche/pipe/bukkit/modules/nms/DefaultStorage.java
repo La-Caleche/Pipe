@@ -227,7 +227,7 @@ public class DefaultStorage implements IStorage {
         this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "b", double.class, double.class, double.class, float.class, float.class));
         this.registerMethod(SET_INVISIBLE, this.getMethod(ENTITY, "j", boolean.class));
         this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
-        this.registerMethod(TICK, this.getMethod(ENTITY_LIVING, "l"));
+        this.registerMethod(TICK, this.getMethod(ENTITY, "l"));
         this.registerMethod(AI_STEP, this.getMethod(ENTITY_LIVING, "b_"));
         this.registerMethod(SET_CUSTOM_NAME, this.getMethod(ENTITY, "b", IChatBaseComponent.class));
         this.registerMethod(SET_CUSTOM_NAME_VISIBLE, this.getMethod(ENTITY, "n", boolean.class));

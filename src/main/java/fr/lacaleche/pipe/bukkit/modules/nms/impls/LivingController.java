@@ -6,6 +6,8 @@ import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.ICalecheLivingEntity;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
 import net.minecraft.world.entity.EntityLiving;
 import org.bukkit.Location;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.util.Transformation;
 
 public abstract class LivingController extends AbstractController implements ICalecheLivingEntity {
 

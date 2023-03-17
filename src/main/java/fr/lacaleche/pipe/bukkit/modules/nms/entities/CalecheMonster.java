@@ -57,10 +57,6 @@ import java.util.function.Predicate;
 
 public abstract class CalecheMonster extends EntityMonster {
 
-    private int inWaterTime;
-    public int conversionTime;
-    private int lastTick = MinecraftServer.currentTick;
-
     public CalecheMonster(EntityTypes<? extends EntityMonster> entitytypes, World world) {
         super(entitytypes, world);
     }
@@ -93,7 +89,7 @@ public abstract class CalecheMonster extends EntityMonster {
      */
     @Override
     public int dX() {
-        return super.dX();
+        return 0;
     }
 
     /**
@@ -116,15 +112,6 @@ public abstract class CalecheMonster extends EntityMonster {
     @Override
     public void l() {
         super.l();
-        this.lastTick = MinecraftServer.currentTick;
-    }
-
-    /**
-     * aiStep b_
-     */
-    @Override
-    public void b_() {
-        super.b_();
     }
 
     /**
@@ -190,24 +177,20 @@ public abstract class CalecheMonster extends EntityMonster {
      * addAdditionalSaveData b
      */
     @Override
-    public void b(NBTTagCompound nbttagcompound) {
-        super.b(nbttagcompound);
-    }
+    public void b(NBTTagCompound nbttagcompound) {}
 
     /**
      * readAdditionalSaveData a
      */
     @Override
-    public void a(NBTTagCompound nbttagcompound) {
-        super.a(nbttagcompound);
-    }
+    public void a(NBTTagCompound nbttagcompound) {}
 
     /**
      * wasKilled a
      */
     @Override
     public boolean a(WorldServer worldserver, EntityLiving entityliving) {
-        return super.a(worldserver, entityliving);
+        return false;
     }
 
     /**
@@ -251,8 +234,6 @@ public abstract class CalecheMonster extends EntityMonster {
      * dropCustomDeathLoot a
      */
     @Override
-    protected void a(DamageSource damagesource, int i, boolean flag) {
-        super.a(damagesource, i, flag);
-    }
+    protected void a(DamageSource damagesource, int i, boolean flag) {}
 
 }
