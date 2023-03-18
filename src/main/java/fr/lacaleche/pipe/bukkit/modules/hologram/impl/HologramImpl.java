@@ -40,14 +40,14 @@ public class HologramImpl implements Hologram {
     public HologramImpl(Location location, Component title, Vector3f scale, CalecheDisplay.BillboardConstraints constraints) {
         if (!Core.get().getCentralModuleManager().moduleEnabled(HologramModule.class)) throw new IllegalStateException("Hologram module is not enabled !");
 
-        this.hologramManager = Core.get().getCentralModuleManager().getModule(HologramModule.class).getHologramManager();
+        this.hologramManager = Core.getModule(HologramModule.class).getHologramManager();
 
         this.title = title;
         this.scale = scale;
         this.billboard = constraints;
         this.viewers = new ArrayList<>();
 
-        this.controller = Core.get().getCentralModuleManager().getModule(NMSModule.class).getNmsManager().createEntity(HologramController.class, location);
+        this.controller = Core.getModule(NMSModule.class).getNmsManager().createEntity(HologramController.class, location);
 
         this.hologramManager.registerHologram(this);
     }

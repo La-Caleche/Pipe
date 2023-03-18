@@ -28,14 +28,14 @@ public class LoginListener {
                 () -> new ClientImpl(player.getUniqueId())
             );
 
-        Core.get().getCentralModuleManager().getModule(ProxyClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.getModule(ProxyClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
         Player player = event.getPlayer();
         Client client = Pipe.get().getClient(player.getUniqueId());
-        Core.get().getCentralModuleManager().getModule(ProxyClientModule.class).getJoinServerCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.getModule(ProxyClientModule.class).getJoinServerCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

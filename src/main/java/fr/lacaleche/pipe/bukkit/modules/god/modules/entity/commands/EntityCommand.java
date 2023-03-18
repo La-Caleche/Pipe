@@ -32,14 +32,14 @@ public class EntityCommand {
             public void completer(Completer completer) {
                 if (completer.index() == 1) {
                     List<EntityDamageEvent.DamageCause> causes = Arrays.stream(EntityDamageEvent.DamageCause.values()).toList();
-                    List<EntityDamageEvent.DamageCause> blackList = Core.get().getCentralModuleManager().getModule(EntityModule.class).getBlackListDamageCauses();
+                    List<EntityDamageEvent.DamageCause> blackList = Core.getModule(EntityModule.class).getBlackListDamageCauses();
                     completer.addAll(causes.stream().filter(cause -> !blackList.contains(cause)).map(EntityDamageEvent.DamageCause::name).collect(Collectors.toList()));
                 }
             }
 
             @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.entity.damage_causes.add")
             public boolean execute(Command<CommandSender> command) {
-                EntityModule module = Core.get().getCentralModuleManager().getModule(EntityModule.class);
+                EntityModule module = Core.getModule(EntityModule.class);
                 String causeName = command.args().getString("cause");
                 EntityDamageEvent.DamageCause cause = Arrays.stream(EntityDamageEvent.DamageCause.values()).filter(damageCause -> damageCause.name().equals(causeName)).findFirst().orElse(null);
 
@@ -68,7 +68,7 @@ public class EntityCommand {
                 if (completer.index() == 1) {
                     if (completer.index() == 1) {
                         List<EntityDamageEvent.DamageCause> causes = Arrays.stream(EntityDamageEvent.DamageCause.values()).toList();
-                        List<EntityDamageEvent.DamageCause> blackList = Core.get().getCentralModuleManager().getModule(EntityModule.class).getBlackListDamageCauses();
+                        List<EntityDamageEvent.DamageCause> blackList = Core.getModule(EntityModule.class).getBlackListDamageCauses();
                         completer.addAll(causes.stream().filter(blackList::contains).map(EntityDamageEvent.DamageCause::name).collect(Collectors.toList()));
                     }
                 }
@@ -76,7 +76,7 @@ public class EntityCommand {
 
             @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.entity.damage_causes.remove")
             public boolean execute(Command<CommandSender> command) {
-                EntityModule module = Core.get().getCentralModuleManager().getModule(EntityModule.class);
+                EntityModule module = Core.getModule(EntityModule.class);
                 String causeName = command.args().getString("cause");
                 EntityDamageEvent.DamageCause cause = Arrays.stream(EntityDamageEvent.DamageCause.values()).filter(damageCause -> damageCause.name().equals(causeName)).findFirst().orElse(null);
 

@@ -20,7 +20,7 @@ public class PlayerLeftListener implements Listener {
         Client client = Pipe.get().getClient(player.getUniqueId());
         client.expireIn(5 * 60 * 1000);
 
-        Core.get().getCentralModuleManager().getModule(BukkitClientModule.class).getQuitCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.getModule(BukkitClientModule.class).getQuitCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

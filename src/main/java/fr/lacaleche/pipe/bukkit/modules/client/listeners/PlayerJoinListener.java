@@ -27,7 +27,7 @@ public class PlayerJoinListener implements Listener {
                 () -> new ClientImpl(player.getUniqueId())
             );
 
-        Core.get().getCentralModuleManager().getModule(BukkitClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.getModule(BukkitClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

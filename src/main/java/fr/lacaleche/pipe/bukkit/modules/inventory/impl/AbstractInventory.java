@@ -45,7 +45,7 @@ public abstract class AbstractInventory implements PipeInventory {
     public AbstractInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
         if (!Core.get().getCentralModuleManager().moduleEnabled(InventoryModule.class)) throw new IllegalStateException("Inventory module is not enabled !");
 
-        this.inventoryManager = Core.get().getCentralModuleManager().getModule(InventoryModule.class).getInventoryManager();
+        this.inventoryManager = Core.getModule(InventoryModule.class).getInventoryManager();
 
         this.player = player;
         this.client = Pipe.get().getClient(player.getUniqueId());
