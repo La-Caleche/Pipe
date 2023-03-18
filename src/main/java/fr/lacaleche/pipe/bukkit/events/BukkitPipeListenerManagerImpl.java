@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.events;
 
 import fr.lacaleche.core.events.GlobalListenerManager;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;

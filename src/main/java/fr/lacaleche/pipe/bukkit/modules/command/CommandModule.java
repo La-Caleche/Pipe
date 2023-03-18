@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.command;
 import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
+import fr.lacaleche.core.modules.interfaces.ICentralModuleManager;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
@@ -29,12 +30,36 @@ import java.util.List;
 @AModule(target = ModuleTarget.BUKKIT)
 public class CommandModule extends BukkitModule {
 
+    private List<Class<?>> commands = new ArrayList<>();
+
     public CommandModule(IModuleHandler handler) {
         super(handler);
-        if (handler.getModules().size() > 0) {
-            Logger.err("Currently %d modules is registered".formatted(handler.getModules().size()));
-            Pipe.get().shutdown("Please, unregister all modules before registering this one !");
+        ICentralModuleManager centralModuleManager = CalecheCore.get().getCentralModuleManager();
+        if (centralModuleManager.getModules().size() > 0) {
+            Logger.err("Currently %d modules is registered".formatted(centralModuleManager.getModules().size()));
+            Pipe.get().shutdown("Command module must be loaded first. Please disable all modules and restart the server.");
         }
+    }
+
+    @Override
+    public void onEnable() {
+        this.commands = new ArrayList<>();
+
+        this.commands.add(FlyCommand.class);
+        this.commands.add(GameModeCommand.class);
+        this.commands.add(HelpCommand.class);
+        this.commands.add(InvisibleCommand.class);
+        this.commands.add(NightVisionCommand.class);
+        this.commands.add(PipeDebugCommand.class);
+        this.commands.add(SpeedCommand.class);
+        this.commands.add(TeleportCommand.class);
+        this.commands.add(TeleportPositionCommand.class);
+    }
+
+    @Override
+    public void onDisable() {
+        this.commands.clear();
+        this.commands = null;
     }
 
     @Override
@@ -46,15 +71,7 @@ public class CommandModule extends BukkitModule {
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, FlyCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, GameModeCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, HelpCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, InvisibleCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, NightVisionCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, PipeDebugCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, SpeedCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, TeleportCommand.class);
-        Pipe.get().getCommandManager().registerNewCommand(this, TeleportPositionCommand.class);
+        this.commands.forEach(command -> Pipe.get().getCommandManager().registerNewCommand(this, command));
     }
 
     @Override

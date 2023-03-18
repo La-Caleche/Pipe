@@ -6,9 +6,9 @@ You can run your migration by using DatabaseMigration artifact and running
 `java -jar DatabaseMigration.jar migrate`
 */
 changeStaffColor {
-    UPDATE nymbis_dev.ranks SET color_code = '#e91e63' WHERE slug = 'staff';
+    UPDATE ranks SET color_code = '#e91e63' WHERE slug = 'staff';
 }
 
 createMemberRank {
-	INSERT INTO nymbis_dev.ranks (slug, color_code, created_at, updated_at) VALUES ('member', '#1abc9c', DEFAULT, DEFAULT);
+	INSERT INTO ranks (slug, color_code, created_at, updated_at) VALUES ('member', '#1abc9c', DEFAULT, DEFAULT);
 }

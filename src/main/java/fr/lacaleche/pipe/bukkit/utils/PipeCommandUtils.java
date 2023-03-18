@@ -17,6 +17,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.help.HelpTopic;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
@@ -124,17 +126,10 @@ public class PipeCommandUtils {
      * */
 
     public static boolean commandExist(JavaPlugin parent, String label) {
-        try {
-            Server server = parent.getServer();
-            final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");
-
-            bukkitCommandMap.setAccessible(true);
-            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(server);
-            return commandMap.getKnownCommands().values().stream().anyMatch(command -> command.getName().equalsIgnoreCase(label) || command.getAliases().contains(label) || command.getLabel().equalsIgnoreCase(label));
-        } catch (Exception exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-            return false;
-        }
+        if (label.matches(".+:.+"))
+            label = label.replace(label.split(":")[0] + ":", "");
+        label = "/" + label;
+        return parent.getServer().getHelpMap().getHelpTopics().stream().map(HelpTopic::getName).toList().contains(label);
     }
 
 
