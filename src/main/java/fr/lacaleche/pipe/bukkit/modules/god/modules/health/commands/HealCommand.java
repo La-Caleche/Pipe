@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.god.modules.health.commands;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.health.HealthModule;
 import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
@@ -84,14 +84,14 @@ public class HealCommand {
             public void completer(Completer completer) {
                 if (completer.index() == 1) {
                     List<EntityRegainHealthEvent.RegainReason> causes = Arrays.stream(EntityRegainHealthEvent.RegainReason.values()).toList();
-                    List<EntityRegainHealthEvent.RegainReason> blackList = CalecheCore.get().getCentralModuleManager().getModule(HealthModule.class).getBlackListRegainReason();
+                    List<EntityRegainHealthEvent.RegainReason> blackList = Core.get().getCentralModuleManager().getModule(HealthModule.class).getBlackListRegainReason();
                     completer.addAll(causes.stream().filter(cause -> !blackList.contains(cause)).map(EntityRegainHealthEvent.RegainReason::name).collect(Collectors.toList()));
                 }
             }
 
             @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.reasons.add")
             public boolean execute(Command<CommandSender> command) {
-                HealthModule module = CalecheCore.get().getCentralModuleManager().getModule(HealthModule.class);
+                HealthModule module = Core.get().getCentralModuleManager().getModule(HealthModule.class);
                 String reasonName = command.args().getString("reason");
                 EntityRegainHealthEvent.RegainReason reason = Arrays.stream(EntityRegainHealthEvent.RegainReason.values()).filter(r -> r.name().equals(reasonName)).findFirst().orElse(null);
 
@@ -120,7 +120,7 @@ public class HealCommand {
                 if (completer.index() == 1) {
                     if (completer.index() == 1) {
                         List<EntityRegainHealthEvent.RegainReason> causes = Arrays.stream(EntityRegainHealthEvent.RegainReason.values()).toList();
-                        List<EntityRegainHealthEvent.RegainReason> blackList = CalecheCore.get().getCentralModuleManager().getModule(HealthModule.class).getBlackListRegainReason();
+                        List<EntityRegainHealthEvent.RegainReason> blackList = Core.get().getCentralModuleManager().getModule(HealthModule.class).getBlackListRegainReason();
                         completer.addAll(causes.stream().filter(blackList::contains).map(EntityRegainHealthEvent.RegainReason::name).collect(Collectors.toList()));
                     }
                 }
@@ -128,7 +128,7 @@ public class HealCommand {
 
             @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.reasons.remove")
             public boolean execute(Command<CommandSender> command) {
-                HealthModule module = CalecheCore.get().getCentralModuleManager().getModule(HealthModule.class);
+                HealthModule module = Core.get().getCentralModuleManager().getModule(HealthModule.class);
                 String reasonName = command.args().getString("reason");
                 EntityRegainHealthEvent.RegainReason reason = Arrays.stream(EntityRegainHealthEvent.RegainReason.values()).filter(r -> r.name().equals(reasonName)).findFirst().orElse(null);
 

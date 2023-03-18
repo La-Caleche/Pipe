@@ -1,9 +1,8 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 
 import de.tr7zw.nbtapi.NBT;
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.bukkit.modules.hologram.HologramModule;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryManager;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryModule;
 import fr.lacaleche.pipe.bukkit.modules.inventory.events.InventoryFillEvent;
@@ -13,7 +12,6 @@ import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,7 +20,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,9 +43,9 @@ public abstract class AbstractInventory implements PipeInventory {
     private InventoryManager inventoryManager;
 
     public AbstractInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
-        if (!CalecheCore.get().getCentralModuleManager().moduleEnabled(InventoryModule.class)) throw new IllegalStateException("Inventory module is not enabled !");
+        if (!Core.get().getCentralModuleManager().moduleEnabled(InventoryModule.class)) throw new IllegalStateException("Inventory module is not enabled !");
 
-        this.inventoryManager = CalecheCore.get().getCentralModuleManager().getModule(InventoryModule.class).getInventoryManager();
+        this.inventoryManager = Core.get().getCentralModuleManager().getModule(InventoryModule.class).getInventoryManager();
 
         this.player = player;
         this.client = Pipe.get().getClient(player.getUniqueId());

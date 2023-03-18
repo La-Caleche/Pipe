@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
-import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.utils.colors.Colors;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.command.arguments.BukkitRegisteredCommandArgument;
@@ -11,7 +10,6 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
-import fr.lacaleche.pipe.common.packets.HelpPacket;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;

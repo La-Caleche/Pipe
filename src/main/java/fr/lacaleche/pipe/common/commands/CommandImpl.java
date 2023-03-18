@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.common.commands;
 
-import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;

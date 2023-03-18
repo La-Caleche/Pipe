@@ -4,12 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
-import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
@@ -17,18 +14,11 @@ import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.core.utils.serializer.annotations.Serializer;
-import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Packet(name = "ServerListPacket")
 public class ServerListPacket extends TransactionalPacket {
@@ -81,7 +71,7 @@ public class ServerListPacket extends TransactionalPacket {
     @Override
     public String write() {
         if (this.getPacketType() == PacketType.REQUEST) {
-            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
+            Core.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
 
             this.buildDefault();
 

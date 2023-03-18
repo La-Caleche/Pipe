@@ -1,9 +1,8 @@
 package fr.lacaleche.pipe.common.packets;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
-import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
@@ -69,7 +68,7 @@ public class ConnectPacket extends TransactionalPacket {
         buildDefault().build(this.player).build(this.server).build(this.getResponse());
 
         if (getPacketType() == PacketType.REQUEST) {
-            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
+            Core.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
         }
 
         if (this.getPacketType() == PacketType.ANSWER) {

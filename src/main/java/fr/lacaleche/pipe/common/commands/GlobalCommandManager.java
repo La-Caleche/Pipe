@@ -1,8 +1,6 @@
 package fr.lacaleche.pipe.common.commands;
 
-import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
@@ -26,7 +24,6 @@ import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class GlobalCommandManager implements CommandManager {
 

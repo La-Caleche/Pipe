@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.client.listeners;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.client.BukkitClientModule;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -20,7 +20,7 @@ public class PlayerLeftListener implements Listener {
         Client client = Pipe.get().getClient(player.getUniqueId());
         client.expireIn(5 * 60 * 1000);
 
-        CalecheCore.get().getCentralModuleManager().getModule(BukkitClientModule.class).getQuitCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.get().getCentralModuleManager().getModule(BukkitClientModule.class).getQuitCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

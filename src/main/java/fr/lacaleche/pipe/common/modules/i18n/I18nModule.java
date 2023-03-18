@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.common.modules.i18n;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
@@ -28,9 +28,9 @@ public class I18nModule extends Module {
 
     @Override
     public void onEnable() {
-        List<LocaleImpl> cachedLocales = CalecheCore.get().getModelManager().get(LocaleImpl.class).stream().toList();
-        List<TranslationImpl> cachedTranslations = CalecheCore.get().getModelManager().get(TranslationImpl.class).stream().toList();
-        List<TranslationKeyImpl> cachedTranslationKeys = CalecheCore.get().getModelManager().get(TranslationKeyImpl.class).stream().toList();
+        List<LocaleImpl> cachedLocales = Core.get().getModelManager().get(LocaleImpl.class).stream().toList();
+        List<TranslationImpl> cachedTranslations = Core.get().getModelManager().get(TranslationImpl.class).stream().toList();
+        List<TranslationKeyImpl> cachedTranslationKeys = Core.get().getModelManager().get(TranslationKeyImpl.class).stream().toList();
 
         Logger.customDebug("Found %d locales in cache...".formatted(cachedLocales.size()));
         Logger.customDebug("Found %d translations in cache...".formatted(cachedTranslations.size()));
@@ -50,9 +50,9 @@ public class I18nModule extends Module {
 
     @Override
     public void onDisable() {
-        List<LocaleImpl> cachedLocales = CalecheCore.get().getModelManager().get(LocaleImpl.class).stream().toList();
-        List<TranslationImpl> cachedTranslations = CalecheCore.get().getModelManager().get(TranslationImpl.class).stream().toList();
-        List<TranslationKeyImpl> cachedTranslationKeys = CalecheCore.get().getModelManager().get(TranslationKeyImpl.class).stream().toList();
+        List<LocaleImpl> cachedLocales = Core.get().getModelManager().get(LocaleImpl.class).stream().toList();
+        List<TranslationImpl> cachedTranslations = Core.get().getModelManager().get(TranslationImpl.class).stream().toList();
+        List<TranslationKeyImpl> cachedTranslationKeys = Core.get().getModelManager().get(TranslationKeyImpl.class).stream().toList();
 
         Logger.customDebug("Found %d locales in cache...".formatted(cachedLocales.size()));
         Logger.customDebug("Found %d translations in cache...".formatted(cachedTranslations.size()));
@@ -70,10 +70,10 @@ public class I18nModule extends Module {
 
     @Override
     public void onReload() {
-        List<ClientImpl> clients = CalecheCore.get().getModelManager().get(ClientImpl.class).stream().toList();
+        List<ClientImpl> clients = Core.get().getModelManager().get(ClientImpl.class).stream().toList();
         List<Locale> toKeep = new ArrayList<>(clients.stream().map(Client::getLocale).toList());
-        List<LocaleImpl> cachedLocales = CalecheCore.get().getModelManager().get(LocaleImpl.class).stream().toList();
-        List<TranslationImpl> cachedTranslations = CalecheCore.get().getModelManager().get(TranslationImpl.class).stream().toList();
+        List<LocaleImpl> cachedLocales = Core.get().getModelManager().get(LocaleImpl.class).stream().toList();
+        List<TranslationImpl> cachedTranslations = Core.get().getModelManager().get(TranslationImpl.class).stream().toList();
         List<TranslationKeyImpl> cachedTranslationKeys;
         List<Locale> toRemove = new ArrayList<>(cachedLocales);
         toRemove.removeAll(toKeep);

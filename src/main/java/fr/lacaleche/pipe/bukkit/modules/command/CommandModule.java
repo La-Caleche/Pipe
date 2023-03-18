@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.command;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.ICentralModuleManager;
@@ -12,11 +12,8 @@ import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.modules.command.commands.*;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.HelpListener;
-import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
 import fr.lacaleche.pipe.common.packets.HelpPacket;
-import fr.lacaleche.pipe.common.packets.ProxyUpPacket;
-import fr.lacaleche.pipe.common.packets.RegisterNewServerPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +31,7 @@ public class CommandModule extends BukkitModule {
 
     public CommandModule(IModuleHandler handler) {
         super(handler);
-        ICentralModuleManager centralModuleManager = CalecheCore.get().getCentralModuleManager();
+        ICentralModuleManager centralModuleManager = Core.get().getCentralModuleManager();
         if (centralModuleManager.getModules().size() > 0) {
             Logger.err("Currently %d modules is registered".formatted(centralModuleManager.getModules().size()));
             Pipe.get().shutdown("Command module must be loaded first. Please disable all modules and restart the server.");
@@ -76,8 +73,8 @@ public class CommandModule extends BukkitModule {
 
     @Override
     public void registerPackets() {
-        CalecheCore.get().getPacketManager().registerPacket(HelpPacket.class);
-        CalecheCore.get().getPacketManager().registerPacket(CheckPermissionsPacket.class);
+        Core.get().getPacketManager().registerPacket(HelpPacket.class);
+        Core.get().getPacketManager().registerPacket(CheckPermissionsPacket.class);
     }
 
 }

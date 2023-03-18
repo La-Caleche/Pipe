@@ -1,14 +1,12 @@
 package fr.lacaleche.pipe.common.i18n.builder;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.CalecheDebug;
-import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
 import fr.lacaleche.pipe.common.utils.PipeComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -110,11 +108,11 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     public Component ct() {
         String text = this.t();
         if (this.from != null) {
-            text = "%s %s".formatted(CalecheCore.get().getPrefixFormat().replace("{{from}}", this.from), text);
+            text = "%s %s".formatted(Core.get().getPrefixFormat().replace("{{from}}", this.from), text);
         }
         Component component = MiniMessage.miniMessage().deserialize(text);
 
-        if (CalecheCore.get().inDev() && CalecheCore.get().debugEnabled()) {
+        if (Core.get().inDev() && Core.get().debugEnabled()) {
             Component hoverComponent = Component.text("Key").color(TextColor.fromHexString("#a8d5ff")).append(PipeComponent.separator());
 
             Component key = Component.text("<none>");

@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.god;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModule;
@@ -10,7 +10,6 @@ import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.modules.god.impl.GodModuleManager;
 import fr.lacaleche.pipe.bukkit.modules.god.interfaces.IGodModuleManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AModule(target = ModuleTarget.BUKKIT)
@@ -42,7 +41,7 @@ public class ParentGodModule extends BukkitModule {
         Pipe.get().getCachedGodModules().addAll(this.getGodModuleManager().getGodModules().stream().map(IModule::getClass).toList());
         List<IModule> cached = this.getGodModuleManager().getGodModules();
 
-        cached.forEach(module -> CalecheCore.get().getCentralModuleManager().disableModule(module));
+        cached.forEach(module -> Core.get().getCentralModuleManager().disableModule(module));
         cached.clear();
     }
 

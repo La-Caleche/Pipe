@@ -4,18 +4,14 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ServerConnection;
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.proxy.modules.client.ProxyClientModule;
-
-import java.util.Optional;
 
 public class LoginListener {
 
@@ -32,14 +28,14 @@ public class LoginListener {
                 () -> new ClientImpl(player.getUniqueId())
             );
 
-        CalecheCore.get().getCentralModuleManager().getModule(ProxyClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.get().getCentralModuleManager().getModule(ProxyClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
         Player player = event.getPlayer();
         Client client = Pipe.get().getClient(player.getUniqueId());
-        CalecheCore.get().getCentralModuleManager().getModule(ProxyClientModule.class).getJoinServerCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Core.get().getCentralModuleManager().getModule(ProxyClientModule.class).getJoinServerCallbacks().forEach(callback -> callback.accept(event, player, client));
     }
 
 }

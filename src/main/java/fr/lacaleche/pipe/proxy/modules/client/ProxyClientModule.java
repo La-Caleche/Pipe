@@ -5,7 +5,7 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.ServerInfo;
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.models.packets.ModelSavedPacket;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
@@ -21,7 +21,6 @@ import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
 import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
 import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
-import fr.lacaleche.pipe.common.packets.ServerListPacket;
 import fr.lacaleche.pipe.proxy.ProxyPlugin;
 import fr.lacaleche.pipe.proxy.commands.ProxyCommandManager;
 import fr.lacaleche.pipe.proxy.events.ProxyPipeListenerManager;
@@ -87,7 +86,7 @@ public class ProxyClientModule extends Module {
             client.expireNow();
         }
 
-        List<RankImpl> cachedRanks = new ArrayList<RankImpl>(CalecheCore.get().getModelManager().get(RankImpl.class));
+        List<RankImpl> cachedRanks = new ArrayList<RankImpl>(Core.get().getModelManager().get(RankImpl.class));
         Logger.customDebug("Removing %s ranks from cache...".formatted(cachedRanks.size()));
         cachedRanks.forEach(RankImpl::expireNow);
 
@@ -107,8 +106,8 @@ public class ProxyClientModule extends Module {
 
     @Override
     public void registerPackets() {
-        CalecheCore.get().getPacketManager().registerPacket(CheckPermissionsPacket.class);
-        CalecheCore.get().getPacketManager().registerPacket(ModelSavedPacket.class);
+        Core.get().getPacketManager().registerPacket(CheckPermissionsPacket.class);
+        Core.get().getPacketManager().registerPacket(ModelSavedPacket.class);
     }
 
     public void loadCommandsFor(ServerConnectedEvent event, Player player, Client client) {
@@ -124,7 +123,7 @@ public class ProxyClientModule extends Module {
                 if (allowedCommand.isAllowed()) client.addAllowedCommand(allowedCommand.getCommand());
             });
         }, reject -> {});
-        CalecheCore.get().getPacketManager().publish(packet);
+        Core.get().getPacketManager().publish(packet);
 
         proxyCommandManager.getCommands().forEach((s, minecraftCommandClass) -> {
             Helper helper = new HelperImpl(client.getLocale(), s);

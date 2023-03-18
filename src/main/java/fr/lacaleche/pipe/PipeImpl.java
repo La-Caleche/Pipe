@@ -6,12 +6,11 @@ import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
-import me.neznamy.tab.api.TabAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,7 @@ public class PipeImpl implements Pipe {
 
     @Override
     public <T> T getListenerManager() {
-        return CalecheCore.get().getListenerManager();
+        return Core.get().getListenerManager();
     }
 
     @Override

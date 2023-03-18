@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.proxy.modules.command;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
@@ -27,7 +27,7 @@ public class CommandModule extends Module {
 
     @Override
     public void registerPackets() {
-        CalecheCore.get().getPacketManager().registerPacket(HelpPacket.class);
+        Core.get().getPacketManager().registerPacket(HelpPacket.class);
     }
 
 }

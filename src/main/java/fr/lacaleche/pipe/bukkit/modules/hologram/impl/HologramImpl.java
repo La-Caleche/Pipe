@@ -1,25 +1,19 @@
 package fr.lacaleche.pipe.bukkit.modules.hologram.impl;
 
-import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.core.utils.maths.Vector3;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.bukkit.modules.hologram.HologramManager;
 import fr.lacaleche.pipe.bukkit.modules.hologram.HologramModule;
 import fr.lacaleche.pipe.bukkit.modules.hologram.interfaces.Hologram;
-import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSModule;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheDisplay;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.controllers.HologramController;
 import net.kyori.adventure.text.Component;
-import net.minecraft.world.entity.Display;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Transformation;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class HologramImpl implements Hologram {
 
@@ -44,16 +38,16 @@ public class HologramImpl implements Hologram {
     }
 
     public HologramImpl(Location location, Component title, Vector3f scale, CalecheDisplay.BillboardConstraints constraints) {
-        if (!CalecheCore.get().getCentralModuleManager().moduleEnabled(HologramModule.class)) throw new IllegalStateException("Hologram module is not enabled !");
+        if (!Core.get().getCentralModuleManager().moduleEnabled(HologramModule.class)) throw new IllegalStateException("Hologram module is not enabled !");
 
-        this.hologramManager = CalecheCore.get().getCentralModuleManager().getModule(HologramModule.class).getHologramManager();
+        this.hologramManager = Core.get().getCentralModuleManager().getModule(HologramModule.class).getHologramManager();
 
         this.title = title;
         this.scale = scale;
         this.billboard = constraints;
         this.viewers = new ArrayList<>();
 
-        this.controller = CalecheCore.get().getCentralModuleManager().getModule(NMSModule.class).getNmsManager().createEntity(HologramController.class, location);
+        this.controller = Core.get().getCentralModuleManager().getModule(NMSModule.class).getNmsManager().createEntity(HologramController.class, location);
 
         this.hologramManager.registerHologram(this);
     }

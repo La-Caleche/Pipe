@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.common.packets;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
@@ -86,7 +86,7 @@ public class HelpPacket extends TransactionalPacket {
     @Override
     public String write() {
         if (this.getPacketType() == PacketType.REQUEST) {
-            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
+            Core.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
         }
 
         buildDefault().build(this.host).build(this.player).build(this.command).build(this.locale.getSlug()).build(this.getResponse());

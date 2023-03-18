@@ -3,12 +3,10 @@ package fr.lacaleche.pipe.bukkit.modules.command.listeners;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.events.interfaces.CoreListener;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
 import fr.lacaleche.core.utils.redis.packet.events.PacketReadEvent;
-import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
 import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
 import fr.lacaleche.core.utils.redis.reader.PacketReader;
 import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
@@ -30,7 +28,7 @@ public class HelpListener implements CoreListener {
 
     @PacketReader(packet = HelpPacket.class)
     public void onHelpPacket(PacketReadEvent event, HelpPacket packet) {
-        if (packet.getPacketType() == PacketType.REQUEST && packet.getHost().equals(CalecheCore.get().getHost())) {
+        if (packet.getPacketType() == PacketType.REQUEST && packet.getHost().equals(Core.get().getHost())) {
             if (Pipe.get().getCommandManager().isRegistered(packet.getCommand())) {
                 JavaPlugin plugin = Pipe.get().getPlugin();
                 Player player = plugin.getServer().getPlayer(packet.getPlayer());
@@ -42,7 +40,7 @@ public class HelpListener implements CoreListener {
                 responsePacket.setResult(TransactionResult.ACCEPT);
                 responsePacket.setResponse(GsonComponentSerializer.gson().serialize(formatted.asComponent()));
 
-                CalecheCore.get().getPacketManager().publish(responsePacket);
+                Core.get().getPacketManager().publish(responsePacket);
             }
         }
     }
@@ -72,7 +70,7 @@ public class HelpListener implements CoreListener {
                 CheckPermissionsPacket responsePacket = new CheckPermissionsPacket(packet.getPlayer(), packet.getToken());
                 responsePacket.setResult(TransactionResult.ACCEPT);
                 responsePacket.setResponse(commandsNode.toString());
-                CalecheCore.get().getPacketManager().publish(responsePacket);
+                Core.get().getPacketManager().publish(responsePacket);
             }).startAfter(10));
         }
     }

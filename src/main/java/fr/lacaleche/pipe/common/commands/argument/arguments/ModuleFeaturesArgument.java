@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.common.commands.argument.arguments;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
@@ -15,7 +15,7 @@ public class ModuleFeaturesArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        CalecheCore core = CalecheCore.get();
+        Core core = Core.get();
         IModule module = core.getCentralModuleManager().getAnyModule(completer.getArgumentManager().getArgument("module").getValue());
 
         if (module != null && module.getFeatureManager() != null) {

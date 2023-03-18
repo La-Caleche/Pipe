@@ -1,8 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.chat.commands;
 
-import fr.lacaleche.core.CalecheCore;
 import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.bukkit.modules.chat.ChatModule;
 import fr.lacaleche.pipe.bukkit.modules.chat.renderers.PipeRenderer;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;

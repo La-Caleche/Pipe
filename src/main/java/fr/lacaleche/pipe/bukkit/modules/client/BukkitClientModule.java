@@ -1,15 +1,13 @@
 package fr.lacaleche.pipe.bukkit.modules.client;
 
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.mysql.models.packets.ModelSavedPacket;
-import fr.lacaleche.core.events.GlobalListenerManager;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.ModelSavedListener;
-import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
@@ -118,7 +116,7 @@ public class BukkitClientModule extends BukkitModule {
             client.expireNow();
         }
 
-        List<RankImpl> cachedRanks = new ArrayList<RankImpl>(CalecheCore.get().getModelManager().get(RankImpl.class));
+        List<RankImpl> cachedRanks = new ArrayList<RankImpl>(Core.get().getModelManager().get(RankImpl.class));
         Logger.customDebug("Removing %s ranks from cache...".formatted(cachedRanks.size()));
         cachedRanks.forEach(RankImpl::expireNow);
 
@@ -145,7 +143,7 @@ public class BukkitClientModule extends BukkitModule {
 
     @Override
     public void registerPackets() {
-        CalecheCore.get().getPacketManager().registerPacket(ModelSavedPacket.class);
+        Core.get().getPacketManager().registerPacket(ModelSavedPacket.class);
     }
 
     public void addJoinCallback(TriConsumer<PlayerJoinEvent, Player, Client> callback) {

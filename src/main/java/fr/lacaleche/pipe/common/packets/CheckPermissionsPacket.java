@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.lacaleche.core.CalecheCore;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
-import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
@@ -22,7 +21,6 @@ import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Packet(name = "CheckPermissionsPacket")
@@ -95,7 +93,7 @@ public class CheckPermissionsPacket extends TransactionalPacket {
     @Override
     public String write() {
         if (this.getPacketType() == PacketType.REQUEST) {
-            CalecheCore.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
+            Core.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
         }
 
         buildDefault().build(this.player.toString()).build(this.getResponse());

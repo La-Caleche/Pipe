@@ -1,11 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.chat.listeners;
 
-import fr.lacaleche.core.CalecheCore;
-import fr.lacaleche.pipe.bukkit.modules.chat.ChatModule;
-import fr.lacaleche.pipe.bukkit.modules.chat.renderers.AbstractRenderer;
 import fr.lacaleche.pipe.bukkit.modules.chat.renderers.PipeRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
