@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 
 import de.tr7zw.nbtapi.NBT;
 import fr.lacaleche.core.Core;
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryManager;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryModule;
@@ -96,6 +97,11 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void showAndRefresh(int delay) {
+        Pipe.get().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
+    }
+
+    @Override
+    public void showAndRefreshWithClose(int delay) {
         this.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
         Pipe.get().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
     }
@@ -110,9 +116,10 @@ public abstract class AbstractInventory implements PipeInventory {
     public void unregister() {
         this.visible = false;
         this.inventory.clear();
-        this.inventory = null;
 
         this.inventoryManager.unregisterInventory(this);
+
+        this.inventory = null;
     }
 
     @Override

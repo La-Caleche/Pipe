@@ -31,7 +31,7 @@ public abstract class AbstractAnvilItem implements AnvilItem {
                 .text(text)
                 .title(title)
                 .itemLeft(left.getItem())
-                .onClose(player -> parent.showAndRefresh(1))
+                .onClose(player -> parent.showAndRefreshWithClose(1))
                 .plugin(Pipe.get().getPlugin());
         return this.builder;
     }

@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;

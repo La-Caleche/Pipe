@@ -16,8 +16,6 @@ public class ExplosionModule extends BukkitModule {
 
     public ExplosionModule(IModuleHandler handler) {
         super(handler);
-
-        this.registerFeatures();
     }
 
     @Override
@@ -26,8 +24,8 @@ public class ExplosionModule extends BukkitModule {
         bukkitManager.registerBukkitListener(this, new ExplosionListener(this));
     }
 
-
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("BLOCK_EXPLODE", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("ENTITY_EXPLODE", false, Boolean.class));
     }

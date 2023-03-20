@@ -16,6 +16,8 @@ import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.core.utils.serializer.annotations.Serializer;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
+import fr.lacaleche.pipe.common.utils.server.PipeServer;
+import fr.lacaleche.pipe.common.utils.server.PipeServerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,12 +56,16 @@ public class ServerListPacket extends TransactionalPacket {
         this.setResult(TransactionResult.valueOf(data.next()));
     }
 
-    private List<Server> parseJson(JsonNode jsonNode) {
-        List<Server> servers = new ArrayList();
+    private List<PipeServer> parseJson(JsonNode jsonNode) {
+        List<PipeServer> servers = new ArrayList<>();
         ArrayNode arrayNode = jsonNode.withArray("servers");
         arrayNode.forEach(elem -> {
-            Server serverInfo = new Server(elem.get("serverName").asText());
-            serverInfo.setServerIcon(elem.get("serverIcon").asText());
+            PipeServer serverInfo = new PipeServerImpl(
+                    elem.get("app").asText(),
+                    elem.get("host").asText(),
+                    elem.get("serverIcon").asText(),
+                    elem.get("maxPlayers").asInt()
+            );
             serverInfo.setOnlinePlayers(elem.get("onlinePlayers").asInt());
             serverInfo.setOnline(elem.get("online").asBoolean());
 
@@ -85,48 +91,6 @@ public class ServerListPacket extends TransactionalPacket {
         }
 
         return getBuilder().toString();
-    }
-
-    @Serializer(variables = {"serverName", "online", "onlinePlayers", "serverIcon"})
-    public static class Server {
-
-        private final String serverName;
-        private boolean online;
-        private int onlinePlayers;
-        private String serverIcon;
-
-        public Server(String serverName) {
-            this.serverName = serverName;
-        }
-
-        public String getServerName() {
-            return serverName;
-        }
-
-        public String getServerIcon() {
-            return serverIcon;
-        }
-
-        public int getOnlinePlayers() {
-            return onlinePlayers;
-        }
-
-        public boolean isOnline() {
-            return online;
-        }
-
-        public void setServerIcon(String serverIcon) {
-            this.serverIcon = serverIcon;
-        }
-
-        public void setOnlinePlayers(int onlinePlayers) {
-            this.onlinePlayers = onlinePlayers;
-        }
-
-        public void setOnline(boolean online) {
-            this.online = online;
-        }
-
     }
 
 }

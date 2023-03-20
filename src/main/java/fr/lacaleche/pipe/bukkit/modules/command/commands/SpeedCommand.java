@@ -9,6 +9,7 @@ import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.argument.arguments.IntegerArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -57,7 +58,10 @@ public class SpeedCommand {
 
             Player target = result.getPlayer();
 
-            command.sender().sendMessage(command.locale().t("pipe.command.speed.target_speed").arg("player", target.getName()).arg("fly_speed", target.getFlySpeed()).arg("walk_speed", target.getWalkSpeed()).from("Speed").ct());
+            int flySpeed = (int) (target.getFlySpeed() * 10);
+            int walkSpeed = (int) (target.getWalkSpeed() * 10);
+
+            command.sender().sendMessage(command.locale().t("pipe.command.speed.target_speed").arg("player", target.getName()).arg("fly_speed", flySpeed).arg("walk_speed", walkSpeed).from("Speed").ct());
 
             return true;
         }

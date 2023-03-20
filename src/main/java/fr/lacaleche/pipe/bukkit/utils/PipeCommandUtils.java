@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.utils;
 
+import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;

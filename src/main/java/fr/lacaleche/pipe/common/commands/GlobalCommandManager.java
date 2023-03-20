@@ -195,7 +195,7 @@ public abstract class GlobalCommandManager implements CommandManager {
 
         if (!this.validateArguments(manager)) return CommandResult.MISSING_ARGUMENT;
 
-        return CommandsUtils.invokeExecutor(method, sender, instance, new ArgumentsImpl(manager)) ? CommandResult.COMMAND_SUCESS : CommandResult.COMMAND_FAILED;
+        return CommandsUtils.invokeExecutor(method, sender, instance, new ArgumentsImpl(manager)) ? CommandResult.COMMAND_SUCCESS : CommandResult.COMMAND_FAILED;
     }
 
     /**

@@ -19,8 +19,6 @@ public class WorldModule extends BukkitModule {
 
     public WorldModule(IModuleHandler handler) {
         super(handler);
-
-        this.registerFeatures();
     }
 
     @Override
@@ -34,7 +32,8 @@ public class WorldModule extends BukkitModule {
         Pipe.get().getCommandManager().registerNewCommand(this, WorldCommand.class);
     }
 
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("DN_TIME_SKIP", true, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("DN_TIME_TYPE", DayLightType.FIXED, DayLightType.class));
         this.getFeatureManager().registerFeature(new Feature<>("DN_TIME_VALUE", 1600L, Long.class));

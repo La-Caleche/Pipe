@@ -31,6 +31,9 @@ public interface PipeInventory {
     void showAndRefresh();
 
     void showAndRefresh(int delay);
+
+    void showAndRefreshWithClose(int delay);
+
     void fill();
 
     void clear();

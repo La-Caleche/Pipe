@@ -16,8 +16,6 @@ public class WeatherModule extends BukkitModule {
 
     public WeatherModule(IModuleHandler handler) {
         super(handler);
-
-        this.registerFeatures();
     }
 
     @Override
@@ -26,7 +24,8 @@ public class WeatherModule extends BukkitModule {
         bukkitManager.registerBukkitListener(this, new WeatherListener(this));
     }
 
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("LIGHTNING_STRIKE", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("THUNDER_CHANGE", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("WEATHER_CHANGE", false, Boolean.class));

@@ -16,8 +16,6 @@ public class BlockModule extends BukkitModule {
 
     public BlockModule(IModuleHandler handler) {
         super(handler);
-
-        this.registerFeatures();
     }
 
     @Override
@@ -26,7 +24,8 @@ public class BlockModule extends BukkitModule {
         bukkitManager.registerBukkitListener(this, new BlockListener(this));
     }
 
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("FLUID_LEVEL_CHANGE", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("BLOCK_GROW", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("LEAVES_DECAY", false, Boolean.class));

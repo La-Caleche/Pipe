@@ -20,15 +20,22 @@ import java.util.List;
 @AModule(target = ModuleTarget.BUKKIT)
 public class EntityModule extends BukkitModule {
 
-    private final List<EntityDamageEvent.DamageCause> blackListDamageCauses;
+    private List<EntityDamageEvent.DamageCause> blackListDamageCauses;
 
     public EntityModule(IModuleHandler handler) {
         super(handler);
+    }
+
+    @Override
+    public void onEnable() {
         this.blackListDamageCauses = new ArrayList<>();
-
-        this.registerFeatures();
-
         Arrays.stream(EntityDamageEvent.DamageCause.values()).forEach(this::blackListDamageCause);
+    }
+
+    @Override
+    public void onDisable() {
+        this.blackListDamageCauses.clear();
+        this.blackListDamageCauses = null;
     }
 
     @Override
@@ -58,7 +65,8 @@ public class EntityModule extends BukkitModule {
         return blackListDamageCauses;
     }
 
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_DAMAGE_PLAYER", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("ENTITY_DAMAGE_PLAYER", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_DAMAGE_ENTITY", false, Boolean.class));

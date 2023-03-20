@@ -20,15 +20,22 @@ import java.util.List;
 @AModule(target = ModuleTarget.BUKKIT)
 public class HealthModule extends BukkitModule {
 
-    private final List<EntityRegainHealthEvent.RegainReason> blackListRegainReasons;
+    private List<EntityRegainHealthEvent.RegainReason> blackListRegainReasons;
 
     public HealthModule(IModuleHandler handler) {
         super(handler);
+    }
+
+    @Override
+    public void onEnable() {
         this.blackListRegainReasons = new ArrayList<>();
-
-        this.registerFeatures();
-
         Arrays.stream(EntityRegainHealthEvent.RegainReason.values()).forEach(this::blackListRegainReason);
+    }
+
+    @Override
+    public void onDisable() {
+        this.blackListRegainReasons.clear();
+        this.blackListRegainReasons = null;
     }
 
     @Override
@@ -58,7 +65,8 @@ public class HealthModule extends BukkitModule {
         return blackListRegainReasons;
     }
 
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_EAT_FOOD", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_LOOSE_FOOD", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_GAIN_FOOD", false, Boolean.class));

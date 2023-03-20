@@ -8,18 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Packet(name = "RegisterNewServerPacket")
-public class RegisterNewServerPacket extends PacketImpl {
+public class RegisterServerPacket extends PacketImpl {
 
     private String app;
     private String host;
+    private String serverIcon;
+    private int maxPlayers;
     private List<String> commands;
 
-    public RegisterNewServerPacket() {
+    public RegisterServerPacket() {
     }
 
-    public RegisterNewServerPacket(String app, String host, List<String> commands) {
+    public RegisterServerPacket(String app, String host, String serverIcon, int maxPlayers, List<String> commands) {
         this.app = app;
         this.host = host;
+        this.serverIcon = serverIcon;
+        this.maxPlayers = maxPlayers;
         this.commands = commands;
     }
 
@@ -29,10 +33,16 @@ public class RegisterNewServerPacket extends PacketImpl {
 
         this.app = data.next();
         this.host = data.next();
+        this.serverIcon = data.next();
+        this.maxPlayers = Integer.parseInt(data.next());
         int size = Integer.parseInt(data.next());
         for (int i = 0; i < size; i++) {
             this.commands.add(data.next());
         }
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
     public List<String> getCommands() {
@@ -43,13 +53,17 @@ public class RegisterNewServerPacket extends PacketImpl {
         return app;
     }
 
+    public String getServerIcon() {
+        return serverIcon;
+    }
+
     public String getHost() {
         return host;
     }
 
     @Override
     public String write() {
-        buildDefault().build(this.app).build(this.host).build(this.commands.size());
+        buildDefault().build(this.app).build(this.host).build(this.serverIcon).build(this.maxPlayers).build(this.commands.size());
         this.commands.forEach(getBuilder()::build);
         return getBuilder().toString();
     }

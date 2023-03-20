@@ -16,8 +16,6 @@ public class PortalModule extends BukkitModule {
 
     public PortalModule(IModuleHandler handler) {
         super(handler);
-
-        this.registerFeatures();
     }
 
     @Override
@@ -26,7 +24,8 @@ public class PortalModule extends BukkitModule {
         bukkitManager.registerBukkitListener(this, new PortalListener(this));
     }
 
-    private void registerFeatures() {
+    @Override
+    public void registerFeatures() {
         this.getFeatureManager().registerFeature(new Feature<>("ENTITY_PORTAL", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_PORTAL", false, Boolean.class));
     }

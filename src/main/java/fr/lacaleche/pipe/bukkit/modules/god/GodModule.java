@@ -13,11 +13,11 @@ import fr.lacaleche.pipe.bukkit.modules.god.interfaces.IGodModuleManager;
 import java.util.List;
 
 @AModule(target = ModuleTarget.BUKKIT)
-public class ParentGodModule extends BukkitModule {
+public class GodModule extends BukkitModule {
 
     private final IGodModuleManager godModuleManager;
 
-    public ParentGodModule(IModuleHandler handler) {
+    public GodModule(IModuleHandler handler) {
         super(handler);
 
         this.godModuleManager = new GodModuleManager(handler);
