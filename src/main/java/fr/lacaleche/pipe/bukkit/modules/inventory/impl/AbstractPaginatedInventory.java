@@ -18,6 +18,7 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     private int previousSlot;
     private int nextSlot;
     private int pageSlot;
+    private int maxPages;
 
     public AbstractPaginatedInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
         super(title, player, inventoryStyle, parent);
@@ -30,6 +31,8 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
         this.previousSlot = 27;
         this.nextSlot = 35;
         this.pageSlot = 4;
+
+        this.setMaxPages();
     }
 
     public AbstractPaginatedInventory(Component title, Player player, InventoryStyle inventoryStyle) {
@@ -44,21 +47,21 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
         }
 
         double max = this.height * this.width;
-        boolean needPage = max < this.totalSize;
-        int pages = (int) Math.ceil(this.totalSize / max);
-        int i = (int) Math.ceil(max * page);
+        int itemsIndex = (int) Math.ceil(max * page);
 
         for (int line = 0; line < this.height; line++) {
-            if (i == this.totalSize) break;
-            int slot = this.startAt + line * 9;
+            if (itemsIndex == this.totalSize) break;
+            int startAt = this.startAt;
+
+            int slot = startAt + line * 9;
             for (int j = slot; j < slot + this.width; j++) {
-                if (i == this.totalSize) break;
-                this.renderSlot(i, j);
-                i++;
+                if (itemsIndex == this.totalSize) break;
+                this.renderSlot(itemsIndex, j);
+                itemsIndex++;
             }
         }
 
-        this.renderPagination(needPage, pages == 0 ? pages + 1 : pages);
+        this.renderPagination(max < this.totalSize, this.maxPages);
     }
 
     @Override
@@ -88,16 +91,19 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     @Override
     public void setTotalSize(int totalSize) {
         this.totalSize = totalSize;
+        this.setMaxPages();
     }
 
     @Override
     public void setWidth(int width) {
         this.width = width;
+        this.setMaxPages();
     }
 
     @Override
     public void setHeight(int height) {
         this.height = height;
+        this.setMaxPages();
     }
 
     @Override
@@ -119,4 +125,63 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     public void setPageSlot(int slot) {
         this.pageSlot = slot;
     }
+
+    @Override
+    public int getPage() {
+        return this.page;
+    }
+
+    @Override
+    public int getTotalSize() {
+        return this.totalSize;
+    }
+
+    @Override
+    public int getWidth() {
+        return this.width;
+    }
+
+    @Override
+    public int getHeight() {
+        return this.height;
+    }
+
+    @Override
+    public int getStartAt() {
+        return this.startAt;
+    }
+
+    @Override
+    public int getPreviousSlot() {
+        return this.previousSlot;
+    }
+
+    @Override
+    public int getNextSlot() {
+        return this.nextSlot;
+    }
+
+    @Override
+    public int getPageSlot() {
+        return this.pageSlot;
+    }
+
+    @Override
+    public int getMaxPages() {
+        return maxPages;
+    }
+
+    private void setMaxPages() {
+        if (this.totalSize == 0) {
+            this.maxPages = 1;
+            return;
+        }
+
+        double max = this.height * this.width;
+        int maxPages = (int) Math.ceil(this.totalSize / max);
+
+        if (maxPages == 0) maxPages = 1;
+        this.maxPages = maxPages;
+    }
+
 }

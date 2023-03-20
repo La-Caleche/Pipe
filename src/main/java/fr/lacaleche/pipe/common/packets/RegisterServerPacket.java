@@ -14,16 +14,19 @@ public class RegisterServerPacket extends PacketImpl {
     private String host;
     private String serverIcon;
     private int maxPlayers;
+    boolean devServer;
     private List<String> commands;
+
 
     public RegisterServerPacket() {
     }
 
-    public RegisterServerPacket(String app, String host, String serverIcon, int maxPlayers, List<String> commands) {
+    public RegisterServerPacket(String app, String host, String serverIcon, int maxPlayers, boolean devServer, List<String> commands) {
         this.app = app;
         this.host = host;
         this.serverIcon = serverIcon;
         this.maxPlayers = maxPlayers;
+        this.devServer = devServer;
         this.commands = commands;
     }
 
@@ -35,6 +38,7 @@ public class RegisterServerPacket extends PacketImpl {
         this.host = data.next();
         this.serverIcon = data.next();
         this.maxPlayers = Integer.parseInt(data.next());
+        this.devServer = Boolean.parseBoolean(data.next());
         int size = Integer.parseInt(data.next());
         for (int i = 0; i < size; i++) {
             this.commands.add(data.next());
@@ -61,9 +65,13 @@ public class RegisterServerPacket extends PacketImpl {
         return host;
     }
 
+    public boolean isDevServer() {
+        return devServer;
+    }
+
     @Override
     public String write() {
-        buildDefault().build(this.app).build(this.host).build(this.serverIcon).build(this.maxPlayers).build(this.commands.size());
+        buildDefault().build(this.app).build(this.host).build(this.serverIcon).build(this.maxPlayers).build(this.devServer).build(this.commands.size());
         this.commands.forEach(getBuilder()::build);
         return getBuilder().toString();
     }

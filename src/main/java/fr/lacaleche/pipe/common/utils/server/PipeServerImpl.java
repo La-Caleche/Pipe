@@ -3,7 +3,7 @@ package fr.lacaleche.pipe.common.utils.server;
 import fr.lacaleche.core.utils.serializer.annotations.Serializer;
 import fr.lacaleche.pipe.common.packets.RegisterServerPacket;
 
-@Serializer(variables = {"app", "host", "serverIcon", "maxPlayers", "onlinePlayers", "online"})
+@Serializer(variables = {"app", "host", "serverIcon", "maxPlayers", "onlinePlayers", "online", "devServer"})
 public class PipeServerImpl implements PipeServer {
 
     private String app;
@@ -12,16 +12,18 @@ public class PipeServerImpl implements PipeServer {
     private int maxPlayers;
     private int onlinePlayers;
     private boolean online;
+    private boolean devServer;
 
     public PipeServerImpl(RegisterServerPacket packet) {
-        this(packet.getApp(), packet.getHost(), packet.getServerIcon(), packet.getMaxPlayers());
+        this(packet.getApp(), packet.getHost(), packet.getServerIcon(), packet.getMaxPlayers(), packet.isDevServer());
     }
 
-    public PipeServerImpl(String app, String host, String serverIcon, int maxPlayers) {
+    public PipeServerImpl(String app, String host, String serverIcon, int maxPlayers, boolean devServer) {
         this.app = app;
         this.host = host;
         this.serverIcon = serverIcon;
         this.maxPlayers = maxPlayers;
+        this.devServer = devServer;
 
         this.onlinePlayers = 0;
         this.online = false;
@@ -65,5 +67,10 @@ public class PipeServerImpl implements PipeServer {
     @Override
     public void setOnlinePlayers(int onlinePlayers) {
         this.onlinePlayers = onlinePlayers;
+    }
+
+    @Override
+    public boolean isDevServer() {
+        return this.devServer;
     }
 }

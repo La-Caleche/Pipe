@@ -27,6 +27,10 @@ public interface Client extends ISqlModel {
 
     boolean hasPermission(String permission);
 
+    boolean hasPermissionOrLevel(String permission, int level);
+
+    boolean hasPermissionOrLevel(Permission permission, int level);
+
     List<String> allowedCommands();
 
     void addAllowedCommand(String command);

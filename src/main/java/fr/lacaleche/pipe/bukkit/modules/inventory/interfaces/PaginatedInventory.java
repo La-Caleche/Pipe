@@ -26,4 +26,22 @@ public interface PaginatedInventory {
 
     void setPageSlot(int slot);
 
+    int getPage();
+
+    int getTotalSize();
+
+    int getWidth();
+
+    int getHeight();
+
+    int getStartAt();
+
+    int getPreviousSlot();
+
+    int getNextSlot();
+
+    int getPageSlot();
+
+    int getMaxPages();
+
 }

@@ -37,7 +37,7 @@ public class ConnectPacket extends TransactionalPacket {
         this.setToken(new Token(64));
         this.setResolve(resolve);
         this.setReject(reject);
-        this.setResponse(false);
+        this.setResponse("none");
         this.setPacketType(PacketType.REQUEST);
     }
     
@@ -50,7 +50,7 @@ public class ConnectPacket extends TransactionalPacket {
         this.server = data.next();
 
         if (this.getPacketType() == PacketType.ANSWER && data.hasNext()) {
-            this.setResponse(Boolean.valueOf(data.next()));
+            this.setResponse(data.next());
             this.setResult(TransactionResult.valueOf(data.next()));
         }
     }

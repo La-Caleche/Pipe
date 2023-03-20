@@ -10,6 +10,8 @@ public interface PipeServer {
 
     String getServerIcon();
 
+    boolean isDevServer();
+
     int getMaxPlayers();
 
     int onlinePlayers();

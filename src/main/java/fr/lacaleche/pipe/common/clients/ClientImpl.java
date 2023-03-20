@@ -98,6 +98,22 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
+    public boolean hasPermissionOrLevel(String permission, int level) {
+        if (this.rank.getPermissionLevel() >= level) {
+            return true;
+        }
+        return this.hasPermission(permission);
+    }
+
+    @Override
+    public boolean hasPermissionOrLevel(Permission permission, int level) {
+        if (this.rank.getPermissionLevel() >= level) {
+            return true;
+        }
+        return this.hasPermission(permission);
+    }
+
+    @Override
     public List<String> allowedCommands() {
         return this.allowedCommands;
     }

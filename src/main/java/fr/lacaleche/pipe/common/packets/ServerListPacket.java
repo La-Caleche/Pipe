@@ -64,7 +64,8 @@ public class ServerListPacket extends TransactionalPacket {
                     elem.get("app").asText(),
                     elem.get("host").asText(),
                     elem.get("serverIcon").asText(),
-                    elem.get("maxPlayers").asInt()
+                    elem.get("maxPlayers").asInt(),
+                    elem.get("devServer").asBoolean()
             );
             serverInfo.setOnlinePlayers(elem.get("onlinePlayers").asInt());
             serverInfo.setOnline(elem.get("online").asBoolean());
