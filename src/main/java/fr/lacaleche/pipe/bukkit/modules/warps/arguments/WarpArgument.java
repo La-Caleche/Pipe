@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.warps.arguments;
 
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.pipe.bukkit.modules.warps.warp.WarpImpl;
 import fr.lacaleche.pipe.common.commands.argument.arguments.DefaultArgument;
@@ -13,6 +14,6 @@ public class WarpArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        completer.addAll(new ModelFilter<WarpImpl>().list(WarpImpl.class, true).map(WarpImpl::getName).toList());
+        completer.addAll(Core.get().getModelManager().get(WarpImpl.class).stream().map(WarpImpl::getName).toList());
     }
 }

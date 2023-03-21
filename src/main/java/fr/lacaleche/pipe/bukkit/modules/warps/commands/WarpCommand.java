@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.warps.commands;
 
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.pipe.Pipe;
@@ -71,7 +72,7 @@ public class WarpCommand {
     public static class ListCommand {
         @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
-            List<WarpImpl> warps = new ModelFilter<WarpImpl>().list(WarpImpl.class, true).toList();
+            List<WarpImpl> warps = Core.get().getModelManager().get(WarpImpl.class).stream().toList();
             TextComponent.Builder message = Component.text();
             message.append(Component.text("Liste des warps: ", NamedTextColor.GOLD));
             message.append(Component.text(String.join(", ", warps.stream().map(WarpImpl::getName).toList()), NamedTextColor.AQUA));
