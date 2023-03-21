@@ -98,8 +98,10 @@ public class CommandListeners implements Listener {
             return;
         }
 
+        event.getCompletions().clear();
+
         int userArgumentsLength = commandImpl.getUserArguments().length;
-        String buffer = commandImpl.getUserInput().endsWith(" ") ? commandImpl.getUserInput().trim() + commandImpl : commandImpl.getUserInput();
+        String buffer = commandImpl.getUserInput().endsWith(" ") ? commandImpl.getUserInput().trim() + " " : commandImpl.getUserInput();
         if (userArgumentsLength == 0 && !buffer.endsWith(" ")) return;
 
         Completer completer = new CompleterImpl(commandImpl, event.getSender());

@@ -15,6 +15,8 @@ import fr.lacaleche.pipe.common.i18n.TranslationKeyImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
 import fr.lacaleche.pipe.common.i18n.interfaces.TranslationKey;
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
