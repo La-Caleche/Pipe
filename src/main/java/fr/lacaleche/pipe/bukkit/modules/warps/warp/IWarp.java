@@ -6,9 +6,14 @@ import org.bukkit.Location;
 @Entity("warps")
 public interface IWarp {
     String getName();
+
     void setName(String name);
+
     String getHost();
+
     void setHost(String host);
+
     Location getLocation();
+
     void setLocation(Location location);
 }
