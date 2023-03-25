@@ -40,7 +40,7 @@ public class HelpListener implements CoreListener {
                 responsePacket.setResult(TransactionResult.ACCEPT);
                 responsePacket.setResponse(GsonComponentSerializer.gson().serialize(formatted.asComponent()));
 
-                Core.get().getPacketManager().publish(responsePacket);
+                Core.get().getPacketManager().publish(responsePacket, event.from());
             }
         }
     }
@@ -70,7 +70,7 @@ public class HelpListener implements CoreListener {
                 CheckPermissionsPacket responsePacket = new CheckPermissionsPacket(packet.getPlayer(), packet.getToken());
                 responsePacket.setResult(TransactionResult.ACCEPT);
                 responsePacket.setResponse(commandsNode.toString());
-                Core.get().getPacketManager().publish(responsePacket);
+                Core.get().getPacketManager().publish(responsePacket, event.from());
             }).startAfter(10));
         }
     }
