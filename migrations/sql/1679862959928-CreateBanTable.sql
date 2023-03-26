@@ -7,7 +7,7 @@ You can run your migration by using DatabaseMigration artifact and running
 */
 
 CreateBanTable {
-create table ban
+create table bans
 (
     id         int auto_increment,
     author     varchar(255)                        not null,
