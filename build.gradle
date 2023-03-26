@@ -23,25 +23,25 @@ repositories {
 }
 
 dependencies {
-    implementation project(":library:CalecheCore")
+    compileOnly project(":library:CalecheCore")
 
-    implementation group: 'io.papermc.paper', name: 'paper-api', version: minecraftVersion
-    implementation group: 'org.spigotmc', name: 'spigot', version: minecraftVersion
+    compileOnly group: 'io.papermc.paper', name: 'paper-api', version: minecraftVersion
+    compileOnly group: 'org.spigotmc', name: 'spigot', version: minecraftVersion
 
-    implementation group: 'com.velocitypowered', name: 'velocity-api', version: velocityVersion
+    compileOnly group: 'com.velocitypowered', name: 'velocity-api', version: velocityVersion
 
-    implementation group: 'org.jooq', name: 'joor', version: joorVersion
-    implementation group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+    compileOnly group: 'org.jooq', name: 'joor', version: joorVersion
+    compileOnly group: 'org.reflections', name: 'reflections', version: reflectionsVersion
 
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
 
-    implementation group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
+    compileOnly group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
 
-    implementation group: 'de.tr7zw', name: 'item-nbt-api-plugin', version: nbtApiVersion
-    implementation group: 'net.wesjd', name: 'anvilgui', version: anvilGuiVersion
+    compileOnly group: 'de.tr7zw', name: 'item-nbt-api-plugin', version: nbtApiVersion
+    compileOnly group: 'net.wesjd', name: 'anvilgui', version: anvilGuiVersion
 
-    implementation group: 'me.neznamy', name: 'tab-api', version: tabApiVersion
+    compileOnly group: 'me.neznamy', name: 'tab-api', version: tabApiVersion
 }
 
 compileJava.options.encoding = 'UTF-8'
