@@ -24,7 +24,7 @@ public class PlayerJoinListener implements Listener {
                 ClientImpl.class,
                 c -> c.getUUID().equals(player.getUniqueId()),
                 (queryBuilder) -> queryBuilder.where(new Where("uuid", player.getUniqueId())),
-                () -> new ClientImpl(player.getUniqueId())
+                () -> new ClientImpl(player.getUniqueId(), player.getName())
             );
 
         Core.getModule(BukkitClientModule.class).getJoinCallbacks().forEach(callback -> callback.accept(event, player, client));

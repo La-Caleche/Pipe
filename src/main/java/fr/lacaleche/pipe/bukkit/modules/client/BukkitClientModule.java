@@ -81,7 +81,7 @@ public class BukkitClientModule extends BukkitModule {
                         ClientImpl.class,
                         c -> c.getUUID().equals(player.getUniqueId()),
                         (queryBuilder) -> queryBuilder.where(new Where("uuid", player.getUniqueId())),
-                        () -> new ClientImpl(player.getUniqueId())
+                        () -> new ClientImpl(player.getUniqueId(), player.getName())
                 );
         }
     }

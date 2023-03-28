@@ -10,6 +10,7 @@ import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import me.neznamy.tab.api.TabPlayer;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,10 @@ public interface Client extends ISqlModel {
     UUID getUUID();
 
     Rank getRank();
+
+    String getUsername();
+
+    void setUsername(String username);
 
     Locale getLocale();
 
@@ -38,7 +43,13 @@ public interface Client extends ISqlModel {
 
     void addAllowedCommand(String command);
 
-    IBan getLastBan();
+    BanImpl getLastBan();
+
+    boolean kick(ClientImpl author, String reason);
+
+    boolean ban(ClientImpl author, String reason, Date endAt);
+
+    boolean unban(ClientImpl author);
 
     List<BanImpl> getBans();
 

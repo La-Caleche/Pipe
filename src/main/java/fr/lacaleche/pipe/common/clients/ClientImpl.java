@@ -2,9 +2,15 @@ package fr.lacaleche.pipe.common.clients;
 
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
+import fr.lacaleche.core.logs.LogsImpl;
+import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
 import fr.lacaleche.pipe.common.clients.moderation.BanImpl;
 import fr.lacaleche.pipe.common.clients.moderation.KickImpl;
 import fr.lacaleche.pipe.common.clients.moderation.interfaces.IBan;
+import fr.lacaleche.pipe.common.clients.moderation.serializers.Ban;
+import fr.lacaleche.pipe.common.clients.moderation.serializers.Kick;
+import fr.lacaleche.pipe.common.clients.moderation.serializers.Unban;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
@@ -16,7 +22,9 @@ import fr.lacaleche.core.databases.mysql.models.annotations.BelongsTo;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -25,6 +33,8 @@ public class ClientImpl extends SqlModel implements Client {
 
     @Property
     private final String uuid;
+    @Property
+    private String username;
 
     @BelongsTo(column = "rank_id")
     private RankImpl rank;
@@ -43,14 +53,15 @@ public class ClientImpl extends SqlModel implements Client {
 
     private List<String> allowedCommands;
 
-    public ClientImpl(UUID uuid) {
+    public ClientImpl(UUID uuid, String username) {
         super();
 
         this.uuid = uuid.toString();
+        this.username = username;
         this.rank = new ModelFilter<RankImpl>().find(RankImpl.class, RankImpl::isDefault);
         this.locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, LocaleImpl::isDefault);
-        this.bans = new ArrayList<>();
-        this.kicks = new ArrayList<>();
+        this.bans = new ArrayList<BanImpl>();
+        this.kicks = new ArrayList<KickImpl>();
 
         this.insertOrSave();
         this.cache();
@@ -69,6 +80,17 @@ public class ClientImpl extends SqlModel implements Client {
     @Override
     public Rank getRank() {
         return rank;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
+        this.save();
     }
 
     @Override
@@ -129,8 +151,47 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
-    public IBan getLastBan() {
+    public BanImpl getLastBan() {
         return this.bans.stream().filter(BanImpl::isActive).findFirst().orElse(null);
+    }
+
+    @Override
+    public boolean kick(ClientImpl author, String reason) {
+        if (author == null) {
+            SentryAPIImpl.getInstance().captureException(new Exception("Client kick, author is null."));
+            return false;
+        }
+        new LogsImpl("GlobalKickCommand", CoreSerializer.get().serialize(new Kick(author.getUsername(), this.getUsername(), reason)).get());
+        this.getKicks().add(new KickImpl(author, this, reason));
+        return true;
+    }
+
+    @Override
+    public boolean ban(ClientImpl author, String reason, Date endAt) {
+        String end = (endAt == null) ? "Definitive." :  new SimpleDateFormat("dd/MM/yyyy HH:mm").format(endAt);
+
+        if (author == null) {
+            SentryAPIImpl.getInstance().captureException(new Exception("Client ban, author is null."));
+            return false;
+        }
+        new LogsImpl("GlobalBanCommand", CoreSerializer.get().serialize(new Ban(author.getUsername(), this.getUsername(), reason, end)).get());
+        this.getBans().add(new BanImpl(author, this, reason, endAt));
+        return true;
+    }
+
+    @Override
+    public boolean unban(ClientImpl author) {
+        if (author == null)
+            new LogsImpl("GlobalUnbanCommand", CoreSerializer.get().serialize(new Unban("Console", this.getUsername())).get());
+        else
+            new LogsImpl("GlobalUnbanCommand", CoreSerializer.get().serialize(new Unban(author.getUsername(), this.getUsername())).get());
+        try {
+            this.bans.stream().filter(BanImpl::isActive).findFirst().ifPresent(ban -> ban.unban(author));
+            return true;
+        } catch (Exception e) {
+            SentryAPIImpl.getInstance().captureException(e);
+            return false;
+        }
     }
 
     @Override

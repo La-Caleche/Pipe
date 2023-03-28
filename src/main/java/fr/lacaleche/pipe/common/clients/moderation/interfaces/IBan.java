@@ -23,4 +23,6 @@ public interface IBan {
 
 
     boolean isActive();
+
+    void unban(ClientImpl author);
 }

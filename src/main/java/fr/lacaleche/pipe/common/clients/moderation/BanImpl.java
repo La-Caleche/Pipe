@@ -75,4 +75,10 @@ public class BanImpl extends SqlModel implements IBan {
     public boolean isActive() {
         return this.end_at == null || this.end_at.after(new Date());
     }
+
+    @Override
+    public void unban(ClientImpl author) {
+        this.setEndAt(new Date());
+        this.save();
+    }
 }
