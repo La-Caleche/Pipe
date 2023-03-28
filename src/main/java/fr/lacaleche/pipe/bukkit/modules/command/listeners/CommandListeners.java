@@ -87,7 +87,8 @@ public class CommandListeners implements Listener {
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
         PipeDebug.eventCalled(event);
-        String message = event.getBuffer().substring(1);
+        String buffer = event.getBuffer();
+        String message = buffer.startsWith("/") ? buffer.substring(1) : buffer;
         String[] splitted = message.split(" ");
         IPair<CoreCommandImpl, CommandResult> command = parseTabCommand(event, event.getSender(), message);
         CoreCommandImpl commandImpl = command.getLeft();
@@ -101,7 +102,7 @@ public class CommandListeners implements Listener {
         event.getCompletions().clear();
 
         int userArgumentsLength = commandImpl.getUserArguments().length;
-        String buffer = commandImpl.getUserInput().endsWith(" ") ? commandImpl.getUserInput().trim() + " " : commandImpl.getUserInput();
+        buffer = commandImpl.getUserInput().endsWith(" ") ? commandImpl.getUserInput().trim() + " " : commandImpl.getUserInput();
         if (userArgumentsLength == 0 && !buffer.endsWith(" ")) return;
 
         Completer completer = new CompleterImpl(commandImpl, event.getSender());
