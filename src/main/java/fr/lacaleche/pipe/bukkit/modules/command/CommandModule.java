@@ -42,6 +42,7 @@ public class CommandModule extends BukkitModule {
     public void onEnable() {
         this.commands = new ArrayList<>();
 
+        this.commands.add(CommandBlockCommand.class);
         this.commands.add(FlyCommand.class);
         this.commands.add(GameModeCommand.class);
         this.commands.add(HelpCommand.class);

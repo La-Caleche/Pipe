@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.command.listeners;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -13,6 +14,7 @@ import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -130,8 +132,13 @@ public class CommandListeners implements Listener {
             return new Pair<>(null, result);
         }
 
+        if (label.split(":").length > 1 && manager.commandExist(label.split(":")[1])) {
+            label = label.split(":")[1];
+        }
+
         CoreCommandImpl command = manager.handleCommand(sender, label, message, arguments);
         if (command == null) result = CommandResult.NOT_LC_COMMAND;
+
         return new Pair<>(command, result);
     }
 
@@ -147,8 +154,13 @@ public class CommandListeners implements Listener {
         if (!manager.commandExist(label)) result = CommandResult.COMMAND_NOT_FOUND;
         else if (client != null && client.getRank().getPermissionLevel() < 20) result = CommandResult.MISSING_PERMISSION;
 
+        if (label.split(":").length > 1 && manager.commandExist(label.split(":")[1])) {
+            label = label.split(":")[1];
+        }
+
         CoreCommandImpl command = manager.handleCommand(sender, label, message, arguments);
         if (command == null) result = CommandResult.NOT_LC_COMMAND;
+
         return new Pair<>(command, result);
     }
 

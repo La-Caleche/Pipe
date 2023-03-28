@@ -17,7 +17,9 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.craftbukkit.v1_19_R3.help.SimpleHelpMap;
 import org.bukkit.entity.Player;
+import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PipeCommandUtils {
@@ -116,10 +119,24 @@ public class PipeCommandUtils {
 
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(server);
-            commandMap.getKnownCommands().remove("nymbis:" + command.label());
+
+            HelpMap helpMap = server.getHelpMap();
+            final Field helpTopics = helpMap.getClass().getDeclaredField("helpTopics");
+            helpTopics.setAccessible(true);
+            Map<String, HelpTopic> topics = (Map<String, HelpTopic>) helpTopics.get(helpMap);
+
+            removeCommandLabel(commandMap, topics, command.label());
+            Arrays.stream(command.aliases()).forEach(alias -> removeCommandLabel(commandMap, topics, alias));
         } catch (Exception exception) {
             SentryAPIImpl.getInstance().captureException(exception);
         }
+    }
+
+    private static void removeCommandLabel(CommandMap commandMap, Map<String, HelpTopic> topics, String label) {
+        commandMap.getKnownCommands().remove(label);
+        commandMap.getKnownCommands().remove("nymbis:" + label);
+        topics.remove("/" + label);
+        topics.remove("/nymbis:" + label);
     }
 
     /**
