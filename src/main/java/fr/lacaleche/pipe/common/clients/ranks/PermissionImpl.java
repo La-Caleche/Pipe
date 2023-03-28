@@ -10,6 +10,8 @@ public class PermissionImpl extends SqlModel implements Permission {
     private String slug;
 
     public PermissionImpl(String slug) {
+        super();
+
         this.slug = slug;
 
         this.save();

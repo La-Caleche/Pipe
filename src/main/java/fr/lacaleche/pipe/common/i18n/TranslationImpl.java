@@ -17,6 +17,8 @@ public class TranslationImpl extends SqlModel implements Translation {
     private LocaleImpl locale;
 
     public TranslationImpl(LocaleImpl locale, TranslationKeyImpl translationKey, String translation) {
+        super();
+
         this.locale = locale;
         this.translationKey = translationKey;
         this.translation = translation;

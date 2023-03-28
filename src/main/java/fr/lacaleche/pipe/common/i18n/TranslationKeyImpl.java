@@ -10,6 +10,8 @@ public class TranslationKeyImpl extends SqlModel implements TranslationKey {
     private String translationKey;
 
     public TranslationKeyImpl(String translationKey) {
+        super();
+
         this.translationKey = translationKey;
 
         this.save();

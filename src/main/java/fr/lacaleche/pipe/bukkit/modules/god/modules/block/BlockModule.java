@@ -33,6 +33,8 @@ public class BlockModule extends BukkitModule {
         this.getFeatureManager().registerFeature(new Feature<>("BLOCK_DROP_ITEM", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("BLOCK_FERTILIZE", false, Boolean.class));
         this.getFeatureManager().registerFeature(new Feature<>("PLAYER_HARVEST_BLOCK", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("ENTITY_BLOCK_CHANGE", false, Boolean.class));
+        this.getFeatureManager().registerFeature(new Feature<>("LIQUID_FLOW", false, Boolean.class));
     }
 
 }

@@ -1,10 +1,13 @@
 package fr.lacaleche.pipe.bukkit.modules.god.modules.block.listeners;
 
+import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.block.BlockModule;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 
 public class BlockListener implements Listener {
@@ -64,7 +67,19 @@ public class BlockListener implements Listener {
         this.module.getFeatureManager().<Boolean>cancelConditionnaly(event, "PLAYER_HARVEST_BLOCK", (f, value) -> !value);
     }
 
+    @EventHandler
+    public void onEntityBlockChangeEvent(EntityChangeBlockEvent event) {
+        PipeDebug.eventCalled(event);
 
+        this.module.getFeatureManager().<Boolean>cancelConditionnaly(event, "ENTITY_BLOCK_CHANGE", (f, value) -> !value);
+    }
+
+    @EventHandler
+    public void onWaterFlowEvent(BlockFromToEvent event) {
+        PipeDebug.eventCalled(event);
+
+        this.module.getFeatureManager().<Boolean>cancelConditionnaly(event, "LIQUID_FLOW", (f, value) -> !value);
+    }
 
 
 

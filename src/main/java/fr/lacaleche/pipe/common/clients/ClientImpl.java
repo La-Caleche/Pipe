@@ -43,6 +43,8 @@ public class ClientImpl extends SqlModel implements Client {
     private List<String> allowedCommands;
 
     public ClientImpl(UUID uuid) {
+        super();
+
         this.uuid = uuid.toString();
         this.rank = new ModelFilter<RankImpl>().find(RankImpl.class, RankImpl::isDefault);
         this.locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, LocaleImpl::isDefault);

@@ -4,20 +4,14 @@ import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.SqlDatabase;
 import fr.lacaleche.core.databases.mysql.SqlDatabaseImpl;
-import fr.lacaleche.core.databases.mysql.morph.builder.builders.SelectQueryBuilder;
-import fr.lacaleche.core.databases.mysql.morph.builder.sql.WhereIn;
-import fr.lacaleche.core.databases.mysql.morph.queries.SimpleQuery;
 import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.core.utils.redis.JedisFactory;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class TestSqlBuilder {
 
@@ -34,10 +28,11 @@ public class TestSqlBuilder {
         Logger.info("Slug: " + client.getLocale().getSlug() + ", id: " + client.getRank().getId());
         Logger.info(client.getRank().getSlug());
 
-        Locale locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, l -> l.getSlug().equals("en"), sqlBuilder -> sqlBuilder.where("slug", "en"));
+        Locale locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, l -> l.getSlug().equals("fr"), sqlBuilder -> sqlBuilder.where("slug", "fr"));
         Logger.info(locale.getSlug());
 
         client.setLocale(locale);
+
     }
 
     private void start() {

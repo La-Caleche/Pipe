@@ -42,6 +42,9 @@ dependencies {
     compileOnly group: 'net.wesjd', name: 'anvilgui', version: anvilGuiVersion
 
     compileOnly group: 'me.neznamy', name: 'tab-api', version: tabApiVersion
+
+    testImplementation project(":library:CalecheCore")
+    testImplementation group: "net.kyori", name: "adventure-api", version: "4.13.0"
 }
 
 compileJava.options.encoding = 'UTF-8'

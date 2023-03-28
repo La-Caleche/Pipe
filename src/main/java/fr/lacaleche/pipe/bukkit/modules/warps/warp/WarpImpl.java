@@ -27,6 +27,8 @@ public class WarpImpl extends SqlModel implements IWarp {
     private Location location;
 
     public WarpImpl(String name, Location location) {
+        super();
+
         this.name = name;
         this.host = Core.get().getHost();
         this.location = location;

@@ -42,7 +42,7 @@ public class BukkitBlobParser<T> extends AbstractBlobParser<T> {
             InputStream stream = rs.getBlob(this.toSnakeCase(columnName)).getBinaryStream();
 
             try {
-                reflect.set(f.getName(), serializer.deserialize(stream));
+                this.setValue(reflect, f.getName(), serializer.deserialize(stream));
             } catch (IOException | ClassNotFoundException exception) {
                 Logger.warn("Unable to deserialize blob " + columnName + " for " + t.getClass().getSimpleName());
             }
