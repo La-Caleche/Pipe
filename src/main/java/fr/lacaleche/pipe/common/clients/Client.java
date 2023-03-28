@@ -1,5 +1,8 @@
 package fr.lacaleche.pipe.common.clients;
 
+import fr.lacaleche.pipe.common.clients.moderation.BanImpl;
+import fr.lacaleche.pipe.common.clients.moderation.KickImpl;
+import fr.lacaleche.pipe.common.clients.moderation.interfaces.IBan;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
@@ -34,4 +37,10 @@ public interface Client extends ISqlModel {
     List<String> allowedCommands();
 
     void addAllowedCommand(String command);
+
+    IBan getLastBan();
+
+    List<BanImpl> getBans();
+
+    List<KickImpl> getKicks();
 }

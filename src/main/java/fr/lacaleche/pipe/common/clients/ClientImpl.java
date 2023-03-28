@@ -2,8 +2,9 @@ package fr.lacaleche.pipe.common.clients;
 
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
-import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.moderation.BanImpl;
+import fr.lacaleche.pipe.common.clients.moderation.KickImpl;
+import fr.lacaleche.pipe.common.clients.moderation.interfaces.IBan;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
@@ -13,17 +14,11 @@ import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.core.databases.mysql.models.annotations.BelongsTo;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
-import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilder;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ClientImpl extends SqlModel implements Client {
@@ -40,6 +35,12 @@ public class ClientImpl extends SqlModel implements Client {
     @HasMany(clazz = PermissionImpl.class, table = "client_permissions", field = "client_id", targetField = "permission_id")
     private List<PermissionImpl> permissions;
 
+    @HasMany(clazz = BanImpl.class, field = "client_id")
+    private List<BanImpl> bans;
+
+    @HasMany(clazz = KickImpl.class, field = "author_id")
+    private List<KickImpl> kicks;
+
     private List<String> allowedCommands;
 
     public ClientImpl(UUID uuid) {
@@ -48,6 +49,8 @@ public class ClientImpl extends SqlModel implements Client {
         this.uuid = uuid.toString();
         this.rank = new ModelFilter<RankImpl>().find(RankImpl.class, RankImpl::isDefault);
         this.locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, LocaleImpl::isDefault);
+        this.bans = new ArrayList<>();
+        this.kicks = new ArrayList<>();
 
         this.save();
         this.insert();
@@ -123,6 +126,21 @@ public class ClientImpl extends SqlModel implements Client {
     @Override
     public void addAllowedCommand(String command) {
         this.allowedCommands.add(command);
+    }
+
+    @Override
+    public IBan getLastBan() {
+        return this.bans.stream().filter(BanImpl::isActive).findFirst().orElse(null);
+    }
+
+    @Override
+    public List<BanImpl> getBans() {
+        return this.bans;
+    }
+
+    @Override
+    public List<KickImpl> getKicks() {
+        return this.kicks;
     }
 
     @Override
