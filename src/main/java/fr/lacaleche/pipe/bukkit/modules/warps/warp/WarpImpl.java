@@ -32,8 +32,8 @@ public class WarpImpl extends SqlModel implements IWarp {
         this.name = name;
         this.host = Core.get().getHost();
         this.location = location;
-        this.save();
-        this.insert();
+        this.insertOrSave();
+        this.cache();
     }
 
     @Override

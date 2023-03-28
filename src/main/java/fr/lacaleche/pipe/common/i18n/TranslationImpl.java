@@ -23,8 +23,8 @@ public class TranslationImpl extends SqlModel implements Translation {
         this.translationKey = translationKey;
         this.translation = translation;
 
-        this.save();
-        this.insert();
+        this.insertOrSave();
+        this.cache();
     }
 
     public TranslationImpl(String error) {

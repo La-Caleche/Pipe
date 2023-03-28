@@ -14,8 +14,8 @@ public class PermissionImpl extends SqlModel implements Permission {
 
         this.slug = slug;
 
-        this.save();
-        this.insert();
+        this.insertOrSave();
+        this.cache();
     }
 
     @Override

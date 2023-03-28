@@ -52,8 +52,8 @@ public class ClientImpl extends SqlModel implements Client {
         this.bans = new ArrayList<>();
         this.kicks = new ArrayList<>();
 
-        this.save();
-        this.insert();
+        this.insertOrSave();
+        this.cache();
     }
 
     @Override

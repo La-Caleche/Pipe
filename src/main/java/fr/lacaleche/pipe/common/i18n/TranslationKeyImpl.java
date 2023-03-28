@@ -14,8 +14,8 @@ public class TranslationKeyImpl extends SqlModel implements TranslationKey {
 
         this.translationKey = translationKey;
 
-        this.save();
-        this.insert();
+        this.insertOrSave();
+        this.cache();
     }
 
     @Override
