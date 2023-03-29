@@ -161,9 +161,15 @@ public class ClientImpl extends SqlModel implements Client {
             SentryAPIImpl.getInstance().captureException(new Exception("Client kick, author is null."));
             return false;
         }
-        new LogsImpl("GlobalKickCommand", CoreSerializer.get().serialize(new Kick(author.getUsername(), this.getUsername(), reason)).get());
-        this.getKicks().add(new KickImpl(author, this, reason));
-        return true;
+        try {
+            new LogsImpl("GlobalKickCommand", CoreSerializer.get().serialize(new Kick(author.getUsername(), this.getUsername(), reason)).get());
+            new KickImpl(author, this, reason);
+            this.refresh();
+            return true;
+        } catch (Exception e) {
+            SentryAPIImpl.getInstance().captureException(e);
+            return false;
+        }
     }
 
     @Override
@@ -174,9 +180,15 @@ public class ClientImpl extends SqlModel implements Client {
             SentryAPIImpl.getInstance().captureException(new Exception("Client ban, author is null."));
             return false;
         }
-        new LogsImpl("GlobalBanCommand", CoreSerializer.get().serialize(new Ban(author.getUsername(), this.getUsername(), reason, end)).get());
-        this.getBans().add(new BanImpl(author, this, reason, endAt));
-        return true;
+        try {
+            new LogsImpl("GlobalBanCommand", CoreSerializer.get().serialize(new Ban(author.getUsername(), this.getUsername(), reason, end)).get());
+            new BanImpl(author, this, reason, endAt);
+            this.refresh();
+            return true;
+        } catch (Exception e) {
+            SentryAPIImpl.getInstance().captureException(e);
+            return false;
+        }
     }
 
     @Override
