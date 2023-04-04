@@ -16,4 +16,6 @@ public interface IWarp {
     Location getLocation();
 
     void setLocation(Location location);
+
+    String getWorld();
 }

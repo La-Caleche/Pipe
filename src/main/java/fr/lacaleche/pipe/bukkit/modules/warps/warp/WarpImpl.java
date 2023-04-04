@@ -26,12 +26,17 @@ public class WarpImpl extends SqlModel implements IWarp {
     @BukkitBlob(serializer = LocationSerializer.class)
     private Location location;
 
+    @Property
+    private String world;
+
     public WarpImpl(String name, Location location) {
         super();
 
         this.name = name;
         this.host = Core.get().getHost();
         this.location = location;
+        this.world = location.getWorld().getName();
+
         this.insertOrSave();
         this.cache();
     }
@@ -66,7 +71,14 @@ public class WarpImpl extends SqlModel implements IWarp {
     @Override
     public void setLocation(Location location) {
         this.location = location;
+        this.world = location.getWorld().getName();
+
         this.save();
+    }
+
+    @Override
+    public String getWorld() {
+        return world;
     }
 
     public void teleport(Player player) {
