@@ -1,7 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.core.Core;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;

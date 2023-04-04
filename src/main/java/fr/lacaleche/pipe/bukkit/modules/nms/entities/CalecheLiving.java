@@ -1,5 +1,8 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.entities;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
+import fr.lacaleche.core.utils.logger.Logger;
 import net.minecraft.core.BlockPosition;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vector3f;
@@ -7,6 +10,7 @@ import net.minecraft.core.particles.ParticleParamBlock;
 import net.minecraft.core.particles.Particles;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment;
 import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.network.syncher.DataWatcherObject;
 import net.minecraft.network.syncher.DataWatcherRegistry;
@@ -22,6 +26,7 @@ import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.entity.projectile.EntityArrow;
 import net.minecraft.world.entity.vehicle.EntityMinecartAbstract;
+import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.EnumSkyBlock;
@@ -40,6 +45,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public abstract class CalecheLiving extends EntityLiving {
@@ -106,12 +112,6 @@ public abstract class CalecheLiving extends EntityLiving {
     public void a(EnumItemSlot enumitemslot, ItemStack itemstack) {
         this.setItemSlot(enumitemslot, itemstack, false);
     }
-
-    /**
-     * setItemSlot
-     * */
-    @Override
-    public void setItemSlot(EnumItemSlot enumitemslot, ItemStack itemstack, boolean silent) {}
 
     /**
      * canTakeItem f

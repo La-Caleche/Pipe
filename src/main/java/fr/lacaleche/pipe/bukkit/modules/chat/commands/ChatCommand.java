@@ -26,7 +26,8 @@ public class ChatCommand {
         String message = command.args().getString("text");
 
         PipeRenderer renderer = new PipeRenderer(command.sender());
-        Component component = renderer.render(command.sender(), Component.text("Console"), Component.text(message));
+        Component messageComponent = Pipe.get().text().deserialize(message);
+        Component component = renderer.render(command.sender(), Component.text("Console"), messageComponent);
 
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage(component));
         command.sender().sendMessage(component);

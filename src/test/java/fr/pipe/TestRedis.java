@@ -1,15 +1,10 @@
 package fr.pipe;
 
 import fr.lacaleche.core.Core;
-import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.SqlDatabase;
 import fr.lacaleche.core.databases.mysql.SqlDatabaseImpl;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.redis.JedisFactory;
-import fr.lacaleche.pipe.common.clients.Client;
-import fr.lacaleche.pipe.common.clients.ClientImpl;
-import fr.lacaleche.pipe.common.i18n.LocaleImpl;
-import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 
 import java.io.IOException;
 import java.sql.SQLException;

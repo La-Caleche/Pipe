@@ -2,7 +2,6 @@ package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 
 import de.tr7zw.nbtapi.NBT;
 import fr.lacaleche.core.Core;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryManager;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryModule;

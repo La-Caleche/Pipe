@@ -2,27 +2,33 @@ package fr.lacaleche.pipe.common.i18n.builder;
 
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.CalecheDebug;
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
 import fr.lacaleche.pipe.common.utils.PipeComponent;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TranslationBuilderImpl implements TranslationBuilder {
 
     private final Translation translation;
     private final List<TArg> arguments;
+    private final Map<String, List<?>> placeholders;
     private String from;
     private Locale locale;
 
     public TranslationBuilderImpl(Translation translation, Locale locale) {
         this.translation = translation;
         this.arguments = new ArrayList<>();
+        this.placeholders = new HashMap<>();
         this.from = null;
         this.locale = locale;
     }
@@ -89,6 +95,30 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     }
 
     @Override
+    public <R> TranslationBuilder ph(String key, R r) {
+        this.placeholders.put(key, List.of(r));
+        return this;
+    }
+
+    @Override
+    public <R, S> TranslationBuilder ph(String key, R r, S s) {
+        this.placeholders.put(key, List.of(r, s));
+        return this;
+    }
+
+    @Override
+    public <R, S, T> TranslationBuilder ph(String key, R r, S s, T t) {
+        this.placeholders.put(key, List.of(r, s, t));
+        return this;
+    }
+
+    @Override
+    public <R, S, T, U> TranslationBuilder ph(String key, R r, S s, T t, U u) {
+        this.placeholders.put(key, List.of(r, s, t, u));
+        return this;
+    }
+
+    @Override
     public TranslationBuilder from(String from) {
         this.from = from;
         return this;
@@ -98,7 +128,6 @@ public class TranslationBuilderImpl implements TranslationBuilder {
     public String t() {
         String translation = this.translation.getTranslation();
         for (TArg argument : this.arguments) {
-            // #{joined_arguments:, :<dark_green>{{argument}}</dark_green>}
             translation = translation.replace("#{" + argument.getKey() + "}", argument.getValue());
         }
         return translation;
@@ -110,7 +139,7 @@ public class TranslationBuilderImpl implements TranslationBuilder {
         if (this.from != null) {
             text = "%s %s".formatted(Core.get().getPrefixFormat().replace("{{from}}", this.from), text);
         }
-        Component component = MiniMessage.miniMessage().deserialize(text);
+        Component component = Pipe.get().text().deserialize(text, locale, this.placeholders);
 
         if (Core.get().inDev() && Core.get().debugEnabled()) {
             Component hoverComponent = Component.text("Key").color(TextColor.fromHexString("#a8d5ff")).append(PipeComponent.separator());

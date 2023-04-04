@@ -1,7 +1,5 @@
 package fr.lacaleche.pipe.bukkit.utils;
 
-import fr.lacaleche.core.modules.interfaces.IModule;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
@@ -17,16 +15,13 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.craftbukkit.v1_19_R3.help.SimpleHelpMap;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 

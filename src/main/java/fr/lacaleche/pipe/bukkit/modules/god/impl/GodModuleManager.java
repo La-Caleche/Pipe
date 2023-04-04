@@ -2,7 +2,7 @@ package fr.lacaleche.pipe.bukkit.modules.god.impl;
 
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.bukkit.modules.god.annotations.AGodModule;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.block.BlockModule;

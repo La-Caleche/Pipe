@@ -1,37 +1,19 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.entities.controllers;
 
-import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheDisplay;
-import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheLiving;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheTextDisplay;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.LivingController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.network.syncher.DataWatcher;
-import net.minecraft.network.syncher.DataWatcherObject;
-import net.minecraft.network.syncher.DataWatcherRegistry;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityPose;
-import net.minecraft.world.entity.EntitySize;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.level.World;
 import org.bukkit.Location;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.TextDisplay;
 import org.bukkit.util.Transformation;
 import org.joml.Vector3f;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class HologramController extends LivingController {
 

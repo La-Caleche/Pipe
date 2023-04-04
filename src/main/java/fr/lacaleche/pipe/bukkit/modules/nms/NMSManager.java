@@ -4,7 +4,9 @@ import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.AbstractController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
+import io.netty.channel.Channel;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
@@ -40,19 +42,38 @@ public class NMSManager {
 
     public void sendPacket(Player player, Object packet) {
         try {
+            Object connection = this.getPlayerConnection(player);
 
-            Object handler = this.getClassFinder().getHandle(player);
+            Method sendPacket = connection.getClass().getMethod("a", this.getClassFinder().protocolClass("Packet"));
+
+            sendPacket.invoke(connection, packet);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+    }
+
+    public Object getPlayerConnection(Player player) {
+        try {
+            Object handler = this.getPlayerHandle(player);
             assert handler != null;
 
             Object connection = handler.getClass().getField("b").get(handler);
             assert connection != null;
 
-            Method sendPackage =  connection.getClass().getMethod("a", this.getClassFinder().protocolClass("Packet"));
-
-            sendPackage.invoke(connection, packet);
-        } catch (NoSuchMethodException | NoSuchFieldException | InvocationTargetException | IllegalAccessException exception) {
+            return connection;
+        } catch (NoSuchFieldException | IllegalAccessException exception) {
             SentryAPIImpl.getInstance().captureException(exception);
         }
+        return null;
+    }
+
+    public Object getPlayerHandle(Player player) {
+        try {
+            return this.getClassFinder().getHandle(player);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+        return null;
     }
 
     public IStorage getStorage() {

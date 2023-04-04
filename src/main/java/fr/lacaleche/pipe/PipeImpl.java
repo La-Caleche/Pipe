@@ -1,20 +1,25 @@
 package fr.lacaleche.pipe;
 
 import fr.lacaleche.core.databases.generic.ModelFilter;
+import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.interfaces.IModule;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
+import fr.lacaleche.core.utils.logger.Logger;
+import fr.lacaleche.pipe.common.adventure.PipeText;
+import fr.lacaleche.pipe.common.adventure.PipeTextImpl;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
+import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PipeImpl implements Pipe {
 
@@ -25,13 +30,21 @@ public class PipeImpl implements Pipe {
     private List<Class<? extends IModule>> cachedGodModules;
     private TaskManager taskManager;
     private TabManager tabManager;
+
     private final List<Object> plugins;
+    private final PipeText pipeText;
+    private final Map<Module, List<TriConsumer<PlayerJoinEvent, Player, Client>>> joinCallbacks;
+    private final Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> quitCallbacks;
 
     private long serverTick;
 
     public PipeImpl() {
         this.plugins = new ArrayList<>();
+        this.pipeText = new PipeTextImpl();
         this.cachedGodModules = new ArrayList<>();
+
+        this.joinCallbacks = new HashMap<>();
+        this.quitCallbacks = new HashMap<>();
 
         this.serverTick = 0;
     }
@@ -97,12 +110,12 @@ public class PipeImpl implements Pipe {
 
     @Override
     public Client getClient(UUID uuid) {
-        return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getUUID().equals(uuid));
+        return new ModelFilter<ClientImpl>().getFromCache(ClientImpl.class, (client) -> client.getUUID().equals(uuid)).findFirst().orElse(null);
     }
 
     @Override
     public Client getClientById(int id) {
-        return new ModelFilter<ClientImpl>().find(ClientImpl.class, (client) -> client.getId() == id);
+        return new ModelFilter<ClientImpl>().getFromCache(ClientImpl.class, (client) -> client.getId() == id).findFirst().orElse(null);
     }
 
     @Override
@@ -153,6 +166,45 @@ public class PipeImpl implements Pipe {
     @Override
     public void shutdown() {
         this.shutdown("Shutdown hook manually called. Please check what's happening.");
+    }
+
+    @Override
+    public void addJoinCallback(Module module, TriConsumer<PlayerJoinEvent, Player, Client> callback) {
+        List<TriConsumer<PlayerJoinEvent, Player, Client>> moduleCallbacks = this.joinCallbacks.getOrDefault(module, new ArrayList<>());
+        moduleCallbacks.add(callback);
+        this.joinCallbacks.put(module, moduleCallbacks);
+    }
+
+    @Override
+    public void addQuitCallbacks(Module module, TriConsumer<PlayerQuitEvent, Player, Client> callback) {
+        List<TriConsumer<PlayerQuitEvent, Player, Client>> moduleCallbacks = this.quitCallbacks.getOrDefault(module, new ArrayList<>());
+        moduleCallbacks.add(callback);
+        this.quitCallbacks.put(module, moduleCallbacks);
+    }
+
+    @Override
+    public void removeJoinCallbacks(Module module) {
+        this.joinCallbacks.remove(module);
+    }
+
+    @Override
+    public void removeQuitCallbacks(Module module) {
+        this.quitCallbacks.remove(module);
+    }
+
+    @Override
+    public Map<Module, List<TriConsumer<PlayerJoinEvent, Player, Client>>> getJoinCallbacks() {
+        return joinCallbacks;
+    }
+
+    @Override
+    public Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> getQuitCallbacks() {
+        return quitCallbacks;
+    }
+
+    @Override
+    public PipeText text() {
+        return this.pipeText;
     }
 
     @Override

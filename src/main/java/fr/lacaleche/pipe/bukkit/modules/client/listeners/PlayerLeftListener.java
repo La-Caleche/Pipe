@@ -10,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.Collection;
+
 public class PlayerLeftListener implements Listener {
 
     @EventHandler
@@ -20,7 +22,9 @@ public class PlayerLeftListener implements Listener {
         Client client = Pipe.get().getClient(player.getUniqueId());
         client.expireIn(5 * 60 * 1000);
 
-        Core.getModule(BukkitClientModule.class).getQuitCallbacks().forEach(callback -> callback.accept(event, player, client));
+        Pipe.get().getQuitCallbacks().values().stream()
+                .flatMap(Collection::stream)
+                .forEach(callback -> callback.accept(event, player, client));
     }
 
 }

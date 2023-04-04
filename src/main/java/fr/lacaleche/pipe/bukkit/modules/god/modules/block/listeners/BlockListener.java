@@ -1,9 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.god.modules.block.listeners;
 
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.block.BlockModule;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;

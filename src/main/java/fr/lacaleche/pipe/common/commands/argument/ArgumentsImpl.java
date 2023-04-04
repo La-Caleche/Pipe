@@ -1,19 +1,13 @@
 package fr.lacaleche.pipe.common.commands.argument;
 
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.commands.argument.arguments.StringArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Argument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
-import org.bukkit.GameMode;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class ArgumentsImpl implements Arguments {
 

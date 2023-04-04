@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.bukkit.modules.command.listeners;
 
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -14,7 +13,6 @@ import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.impls;
 
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
@@ -13,14 +12,12 @@ import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods.*;
 
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
-import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.world.entity.Entity;
-import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;

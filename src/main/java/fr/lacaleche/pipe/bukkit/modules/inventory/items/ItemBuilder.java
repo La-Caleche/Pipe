@@ -1,7 +1,11 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory.items;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
+import fr.lacaleche.pipe.Pipe;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -12,10 +16,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class ItemBuilder {
@@ -110,7 +117,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addPage(String... page) {
-        this.bookMeta().addPages(Arrays.stream(page).map((s) -> MiniMessage.miniMessage().deserialize(s).decoration(TextDecoration.ITALIC, false)).toArray(Component[]::new));
+        this.bookMeta().addPages(Arrays.stream(page).map((s) -> Pipe.get().text().deserialize(s).decoration(TextDecoration.ITALIC, false)).toArray(Component[]::new));
         return this;
     }
 
@@ -141,11 +148,29 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder setPlayerHeadTexture(String textureValue) {
+        SkullMeta skullMeta = this.skullMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        profile.getProperties().put("textures", new Property("textures", textureValue));
+
+        try {
+            Method method = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
+            method.setAccessible(true);
+            method.invoke(skullMeta, profile);
+        } catch (Exception exception) {}
+
+        return this;
+    }
+
     public ItemMeta itemMeta() {
         return this.meta();
     }
 
     public BookMeta bookMeta() {
+        return this.meta();
+    }
+
+    public SkullMeta skullMeta() {
         return this.meta();
     }
 

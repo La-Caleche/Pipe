@@ -1,13 +1,21 @@
 package fr.lacaleche.pipe;
 
+import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
+import fr.lacaleche.pipe.common.adventure.PipeText;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import fr.lacaleche.pipe.common.tabs.interfaces.TabManager;
+import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface Pipe {
@@ -108,6 +116,41 @@ public interface Pipe {
      * TODO
      * */
     void tick();
+
+    /**
+     * TODO
+     * */
+    void addJoinCallback(Module module, TriConsumer<PlayerJoinEvent, Player, Client> callback);
+
+    /**
+     * TODO
+     * */
+    void addQuitCallbacks(Module module, TriConsumer<PlayerQuitEvent, Player, Client> callback);
+
+    /**
+     * TODO
+     * */
+    void removeJoinCallbacks(Module module);
+
+    /**
+     * TODO
+     * */
+    void removeQuitCallbacks(Module module);
+
+    /**
+     * TODO
+     * */
+    Map<Module, List<TriConsumer<PlayerJoinEvent, Player, Client>>> getJoinCallbacks();
+
+    /**
+     * TODO
+     * */
+    Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> getQuitCallbacks();
+
+    /**
+     * TODO
+     * */
+    PipeText text();
 
     static Pipe get() {
         return PipeImpl.get();

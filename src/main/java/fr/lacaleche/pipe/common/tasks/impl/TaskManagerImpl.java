@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.common.tasks.impl;
 
-import fr.lacaleche.core.utils.Logger;
 import fr.lacaleche.pipe.common.tasks.events.UpdateTickEvent;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 

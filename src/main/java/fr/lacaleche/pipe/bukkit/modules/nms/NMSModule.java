@@ -5,7 +5,7 @@ import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 
-@AModule(target = ModuleTarget.BUKKIT)
+@AModule(target = ModuleTarget.BUKKIT, disableLocked = true, locked = true, featuresLocked = true)
 public class NMSModule extends BukkitModule {
 
     private NMSManager nmsManager;

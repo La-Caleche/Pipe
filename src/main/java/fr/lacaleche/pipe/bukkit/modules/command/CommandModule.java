@@ -5,7 +5,7 @@ import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.ICentralModuleManager;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
@@ -33,7 +33,7 @@ public class CommandModule extends BukkitModule {
         super(handler);
         ICentralModuleManager centralModuleManager = Core.get().getCentralModuleManager();
         if (centralModuleManager.getModules().size() > 0) {
-            Logger.err("Currently %d modules is registered".formatted(centralModuleManager.getModules().size()));
+            Logger.err("Currently %d modules is registered", centralModuleManager.getModules().size());
             Pipe.get().shutdown("Command module must be loaded first. Please disable all modules and restart the server.");
         }
     }

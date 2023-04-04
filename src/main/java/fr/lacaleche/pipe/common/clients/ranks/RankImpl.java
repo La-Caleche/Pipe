@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.clients.ranks;
 
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
@@ -9,8 +10,11 @@ import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 public class RankImpl extends SqlModel implements Rank {
 
@@ -19,6 +23,9 @@ public class RankImpl extends SqlModel implements Rank {
 
     @Property
     private String colorCode;
+
+    @Property
+    private String formattedColor;
 
     @Property
     private boolean isDefault;
@@ -40,8 +47,13 @@ public class RankImpl extends SqlModel implements Rank {
     }
 
     @Override
+    public String getFormattedColor() {
+        return formattedColor;
+    }
+
+    @Override
     public Component colorize(String text) {
-        return MiniMessage.miniMessage().deserialize("%s%s".formatted(colorCode, text));
+        return Pipe.get().text().deserialize("%s%s".formatted(formattedColor, text));
     }
 
     @Override
@@ -71,7 +83,7 @@ public class RankImpl extends SqlModel implements Rank {
 
     @Override
     public TextColor colorAsColor() {
-        return MiniMessage.miniMessage().deserialize(colorCode).color();
+        return Pipe.get().text().deserialize(formattedColor).color();
     }
 
     @Override

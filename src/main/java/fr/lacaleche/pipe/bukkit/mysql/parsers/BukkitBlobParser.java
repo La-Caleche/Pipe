@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.bukkit.mysql.parsers;
 
-import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.core.databases.mysql.morph.builder.builders.InsertQueryBuilder;
 import fr.lacaleche.core.databases.mysql.morph.builder.builders.UpdateQueryBuilder;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Insert;
@@ -8,8 +7,7 @@ import fr.lacaleche.core.databases.mysql.morph.builder.sql.Update;
 import fr.lacaleche.core.databases.mysql.morph.interfaces.Query;
 import fr.lacaleche.core.databases.mysql.morph.parser.parsers.AbstractBlobParser;
 import fr.lacaleche.core.databases.mysql.morph.serializer.interfaces.Serializer;
-import fr.lacaleche.core.utils.Logger;
-import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.bukkit.mysql.annotations.BukkitBlob;
 import org.joor.Reflect;
 
@@ -44,7 +42,7 @@ public class BukkitBlobParser<T> extends AbstractBlobParser<T> {
             try {
                 this.setValue(reflect, f.getName(), serializer.deserialize(stream));
             } catch (IOException | ClassNotFoundException exception) {
-                Logger.warn("Unable to deserialize blob " + columnName + " for " + t.getClass().getSimpleName());
+                Logger.warn("Unable to deserialize blob %s for %s", columnName, t.getClass().getSimpleName());
             }
         }
     }

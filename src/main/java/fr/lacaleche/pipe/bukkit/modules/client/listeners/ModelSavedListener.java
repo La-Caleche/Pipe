@@ -8,9 +8,9 @@ import fr.lacaleche.core.utils.redis.packet.events.PacketReadEvent;
 import fr.lacaleche.core.utils.redis.reader.PacketReader;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.client.BukkitClientModule;
+import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
-import me.neznamy.tab.api.TabPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -32,11 +32,11 @@ public class ModelSavedListener implements CoreListener {
             Plugin plugin = Pipe.get().getPlugin();
             Player player = plugin.getServer().getPlayer(client.getUUID());
             if (player == null) return;
-            TabPlayer tabPlayer = Pipe.get().getTabManager().getTabAPI().getPlayer(client.getUUID());
-            if (tabPlayer == null) return;
 
             client.refresh();
-            clientModule.loadTab(tabPlayer, client);
+
+            TabManager tabManager = Pipe.get().getTabManager();
+            tabManager.refreshPlayer(tabManager.getTabPlayer(player.getUniqueId()));
         }
     }
 

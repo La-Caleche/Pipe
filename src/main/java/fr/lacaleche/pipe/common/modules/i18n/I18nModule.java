@@ -6,7 +6,7 @@ import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
-import fr.lacaleche.core.utils.Logger;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
@@ -15,8 +15,6 @@ import fr.lacaleche.pipe.common.i18n.TranslationKeyImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.i18n.interfaces.Translation;
 import fr.lacaleche.pipe.common.i18n.interfaces.TranslationKey;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;

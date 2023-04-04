@@ -53,6 +53,26 @@ public interface ICalecheEntity {
 
     void setGlowing(boolean glowing);
 
+    void setNoGravity(boolean noGravity);
+
+    boolean isNoGravity();
+
+    void ride(ICalecheEntity entity);
+
+    void ride(Player player);
+
+    void addAsPassenger(ICalecheEntity entity);
+
+    void addAsPassenger(Player player);
+
+    void stopRiding();
+
+    void removePassengers();
+
+    void addSpectator(Player player);
+
+    void removeSpectator(Player player);
+
     void tick();
 
 }

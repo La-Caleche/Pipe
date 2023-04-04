@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.nms.entities.controllers;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheMonster;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.LivingController;
+import fr.lacaleche.pipe.bukkit.modules.nms.impls.MobController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import net.minecraft.world.entity.*;
@@ -10,7 +11,7 @@ import net.minecraft.world.level.World;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class ZombieController extends LivingController {
+public class ZombieController extends MobController {
 
     public ZombieController(NMSManager nmsManager, Location location) {
         super(nmsManager, location);
@@ -30,7 +31,7 @@ public class ZombieController extends LivingController {
     public static class CalecheZombie extends CalecheMonster {
 
         public CalecheZombie(World world) {
-            super(EntityTypes.be, world);
+            super(EntityTypes.bp, world);
         }
 
         @Override

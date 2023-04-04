@@ -1,52 +1,22 @@
-def minecraftVersion = '1.19.4-R0.1-SNAPSHOT'
-def velocityVersion = '3.1.1'
-
-def joorVersion = '0.9.14'
-def reflectionsVersion = '0.10.2'
-
-def miniMessageVersion = '4.13.0'
-
-def jacksonVersion = '2.13.3'
-
-def nbtApiVersion = '2.11.2'
-def anvilGuiVersion = '1.6.3-SNAPSHOT'
-
-def tabApiVersion = '3.2.4'
-
-repositories {
-    maven { url = "https://jitpack.io" }
-    maven { url = "https://repo.codemc.org/repository/maven-public/" }
-    maven {
-        name = "sonatype-oss-snapshots1"
-        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-    }
-}
-
 dependencies {
     compileOnly project(":library:CalecheCore")
 
-    compileOnly group: 'io.papermc.paper', name: 'paper-api', version: minecraftVersion
-    compileOnly group: 'org.spigotmc', name: 'spigot', version: minecraftVersion
+    compileOnly rootProject.lcDependencies.paperApi
+    compileOnly rootProject.lcDependencies.spigot
 
-    compileOnly group: 'com.velocitypowered', name: 'velocity-api', version: velocityVersion
+    compileOnly rootProject.lcDependencies.velocityApi
 
-    compileOnly group: 'org.jooq', name: 'joor', version: joorVersion
-    compileOnly group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+    compileOnly rootProject.lcDependencies.joor
+    compileOnly rootProject.lcDependencies.reflections
 
-    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
-    compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+    compileOnly rootProject.lcDependencies.jacksonDatabind
+    compileOnly rootProject.lcDependencies.jacksonCore
 
-    compileOnly group: 'net.kyori', name: 'adventure-text-minimessage', version: miniMessageVersion
+    compileOnly rootProject.lcDependencies.adventureTextMiniMessage
 
-    compileOnly group: 'de.tr7zw', name: 'item-nbt-api-plugin', version: nbtApiVersion
-    compileOnly group: 'net.wesjd', name: 'anvilgui', version: anvilGuiVersion
-
-    compileOnly group: 'me.neznamy', name: 'tab-api', version: tabApiVersion
+    compileOnly rootProject.lcDependencies.nbtApi
+    compileOnly rootProject.lcDependencies.anvilGui
 
     testImplementation project(":library:CalecheCore")
-    testImplementation group: "net.kyori", name: "adventure-api", version: "4.13.0"
+    testImplementation rootProject.lcDependencies.adventureApi
 }
-
-compileJava.options.encoding = 'UTF-8'
-compileTestJava.options.encoding = 'UTF-8'
-javadoc.options.encoding = 'UTF-8'
