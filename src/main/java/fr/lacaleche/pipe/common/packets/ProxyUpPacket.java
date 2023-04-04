@@ -10,12 +10,14 @@ import java.util.List;
 @Packet(name = "ProxyUpPacket")
 public class ProxyUpPacket extends PacketImpl {
 
+    private String proxyHost;
     private List<String> servers;
 
     public ProxyUpPacket() {
     }
 
-    public ProxyUpPacket(List<String> servers) {
+    public ProxyUpPacket(String host, List<String> servers) {
+        this.proxyHost = host;
         this.servers = servers;
     }
 
@@ -23,10 +25,16 @@ public class ProxyUpPacket extends PacketImpl {
     public void read(IPacketData data) {
         this.servers = new ArrayList<>();
 
+        this.proxyHost = data.next();
+
         int size = Integer.parseInt(data.next());
         for (int i = 0; i < size; i++) {
             this.servers.add(data.next());
         }
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
     }
 
     public List<String> getServers() {
@@ -35,7 +43,7 @@ public class ProxyUpPacket extends PacketImpl {
 
     @Override
     public String write() {
-        buildDefault().build(this.servers.size());
+        buildDefault().build(this.proxyHost).build(this.servers.size());
         this.servers.forEach(getBuilder()::build);
         return getBuilder().toString();
     }
