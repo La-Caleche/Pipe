@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.modules.warps.commands;
 
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
+import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.warps.arguments.WarpArgument;
@@ -33,9 +34,7 @@ public class WarpCommand {
     @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
     public boolean execute(Command<Player> command) {
         Client client = Pipe.get().getClient(command.sender().getUniqueId());
-        WarpImpl warp = new ModelFilter<WarpImpl>().find(WarpImpl.class, w -> {
-            return w.getName().equals(command.args().getString("name"));
-        });
+        WarpImpl warp = new ModelFilter<WarpImpl>().find(WarpImpl.class, w -> w.getName().equals(command.args().getString("name")), sqlBuilder -> sqlBuilder.where(new Where("name", command.args().getString("name"))));
         if (warp == null) {
             command.sender().sendMessage(client.getLocale().t("pipe.command.warps.notfound").arg("name", command.args().getString("name")).ct());
             return true;
@@ -55,9 +54,7 @@ public class WarpCommand {
         @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.get().getClient(command.sender().getUniqueId());
-            WarpImpl warp = new ModelFilter<WarpImpl>().find(WarpImpl.class, w -> {
-                return w.getName().equals(command.args().getString("name"));
-            });
+            WarpImpl warp = new ModelFilter<WarpImpl>().find(WarpImpl.class, w -> w.getName().equals(command.args().getString("name")), sqlBuilder -> sqlBuilder.where(new Where("name", command.args().getString("name"))));
             if (warp == null) {
                 command.sender().sendMessage(client.getLocale().t("pipe.command.warps.notfound").arg("name", command.args().getString("name")).ct());
                 return true;
