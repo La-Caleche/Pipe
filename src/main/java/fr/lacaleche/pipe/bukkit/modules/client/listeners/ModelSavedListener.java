@@ -25,9 +25,9 @@ public class ModelSavedListener implements CoreListener {
     @PacketReader(packet = ModelSavedPacket.class)
     public void onModelUpdated(PacketReadEvent event, ModelSavedPacket packet) {
         if (Pipe.get().getTabManager() != null && packet.getResourceClass().equals(ClientImpl.class.getName())) {
-            Client client = new ModelFilter<ClientImpl>().find(ClientImpl.class,
-                    (model) -> model.getId() == packet.getResourceId(),
-                    (sqlBuilder) -> sqlBuilder.where(new Where("id", packet.getResourceId())));
+            Client client = new ModelFilter<ClientImpl>().model(ClientImpl.class)
+                    .cache((model) -> model.getId() == packet.getResourceId())
+                    .sql((sql) -> sql.where(new Where("id", packet.getResourceId()))).getOne();
 
             Plugin plugin = Pipe.get().getPlugin();
             Player player = plugin.getServer().getPlayer(client.getUUID());

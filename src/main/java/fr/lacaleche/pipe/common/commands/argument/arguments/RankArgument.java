@@ -15,6 +15,6 @@ public class RankArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        completer.addAll(new ModelFilter<RankImpl>().list(RankImpl.class, null, true).map(RankImpl::getSlug).collect(Collectors.toList()));
+        completer.addAll(new ModelFilter<RankImpl>().model(RankImpl.class).getAll().map(RankImpl::getSlug).collect(Collectors.toList()));
     }
 }

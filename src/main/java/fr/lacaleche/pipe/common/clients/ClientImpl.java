@@ -58,8 +58,8 @@ public class ClientImpl extends SqlModel implements Client {
 
         this.uuid = uuid.toString();
         this.username = username;
-        this.rank = new ModelFilter<RankImpl>().find(RankImpl.class, RankImpl::isDefault);
-        this.locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, LocaleImpl::isDefault);
+        this.rank = new ModelFilter<RankImpl>().model(RankImpl.class).cache(RankImpl::isDefault).getOne();
+        this.locale = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).cache(LocaleImpl::isDefault).getOne();
         this.bans = new ArrayList<BanImpl>();
         this.kicks = new ArrayList<KickImpl>();
 
@@ -120,7 +120,7 @@ public class ClientImpl extends SqlModel implements Client {
 
     @Override
     public boolean hasPermission(String slug) {
-        Permission permission = new ModelFilter<PermissionImpl>().find(PermissionImpl.class, perm -> perm.getSlug().equals(slug), (sqlBuilder) -> sqlBuilder.where(new Where("slug", slug)));
+        Permission permission = new ModelFilter<PermissionImpl>().model(PermissionImpl.class).cache(perm -> perm.getSlug().equals(slug)).sql((sqlBuilder) -> sqlBuilder.where(new Where("slug", slug))).getOne();
         return this.hasPermission(permission);
     }
 

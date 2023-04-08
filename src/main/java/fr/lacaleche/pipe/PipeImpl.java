@@ -105,17 +105,17 @@ public class PipeImpl implements Pipe {
 
     @Override
     public Locale getDefaultLocale() {
-        return new ModelFilter<LocaleImpl>().find(LocaleImpl.class, LocaleImpl::isDefault);
+        return new ModelFilter<LocaleImpl>().model(LocaleImpl.class).cache(LocaleImpl::isDefault).getOne();
     }
 
     @Override
     public Client getClient(UUID uuid) {
-        return new ModelFilter<ClientImpl>().getFromCache(ClientImpl.class, (client) -> client.getUUID().equals(uuid)).findFirst().orElse(null);
+        return new ModelFilter<ClientImpl>().model(ClientImpl.class).cache((client) -> client.getUUID().equals(uuid)).getOne();
     }
 
     @Override
     public Client getClientById(int id) {
-        return new ModelFilter<ClientImpl>().getFromCache(ClientImpl.class, (client) -> client.getId() == id).findFirst().orElse(null);
+        return new ModelFilter<ClientImpl>().model(ClientImpl.class).cache((client) -> client.getId() == id).getOne();
     }
 
     @Override

@@ -23,9 +23,9 @@ public class WarpsModule extends BukkitModule {
 
     @Override
     public void onEnable() {
-        new ModelFilter<WarpImpl>().list(WarpImpl.class, null, sqlBuilder -> {
-            sqlBuilder.where(new Where("host", Core.get().getHost()));
-        }, true);
+        new ModelFilter<WarpImpl>().model(WarpImpl.class).sql(sql -> {
+            sql.where(new Where("host", Core.get().getHost()));
+        }).getOne();
     }
 
     @Override

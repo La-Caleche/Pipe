@@ -28,6 +28,12 @@ public class I18nModule extends Module {
 
     @Override
     public void onEnable() {
+        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).getAll().toList();
+        Logger.customDebug("%d translation keys cached from database...", keys.size());
+    }
+
+    @Override
+    public void onDisable() {
         List<LocaleImpl> cachedLocales = Core.get().getModelManager().get(LocaleImpl.class).stream().toList();
         List<TranslationImpl> cachedTranslations = Core.get().getModelManager().get(TranslationImpl.class).stream().toList();
         List<TranslationKeyImpl> cachedTranslationKeys = Core.get().getModelManager().get(TranslationKeyImpl.class).stream().toList();
@@ -42,14 +48,12 @@ public class I18nModule extends Module {
         Logger.customDebug("Expiring %d translation keys...".formatted(cachedTranslationKeys.size()));
         cachedTranslationKeys.forEach(TranslationKey::expireNow);
 
-        this.loadDefaults();
-
-        Logger.customDebug("Refreshing %d locales...".formatted(cachedLocales.size()));
-        cachedLocales.forEach(Locale::refresh);
+        Logger.customDebug("Expiring %d locales...".formatted(cachedLocales.size()));
+        cachedLocales.forEach(Locale::expireNow);
     }
 
     @Override
-    public void onDisable() {
+    public void onReload() {
         List<LocaleImpl> cachedLocales = Core.get().getModelManager().get(LocaleImpl.class).stream().toList();
         List<TranslationImpl> cachedTranslations = Core.get().getModelManager().get(TranslationImpl.class).stream().toList();
         List<TranslationKeyImpl> cachedTranslationKeys = Core.get().getModelManager().get(TranslationKeyImpl.class).stream().toList();
@@ -58,47 +62,17 @@ public class I18nModule extends Module {
         Logger.customDebug("Found %d translations in cache...".formatted(cachedTranslations.size()));
         Logger.customDebug("Found %d translation keys in cache...".formatted(cachedTranslationKeys.size()));
 
-        Logger.customDebug("Removing %d translations from cache...".formatted(cachedTranslations.size()));
+        Logger.customDebug("Expiring %d translations...".formatted(cachedTranslations.size()));
         cachedTranslations.forEach(Translation::expireNow);
 
-        Logger.customDebug("Removing %d translation keys from cache...".formatted(cachedTranslationKeys.size()));
+        Logger.customDebug("Expiring %d translation keys...".formatted(cachedTranslationKeys.size()));
         cachedTranslationKeys.forEach(TranslationKey::expireNow);
 
-        Logger.customDebug("Removing %d locales from cache...".formatted(cachedLocales.size()));
-        cachedLocales.forEach(Locale::expireNow);
-    }
+        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).getAll().toList();
+        Logger.customDebug("%d translation keys cached from database...", keys.size());
 
-    @Override
-    public void onReload() {
-        List<ClientImpl> clients = Core.get().getModelManager().get(ClientImpl.class).stream().toList();
-        List<Locale> toKeep = new ArrayList<>(clients.stream().map(Client::getLocale).toList());
-        List<LocaleImpl> cachedLocales = Core.get().getModelManager().get(LocaleImpl.class).stream().toList();
-        List<TranslationImpl> cachedTranslations = Core.get().getModelManager().get(TranslationImpl.class).stream().toList();
-        List<TranslationKeyImpl> cachedTranslationKeys;
-        List<Locale> toRemove = new ArrayList<>(cachedLocales);
-        toRemove.removeAll(toKeep);
-
-        cachedTranslations = cachedTranslations.stream().filter(translation -> !toRemove.contains(translation.getLocale())).toList();
-        cachedTranslationKeys = cachedTranslations.stream().map(Translation::getKey).toList();
-
-        Logger.customDebug("Removing %d translations from cache...".formatted(cachedTranslations.size()));
-        cachedTranslations.forEach(Translation::expireNow);
-
-        Logger.customDebug("Removing %d translation keys from cache...".formatted(cachedTranslationKeys.size()));
-        cachedTranslationKeys.forEach(TranslationKey::expireNow);
-
-        Logger.customDebug("Removing %d locales from cache...".formatted(toRemove.size()));
-        toRemove.forEach(Locale::expireNow);
-
-        Logger.customDebug("Refreshing %d locales...".formatted(toKeep.size()));
-        toKeep.forEach(Locale::refresh);
-
-        this.loadDefaults();
-    }
-
-    private void loadDefaults() {
-        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().list(TranslationKeyImpl.class, true).toList();
-        Logger.customDebug("Found %d translation keys in database...".formatted(keys.size()));
+        Logger.customDebug("Refreshing %d locales...".formatted(cachedLocales.size()));
+        cachedLocales.forEach(Locale::refresh);
     }
 
 }

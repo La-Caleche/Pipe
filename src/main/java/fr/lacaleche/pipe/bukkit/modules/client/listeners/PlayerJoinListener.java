@@ -23,12 +23,10 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         Client client = new ModelFilter<ClientImpl>()
-            .findOrDefault(
-                ClientImpl.class,
-                c -> c.getUUID().equals(player.getUniqueId()),
-                (queryBuilder) -> queryBuilder.where(new Where("uuid", player.getUniqueId())),
-                () -> new ClientImpl(player.getUniqueId(), player.getName())
-            );
+                .model(ClientImpl.class)
+                .cache(c -> c.getUUID().equals(player.getUniqueId()))
+                .sql((sql) -> sql.where(new Where("uuid", player.getUniqueId())))
+                .def(() -> new ClientImpl(player.getUniqueId(), player.getName())).getOne();
 
         Pipe.get().getJoinCallbacks().values().stream()
                 .flatMap(Collection::stream)

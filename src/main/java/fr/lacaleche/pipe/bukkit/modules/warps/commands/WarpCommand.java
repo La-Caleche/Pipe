@@ -34,7 +34,9 @@ public class WarpCommand {
     @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
     public boolean execute(Command<Player> command) {
         Client client = Pipe.get().getClient(command.sender().getUniqueId());
-        WarpImpl warp = new ModelFilter<WarpImpl>().find(WarpImpl.class, w -> w.getName().equalsIgnoreCase(command.args().getString("name")), sqlBuilder -> sqlBuilder.where(new Where("name", command.args().getString("name"))));
+        WarpImpl warp = new ModelFilter<WarpImpl>().model(WarpImpl.class)
+                .cache(w -> w.getName().equalsIgnoreCase(command.args().getString("name")))
+                .sql(sqlBuilder -> sqlBuilder.where(new Where("name", command.args().getString("name")))).getOne();
         if (warp == null) {
             command.sender().sendMessage(client.getLocale().t("pipe.command.warps.notfound").arg("name", command.args().getString("name")).ct());
             return true;
@@ -54,13 +56,15 @@ public class WarpCommand {
         @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.get().getClient(command.sender().getUniqueId());
-            WarpImpl warp = new ModelFilter<WarpImpl>().find(WarpImpl.class, w -> w.getName().equalsIgnoreCase(command.args().getString("name")), sqlBuilder -> sqlBuilder.where(new Where("name", command.args().getString("name"))));
+            WarpImpl warp = new ModelFilter<WarpImpl>().model(WarpImpl.class)
+                    .cache(w -> w.getName().equalsIgnoreCase(command.args().getString("name")))
+                    .sql(sql -> sql.where(new Where("name", command.args().getString("name")))).getOne();
             if (warp == null) {
                 command.sender().sendMessage(client.getLocale().t("pipe.command.warps.notfound").arg("name", command.args().getString("name")).ct());
                 return true;
             }
 
-//            warp.delete();
+            warp.delete();
             return true;
         }
     }

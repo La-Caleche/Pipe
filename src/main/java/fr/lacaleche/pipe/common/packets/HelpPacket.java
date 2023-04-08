@@ -59,7 +59,7 @@ public class HelpPacket extends TransactionalPacket {
         this.player = UUID.fromString(data.next());
         this.command = data.next();
         String localeSlug = data.next();
-        this.locale = new ModelFilter<LocaleImpl>().find(LocaleImpl.class, model -> model.getSlug().equals(localeSlug));
+        this.locale = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).cache(model -> model.getSlug().equals(localeSlug)).getOne();
         this.setResponse(data.next());
 
         if (this.getPacketType() == PacketType.ANSWER && data.hasNext()) {

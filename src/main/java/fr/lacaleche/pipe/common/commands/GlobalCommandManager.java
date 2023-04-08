@@ -168,11 +168,9 @@ public abstract class GlobalCommandManager implements CommandManager {
         else if (commandExecutor.strictPermLevel() > 0 && client.getRank().getPermissionLevel() == commandExecutor.strictPermLevel())
             check = true;
 
-        if (commandExecutor.permissions().length > 0) {
-            for (String permName : commandExecutor.permissions()) {
-                Permission permission = new ModelFilter<PermissionImpl>().find(PermissionImpl.class, perm -> perm.getSlug().equalsIgnoreCase(permName), sql -> sql.where(new Where("slug", permName)));
-                if (client.hasPermission(permission)) check = true;
-            }
+        for (String permName : commandExecutor.permissions()) {
+            Permission permission = new ModelFilter<PermissionImpl>().model(PermissionImpl.class).cache(perm -> perm.getSlug().equalsIgnoreCase(permName)).sql(sql -> sql.where(new Where("slug", permName))).getOne();
+            if (client.hasPermission(permission)) check = true;
         }
 
         return check;
