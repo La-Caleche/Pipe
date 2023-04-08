@@ -20,11 +20,12 @@ public class PlayerLeftListener implements Listener {
         Player player = event.getPlayer();
 
         Client client = Pipe.get().getClient(player.getUniqueId());
-        client.expireIn(5 * 60 * 1000);
 
         Pipe.get().getQuitCallbacks().values().stream()
                 .flatMap(Collection::stream)
                 .forEach(callback -> callback.accept(event, player, client));
+
+        client.expireIn(10 * 1000);
     }
 
 }

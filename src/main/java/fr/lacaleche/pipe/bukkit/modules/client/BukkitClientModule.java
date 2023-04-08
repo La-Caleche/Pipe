@@ -64,19 +64,6 @@ public class BukkitClientModule extends BukkitModule {
                 onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_quit").arg("player", player.getName()).ph("player", player).ct());
             });
         });
-
-        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
-        if (players.size() == 0) return;
-
-        Logger.customDebug("Loading clients for %d players...", players.size());
-
-        for (Player player : players) {
-            new ModelFilter<ClientImpl>()
-                    .model(ClientImpl.class)
-                    .cache(c -> c.getUUID().equals(player.getUniqueId()))
-                    .sql((sql) -> sql.where(new Where("uuid", player.getUniqueId())))
-                    .def(() -> new ClientImpl(player.getUniqueId(), player.getName())).getOne();
-        }
     }
 
     @Override
@@ -112,6 +99,16 @@ public class BukkitClientModule extends BukkitModule {
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
+
+        Logger.customDebug("Loading clients for %d players...", players.size());
+
+        for (Player player : players) {
+            new ModelFilter<ClientImpl>()
+                    .model(ClientImpl.class)
+                    .cache(c -> c.getUUID().equals(player.getUniqueId()))
+                    .sql((sql) -> sql.where(new Where("uuid", player.getUniqueId())))
+                    .def(() -> new ClientImpl(player.getUniqueId(), player.getName())).getOne();
+        }
 
         Logger.customDebug("Calling join callbacks for %d players...", players.size());
 
