@@ -6,6 +6,8 @@ import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.warps.arguments.WarpArgument;
+import fr.lacaleche.pipe.bukkit.modules.warps.events.WarpCreatedEvent;
+import fr.lacaleche.pipe.bukkit.modules.warps.events.WarpDeletedEvent;
 import fr.lacaleche.pipe.bukkit.modules.warps.warp.WarpImpl;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
@@ -64,7 +66,9 @@ public class WarpCommand {
                 return true;
             }
 
+            new WarpDeletedEvent(warp).call();
             warp.delete();
+            command.sender().sendMessage(client.getLocale().t("pipe.command.warps.delete").arg("name", command.args().getString("name")).ct());
             return true;
         }
     }
@@ -83,7 +87,7 @@ public class WarpCommand {
     }
 
     @CommandChild(label = "create", arguments = {"name"}, description = "pipe.command.warps.test.description")
-    public static class TestCommand {
+    public static class CreateCommand {
         @ArgumentsManager
         public void manager(ArgumentManager manager) {
             manager.addArgument(new StringArgument("name"));
@@ -95,6 +99,7 @@ public class WarpCommand {
             Location location = command.sender().getLocation();
 
             WarpImpl warp = new WarpImpl(command.args().getString("name"), location);
+            new WarpCreatedEvent(warp).call();
             command.sender().sendMessage(client.getLocale().t("pipe.command.warps.create").arg("name", command.args().getString("name")).ct());
             return true;
         }
