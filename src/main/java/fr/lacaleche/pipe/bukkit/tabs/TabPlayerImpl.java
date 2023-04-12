@@ -6,6 +6,8 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces.TabListPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.tablist.TabListPlayerImpl;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.TabScoreboard;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.interfaces.Scoreboard;
 import fr.lacaleche.pipe.common.clients.Client;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -16,12 +18,14 @@ public class TabPlayerImpl implements TabPlayer {
 
     private final Player player;
     private final TabListPlayer tabListPlayer;
+    private Scoreboard scoreboard;
 
     private final List<IPair<Integer, Component>> lines;
 
     public TabPlayerImpl(Player player) {
         this.player = player;
         this.tabListPlayer = new TabListPlayerImpl(Pipe.get().getTabManager(), this);
+        this.scoreboard = new TabScoreboard(Pipe.get().getTabManager(), this);
 
         this.lines = new ArrayList<>();
     }
@@ -74,6 +78,11 @@ public class TabPlayerImpl implements TabPlayer {
     @Override
     public void clearLines() {
         this.lines.clear();
+    }
+
+    @Override
+    public Scoreboard getScoreboard() {
+        return scoreboard;
     }
 
     @Override

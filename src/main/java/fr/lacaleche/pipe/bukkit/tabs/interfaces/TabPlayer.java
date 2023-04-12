@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.tabs.interfaces;
 
 import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces.TabListPlayer;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.interfaces.Scoreboard;
 import fr.lacaleche.pipe.common.clients.Client;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -18,6 +19,8 @@ public interface TabPlayer {
 
     TabListPlayer getTabList();
 
+    Scoreboard getScoreboard();
+
     UUID getUniqueId();
 
     String getName();
@@ -26,12 +29,12 @@ public interface TabPlayer {
 
     List<IPair<Integer, Component>> getLines();
 
+    Map<String, List<?>> getPlaceHolders();
+
     void addLine(int line, Component component);
 
     void removeLine(int line);
 
     void clearLines();
-
-    Map<String, List<?>> getPlaceHolders();
 
 }

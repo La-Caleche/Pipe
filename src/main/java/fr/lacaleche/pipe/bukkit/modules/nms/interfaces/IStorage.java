@@ -1,10 +1,10 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.interfaces;
 
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageClass;
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageConstructor;
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageFields;
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageMethods;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -12,43 +12,43 @@ import java.lang.reflect.Method;
 
 public interface IStorage {
 
-    Class<?> clazz(StorageClass storageClass);
+    Class<?> clazz(IStorageClass storageClass);
 
-    Constructor<?> constructor(StorageConstructor storageConstructor);
+    Constructor<?> constructor(IStorageConstructor storageConstructor);
 
-    Method method(StorageMethods storageMethod);
+    Method method(IStorageMethods storageMethod);
 
-    Field field(StorageFields storageField);
+    Field field(IStorageFields storageField);
 
-    void registerClass(StorageClass storageClass, Class<?> clazz);
+    void registerClass(IStorageClass storageClass, Class<?> clazz);
 
-    void registerConstructor(StorageConstructor storageConstructor, Constructor<?> constructor);
+    void registerConstructor(IStorageConstructor storageConstructor, Constructor<?> constructor);
 
-    void registerMethod(StorageMethods storageMethod, Method method);
+    void registerMethod(IStorageMethods storageMethod, Method method);
 
-    void registerField(StorageFields storageField, Field field);
+    void registerField(IStorageFields storageField, Field field);
 
     NMSManager getNmsManager();
 
-    <T> T invoke(StorageMethods storageMethod, Object instance, Object... args);
+    <T> T invoke(IStorageMethods storageMethod, Object instance, Object... args);
 
-    <T> T construct(StorageConstructor storageConstructor, Object... args);
+    <T> T construct(IStorageConstructor storageConstructor, Object... args);
 
-    <T> T cast(StorageClass storageClass, Object instance);
+    <T> T cast(IStorageClass storageClass, Object instance);
 
     <T> T handle(Object objet);
 
-    <T> T get(StorageFields storageField, Object instance);
+    <T> T get(IStorageFields storageField, Object instance);
 
-    <T> T get(StorageFields storageField, Class<?> clazz);
+    <T> T get(IStorageFields storageField, Class<?> clazz);
 
-    void set(StorageFields storageFields, Object instance, Object value);
+    void set(IStorageFields storageFields, Object instance, Object value);
 
-    <T> Constructor<T> getConstructor(StorageClass storageClass, Class<?>... args);
+    <T> Constructor<T> getConstructor(IStorageClass storageClass, Class<?>... args);
 
-    <T> Method getMethod(StorageClass storageClass, String name, Class<?>... args);
+    <T> Method getMethod(IStorageClass storageClass, String name, Class<?>... args);
 
-    <T> Field getField(StorageClass storageClass, String name);
+    <T> Field getField(IStorageClass storageClass, String name);
 
     <T> Field getField(Class<?> clazz, String name);
 

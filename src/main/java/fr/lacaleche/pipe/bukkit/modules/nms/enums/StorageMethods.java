@@ -1,6 +1,8 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.enums;
 
-public enum StorageMethods {
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageMethods;
+
+public enum StorageMethods implements IStorageMethods {
 
     GET_DATA_WATCHER,
     PACK_DIRTY,
@@ -21,7 +23,6 @@ public enum StorageMethods {
     SET_CUSTOM_NAME,
     SET_CUSTOM_NAME_VISIBLE,
     SET_ITEM_SLOT,
-    PCB_PLAYER_INFO_DATA$GET_PROFILE,
     ADVENTURE_COMPONENT$GET_COMPONENT,
 
 

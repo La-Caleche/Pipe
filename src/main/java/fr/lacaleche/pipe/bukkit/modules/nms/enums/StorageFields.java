@@ -1,16 +1,11 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.enums;
 
-public enum StorageFields {
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageFields;
+
+public enum StorageFields implements IStorageFields {
 
     MDP_ITEMS_BY_ID,
     PLAYER_CONNECTION$NETWORK_MANAGER,
-    PCB_PLAYER_INFO_UPDATE$ACTIONS,
-    PCB_PLAYER_INFO_UPDATE$PLAYERS,
-    PCB_PLAYER_INFO_DATA$DISPLAY_NAME,
-    PCB_PLAYER_INFO_DATA$LATENCY,
-    PCB_PLAYER_INFO_DATA$CHAT_SESSION,
-    PCB_PLAYER_INFO_DATA$LISTED,
-    PCB_PLAYER_INFO_DATA$GAME_MODE,
     NETWORK_MANAGER$CHANNEL
 
 }

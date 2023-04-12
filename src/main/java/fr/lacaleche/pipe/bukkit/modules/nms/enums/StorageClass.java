@@ -1,6 +1,8 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.enums;
 
-public enum StorageClass {
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageClass;
+
+public enum StorageClass implements IStorageClass {
 
     CRAFT_WORLD,
     WORLD,
@@ -13,7 +15,6 @@ public enum StorageClass {
     ITEM_STACK,
     NETWORK_MANAGER,
     PLAYER_CONNECTION,
-    REMOTE_CHAT_SESSION_DATA,
     PACKET_PLAY_OUT_SPAWN_ENTITY,
     PACKET_PLAY_OUT_ENTITY_DESTROY,
     PACKET_PLAY_OUT_ENTITY_METADATA,
@@ -23,9 +24,6 @@ public enum StorageClass {
     PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION,
     PACKET_PLAY_OUT_ENTITY_VELOCITY,
     PACKET_PLAY_OUT_ENTITY_EQUIPMENT,
-    PACKET_CLIENTBOUND_PLAYER_INFO_UPDATE,
-    PCB_PLAYER_INFO_DATA,
-    PCB_PLAYER_INFO_ACTION,
     ADVENTURE_COMPONENT
 
 }

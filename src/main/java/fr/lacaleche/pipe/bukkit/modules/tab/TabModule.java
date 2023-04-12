@@ -10,6 +10,7 @@ import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.tabs.features.PipelineInjectorFeature;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.PlayerListFeature;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
+import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.SortingFeature;
 
 @AModule(target = ModuleTarget.BUKKIT)
 public class TabModule extends BukkitModule {
@@ -34,6 +35,7 @@ public class TabModule extends BukkitModule {
         });
 
         pipe.getTabManager().registerFeature("PlayerList", new PlayerListFeature());
+        pipe.getTabManager().registerFeature("Sorting", new SortingFeature());
         pipe.getTabManager().registerFeature("PipelineInjector", new PipelineInjectorFeature("packet_handler"));
 //        pipe.getTabManager().registerFeature("NameTag", new NameTagFeature());
     }

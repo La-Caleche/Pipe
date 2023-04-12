@@ -2,15 +2,22 @@ package fr.lacaleche.pipe.bukkit.tabs.playerlist.tablist;
 
 import com.mojang.authlib.GameProfile;
 import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces.TabListPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.TabScoreboard;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.interfaces.Scoreboard;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
+
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass.*;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.*;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields.*;
+
+import static fr.lacaleche.pipe.bukkit.tabs.nms.enums.TabStorageClass.*;
+import static fr.lacaleche.pipe.bukkit.tabs.nms.enums.TabStorageConstructor.*;
+import static fr.lacaleche.pipe.bukkit.tabs.nms.enums.TabStorageFields.*;
 
 import java.util.*;
 
@@ -35,7 +42,7 @@ public class TabListPlayerImpl implements TabListPlayer {
 
     @Override
     public void addTabListPlayers(List<TabListEntry> entries) {
-        Class<Enum> actionsClazz = (Class<Enum>) this.storage().clazz(StorageClass.PCB_PLAYER_INFO_ACTION);
+        Class<Enum> actionsClazz = (Class<Enum>) this.storage().clazz(PCB_PLAYER_INFO_ACTION);
         this.createPacket(entries, EnumSet.allOf(actionsClazz));
     }
 
@@ -43,7 +50,7 @@ public class TabListPlayerImpl implements TabListPlayer {
     public void updateGamemodes(Map<UUID, Integer> entries) {
         List<TabListEntry> tabListEntries = entries.entrySet().stream().map(entry ->
                 new TabListEntry.Builder(entry.getKey()).gameMode(entry.getValue()).build()).toList();
-        Class<Enum> actionsClazz = (Class<Enum>) this.storage().clazz(StorageClass.PCB_PLAYER_INFO_ACTION);
+        Class<Enum> actionsClazz = (Class<Enum>) this.storage().clazz(PCB_PLAYER_INFO_ACTION);
         this.createPacket(tabListEntries, EnumSet.of(Enum.valueOf(actionsClazz, "UPDATE_GAME_MODE")));
     }
 
@@ -51,7 +58,7 @@ public class TabListPlayerImpl implements TabListPlayer {
     public void updateDisplayNames(Map<UUID, Component> entries) {
         List<TabListEntry> tabListEntries = entries.entrySet().stream().map(entry ->
                 new TabListEntry.Builder(entry.getKey()).displayName(entry.getValue()).build()).toList();
-        Class<Enum> actionsClazz = (Class<Enum>) this.storage().clazz(StorageClass.PCB_PLAYER_INFO_ACTION);
+        Class<Enum> actionsClazz = (Class<Enum>) this.storage().clazz(PCB_PLAYER_INFO_ACTION);
         this.createPacket(tabListEntries, EnumSet.of(Enum.valueOf(actionsClazz, "UPDATE_DISPLAY_NAME")));
     }
 
@@ -61,19 +68,19 @@ public class TabListPlayerImpl implements TabListPlayer {
             GameProfile profile = new GameProfile(entry.getUniqueId(), entry.getName());
 
             players.add(this.storage().construct(
-                    StorageConstructor.PCB_PLAYER_INFO_DATA_CONSTRUCTOR,
+                    PCB_PLAYER_INFO_DATA_CONSTRUCTOR,
                     entry.getUniqueId(),
                     profile,
                     entry.isListed(),
                     0,
                     this.tab.int2GameMode(entry.getGameMode()),
-                    this.storage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, entry.getDisplayName()),
+                    this.storage().construct(ADVENTURE_COMPONENT_CONSTRUCTOR, entry.getDisplayName()),
                     null
             ));
         });
 
-        Object packet = this.storage().construct(StorageConstructor.PACKET_CLIENTBOUND_PLAYER_INFO_UPDATE_CONSTRUCTOR, actions, Collections.emptyList());
-        this.storage().set(StorageFields.PCB_PLAYER_INFO_UPDATE$PLAYERS, packet, players);
+        Object packet = this.storage().construct(PACKET_CLIENTBOUND_PLAYER_INFO_UPDATE_CONSTRUCTOR, actions, Collections.emptyList());
+        this.storage().set(PCB_PLAYER_INFO_UPDATE$PLAYERS, packet, players);
 
         this.tab.getNmsManager().sendPacket(this.getTabPlayer().getPlayer(), packet);
     }

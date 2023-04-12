@@ -22,7 +22,7 @@ public class NMSManager {
     public NMSManager() {
         this.classFinder = new ClassFinder();
 
-        this.storage = new DefaultStorage(this);
+        this.setStorage(new DefaultStorage(this));
     }
 
     public ClassFinder getClassFinder() {
@@ -74,6 +74,10 @@ public class NMSManager {
             SentryAPIImpl.getInstance().captureException(exception);
         }
         return null;
+    }
+
+    protected void setStorage(IStorage storage) {
+        this.storage = storage;
     }
 
     public IStorage getStorage() {

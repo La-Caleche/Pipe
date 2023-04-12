@@ -8,6 +8,7 @@ import fr.lacaleche.pipe.bukkit.modules.nms.NMSModule;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.*;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
+import fr.lacaleche.pipe.bukkit.tabs.nms.TabNMSManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import net.kyori.adventure.text.Component;
@@ -22,10 +23,12 @@ public class TabManagerImpl implements TabManager {
 
     private final List<TabPlayer> tabPlayers;
     private final Map<String, TabFeature> features;
+    private final TabNMSManager nmsManager;
 
     public TabManagerImpl() {
         this.tabPlayers = new ArrayList<>();
         this.features = new HashMap<>();
+        this.nmsManager = new TabNMSManager();
     }
 
     @Override
@@ -146,9 +149,7 @@ public class TabManagerImpl implements TabManager {
     }
 
     @Override
-    public NMSManager getNmsManager() {
-        NMSModule nmsModule = Core.getModule(NMSModule.class);
-        if (nmsModule == null || !nmsModule.isEnabled()) return null;
-        return nmsModule.getNmsManager();
+    public TabNMSManager getNmsManager() {
+        return this.nmsManager;
     }
 }

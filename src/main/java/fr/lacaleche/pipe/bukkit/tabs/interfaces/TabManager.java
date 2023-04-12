@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.tabs.interfaces;
 
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.TabFeature;
+import fr.lacaleche.pipe.bukkit.tabs.nms.TabNMSManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -44,6 +45,6 @@ public interface TabManager {
 
     int gameMode2Int(Object gameMode);
 
-    NMSManager getNmsManager();
+    TabNMSManager getNmsManager();
 
 }
