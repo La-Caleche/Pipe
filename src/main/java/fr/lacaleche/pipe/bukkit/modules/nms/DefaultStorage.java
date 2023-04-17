@@ -23,6 +23,7 @@ import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.RemoteChatSession;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.Entity;
@@ -293,6 +294,12 @@ public class DefaultStorage implements IStorage {
         this.registerField(MDP_ITEMS_BY_ID, this.getField(DATA_WATCHER, "e"));
         this.registerField(NETWORK_MANAGER$CHANNEL, this.getField(NETWORK_MANAGER, "m"));
         this.registerField(PLAYER_CONNECTION$NETWORK_MANAGER, this.getField(PLAYER_CONNECTION, "h"));
+
+        this.registerField(TP_PACKET$X, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "b"));
+        this.registerField(TP_PACKET$Y, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "c"));
+        this.registerField(TP_PACKET$Z, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "d"));
+        this.registerField(TP_PACKET$YAW, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "e"));
+        this.registerField(TP_PACKET$PITCH, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "f"));
     }
 
 }

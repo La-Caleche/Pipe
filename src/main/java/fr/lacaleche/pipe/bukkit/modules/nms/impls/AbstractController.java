@@ -1,8 +1,10 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.impls;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
-import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.*;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields.*;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods.*;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.ICalecheEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.EntityZombie;
@@ -23,7 +25,7 @@ public abstract class AbstractController extends BaseController {
 
     public AbstractController(NMSManager nmsManager, Location location) {
         super(nmsManager);
-        this.setSpawnConstructor(StorageConstructor.PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR);
+        this.setSpawnConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR);
 
         this.location = location;
     }
@@ -51,7 +53,7 @@ public abstract class AbstractController extends BaseController {
     @Override
     public void setEntity(Entity entity) {
         this.entity = entity;
-        this.id = this.getStorage().invoke(StorageMethods.GET_ID, this.getEntity());
+        this.id = this.getStorage().invoke(GET_ID, this.getEntity());
         this.id = this.getEntity().hashCode();
 
         this.setLocation(this.getLocation());
@@ -65,90 +67,104 @@ public abstract class AbstractController extends BaseController {
     public void setLocation(Location location) {
         this.location = location;
 
-        this.getStorage().invoke(StorageMethods.SET_LOCATION, this.getEntity(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        this.commitPacket(this.getStorage().construct(StorageConstructor.PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR, this.getEntity()));
+        this.getStorage().invoke(SET_LOCATION, this.getEntity(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        this.commitPacket(this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR, this.getEntity()));
+    }
+
+    @Override
+    public void teleport(Location location) {
+        Object packet = this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR, this.getEntity());
+
+        this.getStorage().set(TP_PACKET$X, packet, location.getX());
+        this.getStorage().set(TP_PACKET$Y, packet, location.getY());
+        this.getStorage().set(TP_PACKET$Z, packet, location.getZ());
+        this.getStorage().set(TP_PACKET$YAW, packet, (byte) (location.getYaw()/360*256));
+        this.getStorage().set(TP_PACKET$PITCH, packet, (byte) (location.getPitch()/360*256));
+
+        this.commitPacket(packet);
+
     }
 
     @Override
     public void setInvisible(boolean invisible) {
-        this.getStorage().invoke(StorageMethods.SET_INVISIBLE, this.getEntity(), invisible);
+        this.getStorage().invoke(SET_INVISIBLE, this.getEntity(), invisible);
 
         this.updateMetadata();
     }
 
     @Override
     public void setGlowing(boolean glowing) {
-        this.getStorage().invoke(StorageMethods.SET_GLOWING, this.getEntity(), glowing);
+        this.getStorage().invoke(SET_GLOWING, this.getEntity(), glowing);
 
         this.updateMetadata();
     }
 
     @Override
     public void setNoGravity(boolean noGravity) {
-        this.getStorage().invoke(StorageMethods.SET_NO_GRAVITY, this.getEntity(), noGravity);
+        this.getStorage().invoke(SET_NO_GRAVITY, this.getEntity(), noGravity);
 
         this.updateMetadata();
     }
 
     @Override
     public boolean isNoGravity() {
-        return this.getStorage().invoke(StorageMethods.IS_NO_GRAVITY, this.getEntity());
+        return this.getStorage().invoke(IS_NO_GRAVITY, this.getEntity());
     }
 
     @Override
     public void ride(Player player) {
-        this.getStorage().invoke(StorageMethods.START_RIDING, this.getEntity(), this.getNmsManager().getPlayerHandle(player), true);
+        this.getStorage().invoke(START_RIDING, this.getEntity(), this.getNmsManager().getPlayerHandle(player), true);
 
         this.updateMetadata();
     }
 
     @Override
     public void ride(ICalecheEntity entity) {
-        this.getStorage().invoke(StorageMethods.START_RIDING, this.getEntity(), entity.getEntity(), true);
+        this.getStorage().invoke(START_RIDING, this.getEntity(), entity.getEntity(), true);
 
         this.updateMetadata();
     }
 
     @Override
     public void addAsPassenger(Player player) {
-        this.getStorage().invoke(StorageMethods.START_RIDING, this.getNmsManager().getPlayerHandle(player), this.getEntity(), true);
+        this.getStorage().invoke(START_RIDING, this.getNmsManager().getPlayerHandle(player), this.getEntity(), true);
 
         this.updateMetadata();
     }
 
     @Override
     public void addAsPassenger(ICalecheEntity entity) {
-        this.getStorage().invoke(StorageMethods.START_RIDING, entity.getEntity(), this.entity, true);
+        this.getStorage().invoke(START_RIDING, entity.getEntity(), this.entity, true);
 
         this.updateMetadata();
     }
 
     @Override
     public void stopRiding() {
-        this.getStorage().invoke(StorageMethods.STOP_RIDING, this.getEntity());
+        this.getStorage().invoke(STOP_RIDING, this.getEntity());
 
         this.updateMetadata();
     }
 
     @Override
     public void removePassengers() {
-        List<Object> passengers = this.getStorage().invoke(StorageMethods.GET_PASSENGERS, this.getEntity());
+        List<Object> passengers = this.getStorage().invoke(GET_PASSENGERS, this.getEntity());
 
-        passengers.forEach(passenger -> this.getStorage().invoke(StorageMethods.STOP_RIDING, passenger));
+        passengers.forEach(passenger -> this.getStorage().invoke(STOP_RIDING, passenger));
 
         this.updateMetadata();
     }
 
     @Override
     public void addSpectator(Player player) {
-        this.getStorage().invoke(StorageMethods.SET_CAMERA, this.getNmsManager().getPlayerHandle(player), this.getEntity());
+        this.getStorage().invoke(SET_CAMERA, this.getNmsManager().getPlayerHandle(player), this.getEntity());
 
         this.updateMetadata();
     }
 
     @Override
     public void removeSpectator(Player player) {
-        this.getStorage().invoke(StorageMethods.SET_CAMERA, this.getNmsManager().getPlayerHandle(player), (Object) null);
+        this.getStorage().invoke(SET_CAMERA, this.getNmsManager().getPlayerHandle(player), (Object) null);
 
         this.updateMetadata();
     }

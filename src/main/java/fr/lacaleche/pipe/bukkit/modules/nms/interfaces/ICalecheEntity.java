@@ -27,6 +27,8 @@ public interface ICalecheEntity {
 
     void hide(Player player);
 
+    boolean canSee(Player player);
+
     void updateMetadata();
 
     void updateMetadata(Player player);
@@ -48,6 +50,8 @@ public interface ICalecheEntity {
     void remove();
 
     void setLocation(Location location);
+
+    void teleport(Location location);
 
     void setInvisible(boolean invisible);
 

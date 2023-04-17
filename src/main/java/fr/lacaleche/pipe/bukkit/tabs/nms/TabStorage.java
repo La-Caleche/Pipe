@@ -5,6 +5,8 @@ import fr.lacaleche.pipe.bukkit.modules.nms.DefaultStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
 import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.protocol.game.PacketPlayInFlying;
+import net.minecraft.network.protocol.game.PacketPlayOutEntity;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.level.EnumGamemode;
 import net.minecraft.world.scores.Scoreboard;
@@ -42,6 +44,9 @@ public class TabStorage extends DefaultStorage {
         this.registerClass(PCB_PLAYER_INFO_DATA, classFinder.protocolClass("game.ClientboundPlayerInfoUpdatePacket$b"));
         this.registerClass(PCB_PLAYER_INFO_ACTION, classFinder.protocolClass("game.ClientboundPlayerInfoUpdatePacket$a"));
 
+        this.registerClass(PACKET_PLAY_OUT_ENTITY, classFinder.protocolClass("game.PacketPlayOutEntity"));
+        this.registerClass(PACKET_PLAY_OUT_REL_ENTITY_MOVE_LOOK, classFinder.protocolClass("game.PacketPlayOutEntity$PacketPlayOutRelEntityMoveLook"));
+
         this.registerConstructor(PACKET_CLIENTBOUND_PLAYER_INFO_UPDATE_CONSTRUCTOR, this.getConstructor(PACKET_CLIENTBOUND_PLAYER_INFO_UPDATE, EnumSet.class, Collection.class));
 
         this.registerConstructor(PCB_PLAYER_INFO_DATA_CONSTRUCTOR, this.getConstructor(PCB_PLAYER_INFO_DATA, UUID.class, GameProfile.class, boolean.class, int.class, EnumGamemode.class, IChatBaseComponent.class, this.clazz(REMOTE_CHAT_SESSION_DATA)));
@@ -66,6 +71,8 @@ public class TabStorage extends DefaultStorage {
         this.registerField(PCB_PLAYER_INFO_DATA$LATENCY, this.getField(PCB_PLAYER_INFO_DATA, "d"));
         this.registerField(PCB_PLAYER_INFO_DATA$DISPLAY_NAME, this.getField(PCB_PLAYER_INFO_DATA, "f"));
         this.registerField(PCB_PLAYER_INFO_DATA$LISTED, this.getField(PCB_PLAYER_INFO_DATA, "c"));
+
+        this.registerField(PACKET_PLAY_OUT_ENTITY$ENTITY_ID, this.getField(PACKET_PLAY_OUT_ENTITY, "a"));
     }
 
 }

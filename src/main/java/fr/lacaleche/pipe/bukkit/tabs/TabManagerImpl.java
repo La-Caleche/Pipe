@@ -1,10 +1,6 @@
 package fr.lacaleche.pipe.bukkit.tabs;
 
-import fr.lacaleche.core.Core;
-import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
-import fr.lacaleche.pipe.bukkit.modules.nms.NMSModule;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.*;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
@@ -54,8 +50,30 @@ public class TabManagerImpl implements TabManager {
     @Override
     public void registerFeature(String featureName, TabFeature feature) {
         this.features.put(featureName, feature);
-        if (feature instanceof Loadable loadable)
-            loadable.load();
+    }
+
+    @Override
+    public void loadFeatures() {
+        this.features.values().forEach(tabFeature -> {
+            if (tabFeature instanceof Loadable loadable)
+                loadable.load();
+        });
+    }
+
+    @Override
+    public void writePacket(TabPlayer tabPlayer, Object packet) {
+        this.features.values().forEach(tabFeature -> {
+            if (tabFeature instanceof PacketWriteListener packetWriteListener)
+                packetWriteListener.writePacket(tabPlayer, packet);
+        });
+    }
+
+    @Override
+    public void entityMove(TabPlayer viewer, int id) {
+        this.features.values().forEach(tabFeature -> {
+            if (tabFeature instanceof EntityMoveListener entityMoveListener)
+                entityMoveListener.onEntityMove(viewer, id);
+        });
     }
 
     @Override
@@ -90,6 +108,14 @@ public class TabManagerImpl implements TabManager {
         this.features.values().forEach(tabFeature -> {
             if (tabFeature instanceof Refreshable refreshable)
                 refreshable.refresh(tabPlayer);
+        });
+    }
+
+    @Override
+    public void readPacket(TabPlayer tabPlayer, Object packet) {
+        this.features.values().forEach(tabFeature -> {
+            if (tabFeature instanceof PacketReadListener packetReadListener)
+                packetReadListener.readPacket(tabPlayer, packet);
         });
     }
 

@@ -21,6 +21,8 @@ public interface TabManager {
 
     void registerFeature(String featureName, TabFeature feature);
 
+    void loadFeatures();
+
     void unregisterFeature(String featureName);
 
     void unregisterFeature(TabFeature feature);
@@ -34,6 +36,12 @@ public interface TabManager {
     void refreshPlayer(TabPlayer tabPlayer);
 
     void unloadPlayer(TabPlayer tabPlayer);
+
+    void readPacket(TabPlayer tabPlayer, Object packet);
+
+    void writePacket(TabPlayer tabPlayer, Object packet);
+
+    void entityMove(TabPlayer viewer, int id);
 
     int onGameModeChange(TabPlayer packetReceiver, UUID id, int gameMode);
 

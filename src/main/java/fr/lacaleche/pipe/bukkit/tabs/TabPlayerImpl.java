@@ -3,6 +3,8 @@ package fr.lacaleche.pipe.bukkit.tabs;
 import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.PlayerNameTagImpl;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces.TabListPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.tablist.TabListPlayerImpl;
@@ -18,16 +20,14 @@ public class TabPlayerImpl implements TabPlayer {
 
     private final Player player;
     private final TabListPlayer tabListPlayer;
-    private Scoreboard scoreboard;
-
-    private final List<IPair<Integer, Component>> lines;
+    private final Scoreboard scoreboard;
+    private final PlayerNameTag nameTag;
 
     public TabPlayerImpl(Player player) {
         this.player = player;
         this.tabListPlayer = new TabListPlayerImpl(Pipe.get().getTabManager(), this);
         this.scoreboard = new TabScoreboard(Pipe.get().getTabManager(), this);
-
-        this.lines = new ArrayList<>();
+        this.nameTag = new PlayerNameTagImpl(Pipe.get().getTabManager(), this);
     }
 
     @Override
@@ -46,6 +46,16 @@ public class TabPlayerImpl implements TabPlayer {
     }
 
     @Override
+    public PlayerNameTag getNameTag() {
+        return nameTag;
+    }
+
+    @Override
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    @Override
     public UUID getUniqueId() {
         return this.player.getUniqueId();
     }
@@ -58,31 +68,6 @@ public class TabPlayerImpl implements TabPlayer {
     @Override
     public int getGameMode() {
         return this.player.getGameMode().getValue();
-    }
-
-    @Override
-    public List<IPair<Integer, Component>> getLines() {
-        return lines;
-    }
-
-    @Override
-    public void addLine(int line, Component component) {
-        this.lines.add(new Pair<>(line, component));
-    }
-
-    @Override
-    public void removeLine(int line) {
-        this.lines.removeIf(pair -> pair.getLeft() == line);
-    }
-
-    @Override
-    public void clearLines() {
-        this.lines.clear();
-    }
-
-    @Override
-    public Scoreboard getScoreboard() {
-        return scoreboard;
     }
 
     @Override

@@ -4,9 +4,13 @@ import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheAmbient;
 import fr.lacaleche.pipe.bukkit.modules.nms.entities.CalecheLiving;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.LivingController;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.MobController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
+import net.kyori.adventure.text.Component;
+import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.world.entity.EntityPose;
 import net.minecraft.world.entity.EntitySize;
 import net.minecraft.world.entity.EntityTypes;
@@ -26,6 +30,12 @@ public class ArmorStandController extends LivingController {
 
         this.setEntity(new ArmorStandController.CalecheArmorStand(st.handle(st.cast(StorageClass.CRAFT_WORLD, location.getWorld()))));
         this.setNoGravity(true);
+    }
+
+    public void setTitle(Component title) {
+        net.minecraft.network.chat.IChatBaseComponent vanillaComponent = this.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
+        this.getStorage().invoke(StorageMethods.SET_CUSTOM_NAME, this.getEntity(), vanillaComponent);
+        this.getStorage().invoke(StorageMethods.SET_CUSTOM_NAME_VISIBLE, this.getEntity(), true);
     }
 
     protected ArmorStandController.CalecheArmorStand armorStand() {

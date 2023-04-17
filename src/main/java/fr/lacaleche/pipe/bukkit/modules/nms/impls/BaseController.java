@@ -100,6 +100,11 @@ public abstract class BaseController implements ICalecheEntity {
     }
 
     @Override
+    public boolean canSee(Player player) {
+        return this.getViewers().contains(player);
+    }
+
+    @Override
     public void hide(Player player) {
         if (this.getViewers().remove(player)) {
             this.getNmsManager().sendPacket(player, this.getDestroyPacket());

@@ -5,11 +5,13 @@ import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.Injector;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.JoinListener;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.Loadable;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.Unloadable;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
+import fr.lacaleche.pipe.bukkit.tabs.nms.enums.TabStorageClass;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -85,7 +87,8 @@ public class PipelineInjectorFeature extends AbstractTabFeature implements Loada
         try {
             if (channel.pipeline().names().contains(Core.get().getAppName()))
                 channel.pipeline().remove(Core.get().getAppName());
-        } catch (NoSuchElementException ignored) {}
+        } catch (NoSuchElementException ignored) {
+        }
     }
 
     private Channel getChannel(TabPlayer tabPlayer) {
@@ -164,11 +167,22 @@ public class PipelineInjectorFeature extends AbstractTabFeature implements Loada
         }
 
         @Override
+        public void channelRead(@NotNull ChannelHandlerContext context, @NotNull Object packet) {
+            tab().readPacket(player, packet);
+
+            try {
+                super.channelRead(context, packet);
+            } catch (Throwable exception) {
+                Logger.catchThrowable("Failed to forward packet %s to %s", exception, packet.getClass().getSimpleName(), player.getName());
+            }
+        }
+
+        @Override
         public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) {
             try {
+                tab().writePacket(player, packet);
+
                 if (isPlayerInfo(packet)) onPlayerInfo(player, packet);
-                // if (isTeam(packet))  modifyPlayers(packet);
-                // getTab().onPacketSend(player, packet);
             } catch (Throwable exception) {
                 SentryAPIImpl.getInstance().captureException(exception);
             }
