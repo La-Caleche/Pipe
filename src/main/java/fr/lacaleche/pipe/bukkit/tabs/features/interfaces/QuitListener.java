@@ -2,8 +2,8 @@ package fr.lacaleche.pipe.bukkit.tabs.features.interfaces;
 
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 
-public interface PacketReadListener {
+public interface QuitListener {
 
-    void readPacket(TabPlayer tabPlayer, Object packet);
+    void quit(TabPlayer tabPlayer);
 
 }

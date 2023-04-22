@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.nms;
 
 import com.mojang.authlib.GameProfile;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass.*;
@@ -25,6 +26,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityLiving;
@@ -227,6 +229,8 @@ public class DefaultStorage implements IStorage {
         this.registerClass(ENTITY, classFinder.worldClass("entity.Entity"));
         this.registerClass(ENTITY_PLAYER, classFinder.getNMSClass("server.level.EntityPlayer"));
         this.registerClass(DATA_WATCHER, classFinder.networkClass("syncher.DataWatcher"));
+        this.registerClass(DATA_WATCHER$ITEM, classFinder.networkClass("syncher.DataWatcher$Item"));
+        this.registerClass(DATA_WATCHER_OBJECT, classFinder.networkClass("syncher.DataWatcherObject"));
         this.registerClass(ENTITY_LIVING, classFinder.worldClass("entity.EntityLiving"));
         this.registerClass(ENTITY_INSENTIENT, classFinder.worldClass("entity.EntityInsentient"));
 
@@ -235,6 +239,7 @@ public class DefaultStorage implements IStorage {
         this.registerClass(PLAYER_CONNECTION, classFinder.getNMSClass("server.network.PlayerConnection"));
         this.registerClass(EQUIPMENT_SLOT, classFinder.worldClass("entity.EnumItemSlot"));
 
+        this.registerClass(PACKET, classFinder.protocolClass("Packet"));
         this.registerClass(PACKET_PLAY_OUT_SPAWN_ENTITY, classFinder.protocolClass("game.PacketPlayOutSpawnEntity"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_DESTROY, classFinder.protocolClass("game.PacketPlayOutEntityDestroy"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_METADATA, classFinder.protocolClass("game.PacketPlayOutEntityMetadata"));
@@ -246,6 +251,8 @@ public class DefaultStorage implements IStorage {
         this.registerClass(PACKET_PLAY_OUT_ENTITY_EQUIPMENT, classFinder.protocolClass("game.PacketPlayOutEntityEquipment"));
 
         this.registerClass(ADVENTURE_COMPONENT, classFinder.getAbsoluteClass("io.papermc.paper.adventure.AdventureComponent"));
+
+        this.registerClass(VEC_3D, classFinder.worldClass("phys.Vec3D"));
     }
 
     private void registerDefaultConstructor() {
@@ -260,22 +267,29 @@ public class DefaultStorage implements IStorage {
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_EQUIPMENT_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_EQUIPMENT, int.class, List.class));
 
         this.registerConstructor(ADVENTURE_COMPONENT_CONSTRUCTOR, this.getConstructor(ADVENTURE_COMPONENT, Component.class));
+
+        this.registerConstructor(VEC_3D_XYZ_CONSTRUCTOR, this.getConstructor(VEC_3D, double.class, double.class, double.class));
     }
 
     private void registerDefaultMethod() {
         this.registerMethod(GET_DATA_WATCHER, this.getMethod(ENTITY, "aj"));
+        this.registerMethod(DATA_WATCHER$SET, this.getMethod(DATA_WATCHER, "b", this.clazz(DATA_WATCHER_OBJECT), Object.class));
         this.registerMethod(PACK_DIRTY, this.getMethod(DATA_WATCHER, "b"));
 
         this.registerMethod(GET_ID, this.getMethod(ENTITY, "hashCode"));
         this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "b", double.class, double.class, double.class, float.class, float.class));
-        this.registerMethod(SET_INVISIBLE, this.getMethod(ENTITY, "j", boolean.class));
-        this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
         this.registerMethod(START_RIDING, this.getMethod(ENTITY, "a", this.clazz(ENTITY), boolean.class));
         this.registerMethod(STOP_RIDING, this.getMethod(ENTITY, "bz"));
         this.registerMethod(GET_PASSENGERS, this.getMethod(ENTITY, "cM"));
         this.registerMethod(TICK, this.getMethod(ENTITY, "l"));
         this.registerMethod(SET_CUSTOM_NAME, this.getMethod(ENTITY, "b", IChatBaseComponent.class));
         this.registerMethod(SET_CUSTOM_NAME_VISIBLE, this.getMethod(ENTITY, "n", boolean.class));
+
+        this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
+
+        this.registerMethod(SET_INVISIBLE, this.getMethod(ENTITY, "j", boolean.class));
+        this.registerMethod(IS_INVISIBLE, this.getMethod(ENTITY, "ca"));
+
         this.registerMethod(SET_NO_GRAVITY, this.getMethod(ENTITY, "e", boolean.class));
         this.registerMethod(IS_NO_GRAVITY, this.getMethod(ENTITY, "aP"));
 
@@ -285,6 +299,11 @@ public class DefaultStorage implements IStorage {
         this.registerMethod(SET_NO_AI, this.getMethod(ENTITY_INSENTIENT, "t", boolean.class));
         this.registerMethod(IS_NO_AI, this.getMethod(ENTITY_INSENTIENT, "fK"));
 
+        this.registerMethod(SET_SHIFT_KEY_DOWN, this.getMethod(ENTITY, "f", boolean.class));
+        this.registerMethod(IS_SHIFT_KEY_DOWN, this.getMethod(ENTITY, "bO"));
+
+        this.registerMethod(PLAYER_CONNECTION$SEND_PACKET, this.getMethod(PLAYER_CONNECTION, "a", this.clazz(PACKET)));
+
         this.registerMethod(ADVENTURE_COMPONENT$GET_COMPONENT, this.getMethod(ADVENTURE_COMPONENT, "adventure$component"));
 
         this.registerMethod(SET_CAMERA, this.getMethod(ENTITY_PLAYER, "c", this.clazz(ENTITY)));
@@ -293,7 +312,10 @@ public class DefaultStorage implements IStorage {
     private void registerDefaultField() {
         this.registerField(MDP_ITEMS_BY_ID, this.getField(DATA_WATCHER, "e"));
         this.registerField(NETWORK_MANAGER$CHANNEL, this.getField(NETWORK_MANAGER, "m"));
+        this.registerField(PLAYER_HANDLER$PLAYER_CONNECTION, this.getField(ENTITY_PLAYER, "b"));
         this.registerField(PLAYER_CONNECTION$NETWORK_MANAGER, this.getField(PLAYER_CONNECTION, "h"));
+
+        this.registerField(ENTITY$POSITION, this.getField(ENTITY, "t"));
 
         this.registerField(TP_PACKET$X, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "b"));
         this.registerField(TP_PACKET$Y, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "c"));

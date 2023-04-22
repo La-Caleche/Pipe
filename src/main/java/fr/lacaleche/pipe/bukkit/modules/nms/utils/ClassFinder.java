@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.utils;
 
+import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;

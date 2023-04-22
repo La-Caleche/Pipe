@@ -63,7 +63,7 @@ public class SortingFeature extends AbstractTabFeature implements JoinListener, 
         options.put("players", players.stream().map(TabPlayer::getName).collect(Collectors.toUnmodifiableSet()));
         options.put("friendlyFire", false);
         options.put("friendlyInvisibles", false);
-        options.put("visibility", "always");
+        options.put("visibility", "never");
         options.put("colision", "always");
         return options;
     }

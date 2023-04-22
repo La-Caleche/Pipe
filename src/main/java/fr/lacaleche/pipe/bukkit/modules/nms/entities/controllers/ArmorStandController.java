@@ -11,6 +11,9 @@ import fr.lacaleche.pipe.bukkit.modules.nms.impls.MobController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.network.syncher.DataWatcherObject;
+import net.minecraft.network.syncher.DataWatcherRegistry;
 import net.minecraft.world.entity.EntityPose;
 import net.minecraft.world.entity.EntitySize;
 import net.minecraft.world.entity.EntityTypes;
@@ -36,6 +39,14 @@ public class ArmorStandController extends LivingController {
         net.minecraft.network.chat.IChatBaseComponent vanillaComponent = this.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
         this.getStorage().invoke(StorageMethods.SET_CUSTOM_NAME, this.getEntity(), vanillaComponent);
         this.getStorage().invoke(StorageMethods.SET_CUSTOM_NAME_VISIBLE, this.getEntity(), true);
+
+        this.enqueueUpdateMetadata();
+    }
+
+    public void setMarker(boolean marker) {
+        this.armorStand().setMarker(marker);
+
+        this.enqueueUpdateMetadata();
     }
 
     protected ArmorStandController.CalecheArmorStand armorStand() {
@@ -44,8 +55,16 @@ public class ArmorStandController extends LivingController {
 
     public static class CalecheArmorStand extends CalecheLiving {
 
+        protected static final DataWatcherObject<Byte> DATA_CLIENT_FLAGS = DataWatcher.a(CalecheArmorStand.class, DataWatcherRegistry.a);
+
         public CalecheArmorStand(World world) {
             super(EntityTypes.d, world);
+        }
+
+        @Override
+        protected void a_() {
+            super.a_();
+            this.am.a(DATA_CLIENT_FLAGS, (byte) 0);
         }
 
         @Override
@@ -57,6 +76,25 @@ public class ArmorStandController extends LivingController {
         public double bu() {
             return 0;
         }
+
+        public void setMarker(boolean marker) {
+            this.am.b(DATA_CLIENT_FLAGS, this.setBit((Byte) this.am.a(DATA_CLIENT_FLAGS), 16, marker));
+        }
+
+        public boolean isMarker() {
+            return ((Byte) this.am.a(DATA_CLIENT_FLAGS) & 16) != 0;
+        }
+
+        private byte setBit(byte value, int bitField, boolean set) {
+            if (set) {
+                value = (byte) (value | bitField);
+            } else {
+                value = (byte) (value & ~bitField);
+            }
+
+            return value;
+        }
+
     }
 
 }

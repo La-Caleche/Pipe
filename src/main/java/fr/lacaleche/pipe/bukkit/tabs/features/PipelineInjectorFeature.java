@@ -167,22 +167,11 @@ public class PipelineInjectorFeature extends AbstractTabFeature implements Loada
         }
 
         @Override
-        public void channelRead(@NotNull ChannelHandlerContext context, @NotNull Object packet) {
-            tab().readPacket(player, packet);
-
-            try {
-                super.channelRead(context, packet);
-            } catch (Throwable exception) {
-                Logger.catchThrowable("Failed to forward packet %s to %s", exception, packet.getClass().getSimpleName(), player.getName());
-            }
-        }
-
-        @Override
         public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) {
             try {
-                tab().writePacket(player, packet);
-
                 if (isPlayerInfo(packet)) onPlayerInfo(player, packet);
+
+                tab().writePacket(player, packet);
             } catch (Throwable exception) {
                 SentryAPIImpl.getInstance().captureException(exception);
             }

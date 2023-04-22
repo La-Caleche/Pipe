@@ -30,6 +30,10 @@ public interface TabPlayer {
 
     int getGameMode();
 
+    boolean hasMoved();
+
+    void update();
+
     Map<String, List<?>> getPlaceHolders();
 
 }

@@ -1,30 +1,48 @@
 package fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces;
 
+import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.NameTagController;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.PlayerNameTagImpl;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PlayerNameTag {
 
-    List<NameTagController> getLines();
+    Map<Integer, Object> getLines();
 
-    void addLine(Component text, int order);
+    Map<TabPlayer, List<NameTagController>> getTabPlayersLines();
 
-    void removeLine(NameTagController line);
+    List<NameTagController> getLinesFor(TabPlayer viewer);
 
-    NameTagController getLine(int order);
+    void addLine(Object text, int order);
 
-    NameTagController getFirstLine();
+    void addLineFor(NameTagController line, TabPlayer viewer);
 
-    NameTagController getSecondLine();
+    void removeLine(int order);
 
-    NameTagController getThirdLine();
+    void removeLineFor(TabPlayer viewer, int order);
 
-    NameTagController getLastLine();
+    boolean hasLine(int order);
+
+    Object getLine(int order);
+
+    Object getFirstLine();
+
+    Object getSecondLine();
+
+    Object getThirdLine();
+
+    Object getLastLine();
 
     void clearLines();
 
-    void refresh();
+    void teleport();
+
+    void teleport(TabPlayer viewer);
+
+    void setSneak(boolean sneak);
 
 }

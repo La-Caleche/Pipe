@@ -50,7 +50,7 @@ import java.util.function.Predicate;
 
 public abstract class CalecheLiving extends EntityLiving {
 
-    public CalecheLiving(EntityTypes<? extends EntityArmorStand> entitytypes, World world) {
+    public CalecheLiving(EntityTypes<? extends EntityLiving> entitytypes, World world) {
         super(entitytypes, world);
     }
 

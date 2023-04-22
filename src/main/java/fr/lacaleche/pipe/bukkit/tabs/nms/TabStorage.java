@@ -3,10 +3,12 @@ package fr.lacaleche.pipe.bukkit.tabs.nms;
 import com.mojang.authlib.GameProfile;
 import fr.lacaleche.pipe.bukkit.modules.nms.DefaultStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageClass;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.game.PacketPlayInFlying;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.level.EnumGamemode;
 import net.minecraft.world.scores.Scoreboard;
@@ -73,6 +75,7 @@ public class TabStorage extends DefaultStorage {
         this.registerField(PCB_PLAYER_INFO_DATA$LISTED, this.getField(PCB_PLAYER_INFO_DATA, "c"));
 
         this.registerField(PACKET_PLAY_OUT_ENTITY$ENTITY_ID, this.getField(PACKET_PLAY_OUT_ENTITY, "a"));
+        this.registerField(PACKET_PLAY_OUT_ENTITY_TELEPORT$ENTITY_ID, this.getField(StorageClass.PACKET_PLAY_OUT_ENTITY_TELEPORT, "a"));
     }
 
 }

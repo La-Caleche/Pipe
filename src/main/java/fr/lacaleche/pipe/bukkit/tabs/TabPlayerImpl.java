@@ -1,7 +1,6 @@
 package fr.lacaleche.pipe.bukkit.tabs;
 
-import fr.lacaleche.core.utils.commons.pairs.IPair;
-import fr.lacaleche.core.utils.commons.pairs.Pair;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.PlayerNameTagImpl;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
@@ -11,7 +10,8 @@ import fr.lacaleche.pipe.bukkit.tabs.playerlist.tablist.TabListPlayerImpl;
 import fr.lacaleche.pipe.bukkit.tabs.scoreboard.TabScoreboard;
 import fr.lacaleche.pipe.bukkit.tabs.scoreboard.interfaces.Scoreboard;
 import fr.lacaleche.pipe.common.clients.Client;
-import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -22,6 +22,11 @@ public class TabPlayerImpl implements TabPlayer {
     private final TabListPlayer tabListPlayer;
     private final Scoreboard scoreboard;
     private final PlayerNameTag nameTag;
+
+    private Location currentLocation;
+    private Location previousLocation;
+    private boolean isSneaking = false;
+    private boolean wasSneaking = false;
 
     public TabPlayerImpl(Player player) {
         this.player = player;
@@ -68,6 +73,30 @@ public class TabPlayerImpl implements TabPlayer {
     @Override
     public int getGameMode() {
         return this.player.getGameMode().getValue();
+    }
+
+    @Override
+    public boolean hasMoved() {
+        return this.currentLocation == null || !this.currentLocation.equals(this.previousLocation) || this.isSneaking != this.wasSneaking;
+    }
+
+    @Override
+    public void update() {
+        if (this.currentLocation == null) {
+            this.currentLocation = this.player.getLocation();
+            return;
+        }
+
+        this.wasSneaking = this.isSneaking;
+        this.isSneaking = this.player.isSneaking();
+
+        if (this.currentLocation.equals(this.player.getLocation())
+                && this.currentLocation.equals(this.previousLocation)) {
+            return;
+        }
+
+        this.previousLocation = this.currentLocation;
+        this.currentLocation = this.getPlayer().getLocation();
     }
 
     @Override
