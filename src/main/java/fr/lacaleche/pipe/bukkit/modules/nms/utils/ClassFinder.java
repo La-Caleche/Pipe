@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.utils;
 
+import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +35,12 @@ public class ClassFinder {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
         return this.findWithoutVersion("NMS", "net.minecraft.network", className);
+    }
+
+    public Class<?> coreClass(String className) {
+        if (this.cache.containsKey(className)) return this.cache.get(className);
+
+        return this.findWithoutVersion("NMS", "net.minecraft.core", className);
     }
 
     public Class<?> protocolClass(String className) {

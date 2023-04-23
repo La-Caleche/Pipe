@@ -8,6 +8,7 @@ import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.common.adventure.PipeText;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.ModelSavedListener;
@@ -63,6 +64,14 @@ public class BukkitClientModule extends BukkitModule {
                 Client onlineClient = Pipe.get().getClient(onlinePlayer.getUniqueId());
                 onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_quit").arg("player", player.getName()).ph("player", player).ct());
             });
+        });
+
+        pipe.getTabManager().addPlayerLoadCallback(this, (tabPlayer, player, client) -> {
+            PlayerNameTag nameTag = tabPlayer.getNameTag();
+            nameTag.addLine("<player>", 0);
+            if (client.isStaff()) {
+                nameTag.addLine("<rank>", 1);
+            }
         });
     }
 

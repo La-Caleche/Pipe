@@ -32,4 +32,6 @@ public interface Rank extends ISqlModel {
 
     TextColor colorAsColor();
 
+    boolean isStaff();
+
 }

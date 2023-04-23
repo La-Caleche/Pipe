@@ -24,7 +24,7 @@ public abstract class MobController extends LivingController implements ICaleche
     public void setNoAi(boolean noAi) {
         this.getStorage().invoke(StorageMethods.SET_NO_AI, this.getEntity(), noAi);
 
-        this.updateMetadata();
+        this.enqueueUpdateMetadata();
     }
 
     @Override

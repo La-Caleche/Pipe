@@ -30,6 +30,8 @@ public interface Client extends ISqlModel {
 
     void setRank(Rank rank);
 
+    boolean isStaff();
+
     boolean hasPermission(Permission permission);
 
     boolean hasPermission(String permission);

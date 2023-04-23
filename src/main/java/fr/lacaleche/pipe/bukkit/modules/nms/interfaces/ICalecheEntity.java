@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.interfaces;
 
 import fr.lacaleche.core.utils.maths.Vector3;
+import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketListenerPlayOut;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
@@ -27,6 +28,12 @@ public interface ICalecheEntity {
 
     void hide(Player player);
 
+    void setNoTick(boolean noTick);
+
+    boolean isNoTick();
+
+    boolean canSee(Player player);
+
     void updateMetadata();
 
     void updateMetadata(Player player);
@@ -34,6 +41,10 @@ public interface ICalecheEntity {
     void commitPacket(Object packet);
 
     Set<Player> getViewers();
+
+    void setTmpViewers(Set<Player> players);
+
+    void resetTmpViewers();
 
     int getId();
 
@@ -49,13 +60,27 @@ public interface ICalecheEntity {
 
     void setLocation(Location location);
 
+    void setPosition(double x, double y, double z);
+
+    void teleport(Location location);
+
+    void teleport(double x, double y, double z);
+
+    void teleport(double x, double y, double z, float yaw, float pitch);
+
     void setInvisible(boolean invisible);
 
     void setGlowing(boolean glowing);
 
     void setNoGravity(boolean noGravity);
 
+    void setShiftKeyDown(boolean shiftKeyDown);
+
+    boolean isShiftKeyDown();
+
     boolean isNoGravity();
+
+    boolean isInvisible();
 
     void ride(ICalecheEntity entity);
 
@@ -74,5 +99,9 @@ public interface ICalecheEntity {
     void removeSpectator(Player player);
 
     void tick();
+
+    void taskLoop(Task task);
+
+    void enqueueUpdateMetadata();
 
 }

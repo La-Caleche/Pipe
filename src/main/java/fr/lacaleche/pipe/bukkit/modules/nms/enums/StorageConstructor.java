@@ -1,6 +1,8 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.enums;
 
-public enum StorageConstructor {
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageConstructor;
+
+public enum StorageConstructor implements IStorageConstructor {
 
     PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR,
     PACKET_PLAY_OUT_ENTITY_DESTROY_CONSTRUCTOR,
@@ -11,8 +13,9 @@ public enum StorageConstructor {
     PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION_CONSTRUCTOR,
     PACKET_PLAY_OUT_ENTITY_VELOCITY_CONSTRUCTOR,
     PACKET_PLAY_OUT_ENTITY_EQUIPMENT_CONSTRUCTOR,
-    PACKET_CLIENTBOUND_PLAYER_INFO_UPDATE_CONSTRUCTOR,
-    PCB_PLAYER_INFO_DATA_CONSTRUCTOR,
     ADVENTURE_COMPONENT_CONSTRUCTOR,
+    VEC_3D_XYZ_CONSTRUCTOR,
+    BLOCK_POSITION_XYZ_CONSTRUCTOR,
+    CHUNK_COORD_INT_PAIR_BLOCK_POSITION_CONSTRUCTOR,
 
 }

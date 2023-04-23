@@ -217,6 +217,11 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
+    public boolean isStaff() {
+        return this.getRank().isStaff();
+    }
+
+    @Override
     public String toString() {
         return "ClientImpl { id='%d', uuid='%s', rank='%s', locale='%s' }".formatted(this.getId(), uuid, rank, locale);
     }

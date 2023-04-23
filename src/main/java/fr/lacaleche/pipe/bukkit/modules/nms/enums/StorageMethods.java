@@ -1,8 +1,11 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.enums;
 
-public enum StorageMethods {
+import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.enums.IStorageMethods;
+
+public enum StorageMethods implements IStorageMethods {
 
     GET_DATA_WATCHER,
+    DATA_WATCHER$SET,
     PACK_DIRTY,
     GET_ID,
     SET_LOCATION,
@@ -15,14 +18,20 @@ public enum StorageMethods {
     TICK,
     AI_STEP,
     SET_NO_GRAVITY,
+    SET_SHIFT_KEY_DOWN,
+    IS_SHIFT_KEY_DOWN,
     IS_NO_GRAVITY,
+    IS_INVISIBLE,
     SET_NO_AI,
     IS_NO_AI,
     SET_CUSTOM_NAME,
     SET_CUSTOM_NAME_VISIBLE,
     SET_ITEM_SLOT,
-    PCB_PLAYER_INFO_DATA$GET_PROFILE,
     ADVENTURE_COMPONENT$GET_COMPONENT,
+    PLAYER_CONNECTION$SEND_PACKET,
+    BLOCK_POSITION$GET_X,
+    BLOCK_POSITION$GET_Y,
+    BLOCK_POSITION$GET_Z
 
 
 }

@@ -1,10 +1,15 @@
 package fr.lacaleche.pipe.bukkit.modules.nms;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.AbstractController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
 import io.netty.channel.Channel;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -22,7 +27,7 @@ public class NMSManager {
     public NMSManager() {
         this.classFinder = new ClassFinder();
 
-        this.storage = new DefaultStorage(this);
+        this.setStorage(new DefaultStorage(this));
     }
 
     public ClassFinder getClassFinder() {
@@ -41,39 +46,26 @@ public class NMSManager {
     }
 
     public void sendPacket(Player player, Object packet) {
-        try {
-            Object connection = this.getPlayerConnection(player);
-
-            Method sendPacket = connection.getClass().getMethod("a", this.getClassFinder().protocolClass("Packet"));
-
-            sendPacket.invoke(connection, packet);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-        }
+        PlayerConnection connection = this.getPlayerConnection(player);
+        this.getStorage().invoke(StorageMethods.PLAYER_CONNECTION$SEND_PACKET, connection, packet);
     }
 
-    public Object getPlayerConnection(Player player) {
+    public PlayerConnection getPlayerConnection(Player player) {
+        EntityPlayer handler = this.getPlayerHandle(player);
+        return this.getStorage().get(StorageFields.PLAYER_HANDLER$PLAYER_CONNECTION, handler);
+    }
+
+    public EntityPlayer getPlayerHandle(Player player) {
         try {
-            Object handler = this.getPlayerHandle(player);
-            assert handler != null;
-
-            Object connection = handler.getClass().getField("b").get(handler);
-            assert connection != null;
-
-            return connection;
-        } catch (NoSuchFieldException | IllegalAccessException exception) {
+            return (EntityPlayer) this.getClassFinder().getHandle(player);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
             SentryAPIImpl.getInstance().captureException(exception);
         }
         return null;
     }
 
-    public Object getPlayerHandle(Player player) {
-        try {
-            return this.getClassFinder().getHandle(player);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException exception) {
-            SentryAPIImpl.getInstance().captureException(exception);
-        }
-        return null;
+    protected void setStorage(IStorage storage) {
+        this.storage = storage;
     }
 
     public IStorage getStorage() {

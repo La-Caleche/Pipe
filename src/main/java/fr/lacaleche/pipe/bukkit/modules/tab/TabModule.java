@@ -6,10 +6,26 @@ import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.events.BukkitPipeListener;
+import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
+import fr.lacaleche.pipe.bukkit.modules.handler.BukkitPipeModuleHandler;
+import fr.lacaleche.pipe.bukkit.modules.tab.listeners.TabPlayerListener;
+import fr.lacaleche.pipe.bukkit.tabs.features.NameTagFeature;
 import fr.lacaleche.pipe.bukkit.tabs.features.PipelineInjectorFeature;
+import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.Refreshable;
+import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.TabFeature;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.PlayerListFeature;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
+import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.SortingFeature;
+import fr.lacaleche.pipe.common.clients.Client;
+import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.util.Collection;
 
 @AModule(target = ModuleTarget.BUKKIT)
 public class TabModule extends BukkitModule {
@@ -34,9 +50,17 @@ public class TabModule extends BukkitModule {
         });
 
         pipe.getTabManager().registerFeature("PlayerList", new PlayerListFeature());
+        pipe.getTabManager().registerFeature("Sorting", new SortingFeature());
         pipe.getTabManager().registerFeature("PipelineInjector", new PipelineInjectorFeature("packet_handler"));
-//        pipe.getTabManager().registerFeature("NameTag", new NameTagFeature());
+        pipe.getTabManager().registerFeature("NameTag", new NameTagFeature());
     }
+
+    @Override
+    public void registerListeners() {
+        BukkitPipeListenerManager listenerManager = Pipe.get().getListenerManager();
+        listenerManager.registerBukkitListener(this, new TabPlayerListener());
+    }
+
     @Override
     public void onDisable() {
         Pipe pipe = Pipe.get();
@@ -50,5 +74,34 @@ public class TabModule extends BukkitModule {
         ImmutableList.copyOf(pipe.getTabManager().getTabPlayers()).forEach(tabPlayer -> {
             pipe.getTabManager().unloadPlayer(tabPlayer);
         });
+    }
+
+    @Override
+    public void onReload() {
+        Pipe pipe = Pipe.get();
+        Plugin plugin = pipe.getPlugin();
+
+        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
+        if (players.size() == 0) {
+            super.onReload();
+            return;
+        }
+
+        for (Player player : players) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            pipe.getQuitCallbacks().get(this).forEach(callback -> callback.accept(null, player, client));
+        }
+
+        super.onReload();
+
+        for (Player player : players) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            pipe.getJoinCallbacks().get(this).forEach(callback -> callback.accept(null, player, client));
+        }
+    }
+
+    @Override
+    public void onEnableFinish() {
+        Pipe.get().getTabManager().loadFeatures();
     }
 }

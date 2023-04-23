@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.impls;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
@@ -34,23 +35,45 @@ public abstract class BaseController implements ICalecheEntity {
     private StorageConstructor spawnConstructor;
 
     private Task tick;
+    private boolean noTick = false;
+    private boolean needUpdateMetadata;
 
     public BaseController(NMSManager nmsManager) {
         this.nmsManager = nmsManager;
+        this.needUpdateMetadata = false;
     }
 
     @Override
     public void setEntity(Entity entity) {
         this.entityTracker = new EntityTracker(this);
 
-        this.tick = Pipe.get().getTaskManager().newTask(new TaskBuilder().loop(true).callback((tick) -> {
-            this.tick();
-        }));
+        this.tick = Pipe.get().getTaskManager().newTask(new TaskBuilder().loop(true).callback(this::taskLoop));
+        this.tick();
+    }
+
+    @Override
+    public void setNoTick(boolean noTick) {
+        this.noTick = noTick;
+    }
+
+    @Override
+    public boolean isNoTick() {
+        return noTick;
     }
 
     @Override
     public void tick() {
         this.entityTracker.getTracker().a();
+    }
+
+    @Override
+    public void taskLoop(Task task) {
+        if (!this.noTick) this.tick();
+
+        if (this.needUpdateMetadata) {
+            this.updateMetadata();
+            this.needUpdateMetadata = false;
+        }
     }
 
     public void setSpawnConstructor(StorageConstructor spawnConstructor) {
@@ -100,6 +123,11 @@ public abstract class BaseController implements ICalecheEntity {
     }
 
     @Override
+    public boolean canSee(Player player) {
+        return this.getViewers().contains(player);
+    }
+
+    @Override
     public void hide(Player player) {
         if (this.getViewers().remove(player)) {
             this.getNmsManager().sendPacket(player, this.getDestroyPacket());
@@ -118,12 +146,19 @@ public abstract class BaseController implements ICalecheEntity {
 
     @Override
     public void commitPacket(Object packet) {
-        this.getViewers().forEach((Player player) -> this.getNmsManager().sendPacket(player, packet));
+        for (Player player : this.getViewers()) {
+            this.getNmsManager().sendPacket(player, packet);
+        }
     }
 
     @Override
     public void remove() {
         this.tick.stop();
+    }
+
+    @Override
+    public void enqueueUpdateMetadata() {
+        this.needUpdateMetadata = true;
     }
 
     public void constructPackets() {

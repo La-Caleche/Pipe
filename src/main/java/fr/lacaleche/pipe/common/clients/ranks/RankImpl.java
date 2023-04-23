@@ -87,7 +87,12 @@ public class RankImpl extends SqlModel implements Rank {
     }
 
     @Override
+    public boolean isStaff() {
+        return this.getPermissionLevel() > 20;
+    }
+
+    @Override
     public String toString() {
-        return "RankImpl { slug='%s', colorCode='%s' }".formatted(slug, colorCode);
+        return "RankImpl { slug='%s', colorCode='%s', staff='%b' }".formatted(slug, colorCode, isStaff());
     }
 }

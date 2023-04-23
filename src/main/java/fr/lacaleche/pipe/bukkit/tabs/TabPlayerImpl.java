@@ -1,13 +1,17 @@
 package fr.lacaleche.pipe.bukkit.tabs;
 
-import fr.lacaleche.core.utils.commons.pairs.IPair;
-import fr.lacaleche.core.utils.commons.pairs.Pair;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.PlayerNameTagImpl;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces.TabListPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.tablist.TabListPlayerImpl;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.TabScoreboard;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.interfaces.Scoreboard;
 import fr.lacaleche.pipe.common.clients.Client;
-import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -16,14 +20,19 @@ public class TabPlayerImpl implements TabPlayer {
 
     private final Player player;
     private final TabListPlayer tabListPlayer;
+    private final Scoreboard scoreboard;
+    private final PlayerNameTag nameTag;
 
-    private final List<IPair<Integer, Component>> lines;
+    private Location currentLocation;
+    private Location previousLocation;
+    private boolean isSneaking = false;
+    private boolean wasSneaking = false;
 
     public TabPlayerImpl(Player player) {
         this.player = player;
         this.tabListPlayer = new TabListPlayerImpl(Pipe.get().getTabManager(), this);
-
-        this.lines = new ArrayList<>();
+        this.scoreboard = new TabScoreboard(Pipe.get().getTabManager(), this);
+        this.nameTag = new PlayerNameTagImpl(Pipe.get().getTabManager(), this);
     }
 
     @Override
@@ -42,6 +51,16 @@ public class TabPlayerImpl implements TabPlayer {
     }
 
     @Override
+    public PlayerNameTag getNameTag() {
+        return nameTag;
+    }
+
+    @Override
+    public Scoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    @Override
     public UUID getUniqueId() {
         return this.player.getUniqueId();
     }
@@ -57,23 +76,29 @@ public class TabPlayerImpl implements TabPlayer {
     }
 
     @Override
-    public List<IPair<Integer, Component>> getLines() {
-        return lines;
+    public boolean hasMoved() {
+        return this.currentLocation == null || !this.currentLocation.equals(this.previousLocation) || this.isSneaking != this.wasSneaking;
     }
 
     @Override
-    public void addLine(int line, Component component) {
-        this.lines.add(new Pair<>(line, component));
-    }
+    public void update() {
+        if (this.currentLocation == null) {
+            this.currentLocation = this.player.getLocation();
+            return;
+        }
 
-    @Override
-    public void removeLine(int line) {
-        this.lines.removeIf(pair -> pair.getLeft() == line);
-    }
+        this.wasSneaking = this.isSneaking;
+        this.isSneaking = this.player.isSneaking();
 
-    @Override
-    public void clearLines() {
-        this.lines.clear();
+        if (this.currentLocation.equals(this.player.getLocation())
+                && this.currentLocation.equals(this.previousLocation)) {
+            return;
+        }
+
+        final boolean hasMovedPreviously = this.hasMoved();
+
+        this.previousLocation = this.currentLocation;
+        this.currentLocation = this.getPlayer().getLocation();
     }
 
     @Override

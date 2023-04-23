@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces;
 
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.tablist.TabListEntry;
+import fr.lacaleche.pipe.bukkit.tabs.scoreboard.interfaces.Scoreboard;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import net.kyori.adventure.text.Component;
 
