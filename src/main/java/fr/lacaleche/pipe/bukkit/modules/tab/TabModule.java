@@ -19,8 +19,13 @@ import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.PlayerListFeature;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.SortingFeature;
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.util.Collection;
 
 @AModule(target = ModuleTarget.BUKKIT)
 public class TabModule extends BukkitModule {
@@ -48,7 +53,6 @@ public class TabModule extends BukkitModule {
         pipe.getTabManager().registerFeature("Sorting", new SortingFeature());
         pipe.getTabManager().registerFeature("PipelineInjector", new PipelineInjectorFeature("packet_handler"));
         pipe.getTabManager().registerFeature("NameTag", new NameTagFeature());
-
     }
 
     @Override
@@ -70,6 +74,30 @@ public class TabModule extends BukkitModule {
         ImmutableList.copyOf(pipe.getTabManager().getTabPlayers()).forEach(tabPlayer -> {
             pipe.getTabManager().unloadPlayer(tabPlayer);
         });
+    }
+
+    @Override
+    public void onReload() {
+        Pipe pipe = Pipe.get();
+        Plugin plugin = pipe.getPlugin();
+
+        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
+        if (players.size() == 0) {
+            super.onReload();
+            return;
+        }
+
+        for (Player player : players) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            pipe.getQuitCallbacks().get(this).forEach(callback -> callback.accept(null, player, client));
+        }
+
+        super.onReload();
+
+        for (Player player : players) {
+            Client client = Pipe.get().getClient(player.getUniqueId());
+            pipe.getJoinCallbacks().get(this).forEach(callback -> callback.accept(null, player, client));
+        }
     }
 
     @Override
