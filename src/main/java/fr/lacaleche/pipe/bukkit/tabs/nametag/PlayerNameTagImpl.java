@@ -109,7 +109,7 @@ public class PlayerNameTagImpl implements PlayerNameTag {
 
     @Override
     public void teleport() {
-        for (NameTagController line : this.tabPlayersLines.values().stream().map(List::stream).flatMap(s -> s).toList()) {
+        for (NameTagController line : this.tabPlayersLines.values().stream().flatMap(List::stream).toList()) {
             line.teleport();
         }
     }
@@ -124,9 +124,8 @@ public class PlayerNameTagImpl implements PlayerNameTag {
 
     @Override
     public void setSneak(boolean sneak) {
-        for (NameTagController line : this.tabPlayersLines.values().stream().map(List::stream).flatMap(s -> s).toList()) {
+        for (NameTagController line : this.tabPlayersLines.values().stream().flatMap(List::stream).toList()) {
             line.setSneak(sneak);
         }
     }
-
 }

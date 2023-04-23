@@ -253,6 +253,9 @@ public class DefaultStorage implements IStorage {
         this.registerClass(ADVENTURE_COMPONENT, classFinder.getAbsoluteClass("io.papermc.paper.adventure.AdventureComponent"));
 
         this.registerClass(VEC_3D, classFinder.worldClass("phys.Vec3D"));
+        this.registerClass(BLOCK_POSITION, classFinder.coreClass("BlockPosition"));
+        this.registerClass(CHUNK_COORD_INT_PAIR, classFinder.worldClass("level.ChunkCoordIntPair"));
+        this.registerClass(SECTION_POSITION, classFinder.coreClass("SectionPosition"));
     }
 
     private void registerDefaultConstructor() {
@@ -269,6 +272,8 @@ public class DefaultStorage implements IStorage {
         this.registerConstructor(ADVENTURE_COMPONENT_CONSTRUCTOR, this.getConstructor(ADVENTURE_COMPONENT, Component.class));
 
         this.registerConstructor(VEC_3D_XYZ_CONSTRUCTOR, this.getConstructor(VEC_3D, double.class, double.class, double.class));
+        this.registerConstructor(BLOCK_POSITION_XYZ_CONSTRUCTOR, this.getConstructor(BLOCK_POSITION, int.class, int.class, int.class));
+        this.registerConstructor(CHUNK_COORD_INT_PAIR_BLOCK_POSITION_CONSTRUCTOR, this.getConstructor(CHUNK_COORD_INT_PAIR, this.clazz(BLOCK_POSITION)));
     }
 
     private void registerDefaultMethod() {
@@ -307,6 +312,10 @@ public class DefaultStorage implements IStorage {
         this.registerMethod(ADVENTURE_COMPONENT$GET_COMPONENT, this.getMethod(ADVENTURE_COMPONENT, "adventure$component"));
 
         this.registerMethod(SET_CAMERA, this.getMethod(ENTITY_PLAYER, "c", this.clazz(ENTITY)));
+
+        this.registerMethod(BLOCK_POSITION$GET_X, this.getMethod(BLOCK_POSITION, "u"));
+        this.registerMethod(BLOCK_POSITION$GET_Y, this.getMethod(BLOCK_POSITION, "v"));
+        this.registerMethod(BLOCK_POSITION$GET_Z, this.getMethod(BLOCK_POSITION, "w"));
     }
 
     private void registerDefaultField() {
@@ -316,6 +325,11 @@ public class DefaultStorage implements IStorage {
         this.registerField(PLAYER_CONNECTION$NETWORK_MANAGER, this.getField(PLAYER_CONNECTION, "h"));
 
         this.registerField(ENTITY$POSITION, this.getField(ENTITY, "t"));
+        this.registerField(ENTITY$BLOCK_POSITION, this.getField(ENTITY, "u"));
+        this.registerField(ENTITY$CHUNK_POSITION, this.getField(ENTITY, "aC"));
+
+        this.registerField(CHUNK_POSITION$X, this.getField(CHUNK_COORD_INT_PAIR, "e"));
+        this.registerField(CHUNK_POSITION$Z, this.getField(CHUNK_COORD_INT_PAIR, "f"));
 
         this.registerField(TP_PACKET$X, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "b"));
         this.registerField(TP_PACKET$Y, this.getField(PACKET_PLAY_OUT_ENTITY_TELEPORT, "c"));

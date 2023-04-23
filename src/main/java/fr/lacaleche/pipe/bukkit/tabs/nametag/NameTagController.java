@@ -49,6 +49,8 @@ public class NameTagController extends ArmorStandController {
     public NameTagController(NMSManager nmsManager, Location location) {
         super(nmsManager, location);
         this.toRemove = false;
+
+        this.setNoTick(true);
     }
 
     public int getOrder() {

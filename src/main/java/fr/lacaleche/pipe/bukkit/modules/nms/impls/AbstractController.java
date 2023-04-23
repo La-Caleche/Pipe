@@ -9,10 +9,14 @@ import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods.*;
 import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageFields;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.ICalecheEntity;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.core.SectionPosition;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.monster.EntityZombie;
+import net.minecraft.world.level.ChunkCoordIntPair;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -69,6 +73,37 @@ public abstract class AbstractController extends BaseController {
     public void setLocation(Location location) {
         this.location = location;
         this.teleport(location);
+        this.setPosition(location.getX(), location.getY(), location.getZ());
+    }
+
+    @Override
+    public void setPosition(double x, double y, double z) {
+        this.getStorage().set(ENTITY$POSITION, this.getEntity(), this.getStorage().construct(VEC_3D_XYZ_CONSTRUCTOR, x, y, z));
+
+        BlockPosition blockPosition = this.getStorage().get(ENTITY$BLOCK_POSITION, this.getEntity());
+        ChunkCoordIntPair chunkPosition = this.getStorage().get(ENTITY$CHUNK_POSITION, this.getEntity());
+
+        int i = MathHelper.a(x);
+        int j = MathHelper.a(y);
+        int k = MathHelper.a(z);
+
+        int blockPositionX = this.getStorage().invoke(BLOCK_POSITION$GET_X, blockPosition);
+        int blockPositionY = this.getStorage().invoke(BLOCK_POSITION$GET_Y, blockPosition);
+        int blockPositionZ = this.getStorage().invoke(BLOCK_POSITION$GET_Z, blockPosition);
+
+        int sectionCoordX = SectionPosition.a(blockPositionX);
+        int sectionCoordZ = SectionPosition.a(blockPositionZ);
+
+        int chunkPositionX = this.getStorage().get(CHUNK_POSITION$X, chunkPosition);
+        int chunkPositionZ = this.getStorage().get(CHUNK_POSITION$Z, chunkPosition);
+
+        if (i != blockPositionX || j != blockPositionY || k != blockPositionZ) {
+            blockPosition = this.getStorage().construct(BLOCK_POSITION_XYZ_CONSTRUCTOR, i, j, k);
+            this.getStorage().set(ENTITY$BLOCK_POSITION, this.getEntity(), blockPosition);
+            if (sectionCoordX != chunkPositionX || sectionCoordZ != chunkPositionZ) {
+                this.getStorage().set(ENTITY$CHUNK_POSITION, this.getEntity(), this.getStorage().construct(CHUNK_COORD_INT_PAIR_BLOCK_POSITION_CONSTRUCTOR, blockPosition));
+            }
+        }
     }
 
     @Override
@@ -86,8 +121,6 @@ public abstract class AbstractController extends BaseController {
         this.location = this.location.clone().set(x, y, z);
         this.location.setYaw(yaw);
         this.location.setPitch(pitch);
-
-        this.getStorage().set(ENTITY$POSITION, this.getEntity(), this.getStorage().construct(VEC_3D_XYZ_CONSTRUCTOR, x, y, z));
 
         Object packet = this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR, this.getEntity());
 

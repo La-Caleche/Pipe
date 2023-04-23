@@ -35,6 +35,7 @@ public abstract class BaseController implements ICalecheEntity {
     private StorageConstructor spawnConstructor;
 
     private Task tick;
+    private boolean noTick = false;
     private boolean needUpdateMetadata;
 
     public BaseController(NMSManager nmsManager) {
@@ -51,13 +52,23 @@ public abstract class BaseController implements ICalecheEntity {
     }
 
     @Override
+    public void setNoTick(boolean noTick) {
+        this.noTick = noTick;
+    }
+
+    @Override
+    public boolean isNoTick() {
+        return noTick;
+    }
+
+    @Override
     public void tick() {
         this.entityTracker.getTracker().a();
     }
 
     @Override
     public void taskLoop(Task task) {
-        this.tick();
+        if (!this.noTick) this.tick();
 
         if (this.needUpdateMetadata) {
             this.updateMetadata();

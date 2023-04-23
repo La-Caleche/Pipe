@@ -14,10 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static fr.lacaleche.pipe.bukkit.tabs.nms.enums.TabStorageClass.*;
@@ -38,7 +35,6 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
             }
         }));
     }
-
 
     @Override
     public void refresh(TabPlayer tabPlayer) {
@@ -136,8 +132,11 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
             }
         }
 
+        if (!this.shouldSee(viewer, tabPlayer)) return ;
+
         List<NameTagController> finalControllers = new ArrayList<>(controllers);
-        nameTag.getLines().forEach((order, text) -> {
+        Map<Integer, Object> finalLines = new HashMap<>(nameTag.getLines());
+        finalLines.forEach((order, text) -> {
             if (finalControllers.stream().noneMatch(nameTagController -> nameTagController.getOrder() == order)) {
                 NameTagController newLine = this.tab().getNmsManager().createEntity(NameTagController.class, new Location(viewer.getPlayer().getWorld(), 0, -100, 0));
 
@@ -157,8 +156,8 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
 
     private boolean shouldSee(TabPlayer viewer, TabPlayer tabPlayer) {
         if (viewer == tabPlayer) return false;
-        return viewer.getPlayer().canSee(tabPlayer.getPlayer())
-                && tabPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR;
+        if (viewer.getPlayer().getGameMode() != GameMode.SPECTATOR && tabPlayer.getPlayer().getGameMode() == GameMode.SPECTATOR) return false;
+        return viewer.getPlayer().canSee(tabPlayer.getPlayer());
     }
 
 }

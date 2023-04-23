@@ -29,5 +29,8 @@ public enum StorageClass implements IStorageClass {
     PACKET_PLAY_OUT_ENTITY_EQUIPMENT,
     ADVENTURE_COMPONENT,
     VEC_3D,
+    BLOCK_POSITION,
+    CHUNK_COORD_INT_PAIR,
+    SECTION_POSITION
 
 }

@@ -37,6 +37,12 @@ public class ClassFinder {
         return this.findWithoutVersion("NMS", "net.minecraft.network", className);
     }
 
+    public Class<?> coreClass(String className) {
+        if (this.cache.containsKey(className)) return this.cache.get(className);
+
+        return this.findWithoutVersion("NMS", "net.minecraft.core", className);
+    }
+
     public Class<?> protocolClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 

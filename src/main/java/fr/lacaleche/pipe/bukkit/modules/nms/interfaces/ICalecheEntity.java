@@ -28,6 +28,10 @@ public interface ICalecheEntity {
 
     void hide(Player player);
 
+    void setNoTick(boolean noTick);
+
+    boolean isNoTick();
+
     boolean canSee(Player player);
 
     void updateMetadata();
@@ -55,6 +59,8 @@ public interface ICalecheEntity {
     void remove();
 
     void setLocation(Location location);
+
+    void setPosition(double x, double y, double z);
 
     void teleport(Location location);
 

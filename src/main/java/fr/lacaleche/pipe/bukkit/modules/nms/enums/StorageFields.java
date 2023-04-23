@@ -13,6 +13,10 @@ public enum StorageFields implements IStorageFields {
     TP_PACKET$Z,
     TP_PACKET$YAW,
     TP_PACKET$PITCH,
-    ENTITY$POSITION
+    ENTITY$POSITION,
+    ENTITY$BLOCK_POSITION,
+    ENTITY$CHUNK_POSITION,
+    CHUNK_POSITION$X,
+    CHUNK_POSITION$Z
 
 }
