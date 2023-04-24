@@ -40,13 +40,13 @@ public class HealthModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new HealthListener(this));
     }
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, HealCommand.class);
+        Pipe.getBukkit().getCommandManager().registerNewCommand(this, HealCommand.class);
     }
 
     public void blackListRegainReason(EntityRegainHealthEvent.RegainReason reason) {

@@ -38,7 +38,7 @@ public class TeleportPositionCommand {
         pitch = (float) this.parse(command.args(), "pitch", (double) player.getLocation().getPitch());
 
         if (!command.args().blank("world")) {
-            world = Pipe.get().<JavaPlugin>getPlugin().getServer().getWorld(command.args().getString("world"));
+            world = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getWorld(command.args().getString("world"));
 
             if (world == null) {
                 command.sender().sendMessage(locale.t("global.world_not_found").arg("world", command.args().getString("world")).from("Teleport").ct());

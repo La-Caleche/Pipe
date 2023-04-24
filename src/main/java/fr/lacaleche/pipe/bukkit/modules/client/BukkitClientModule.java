@@ -6,6 +6,7 @@ import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
+import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
@@ -43,15 +44,14 @@ public class BukkitClientModule extends BukkitModule {
 
     @Override
     public void onEnable() {
-        Pipe pipe = Pipe.get();
-        Plugin plugin = pipe.getPlugin();
+        BukkitPipe pipe = Pipe.getBukkit();
 
         pipe.addJoinCallback(this, (listener, player, client) -> {
             if (listener == null) return;
             listener.joinMessage(null);
 
-            plugin.getServer().getOnlinePlayers().forEach(onlinePlayer -> {
-                Client onlineClient = Pipe.get().getClient(onlinePlayer.getUniqueId());
+            pipe.getPlugin().getServer().getOnlinePlayers().forEach(onlinePlayer -> {
+                Client onlineClient = pipe.getClient(onlinePlayer.getUniqueId());
                 onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_join").arg("player", player.getName()).ph("player", player).ct());
             });
         });
@@ -60,8 +60,8 @@ public class BukkitClientModule extends BukkitModule {
             if (listener == null) return;
             listener.quitMessage(null);
 
-            plugin.getServer().getOnlinePlayers().forEach(onlinePlayer -> {
-                Client onlineClient = Pipe.get().getClient(onlinePlayer.getUniqueId());
+            pipe.getPlugin().getServer().getOnlinePlayers().forEach(onlinePlayer -> {
+                Client onlineClient = pipe.getClient(onlinePlayer.getUniqueId());
                 onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_quit").arg("player", player.getName()).ph("player", player).ct());
             });
         });
@@ -69,16 +69,13 @@ public class BukkitClientModule extends BukkitModule {
         pipe.getTabManager().addPlayerLoadCallback(this, (tabPlayer, player, client) -> {
             PlayerNameTag nameTag = tabPlayer.getNameTag();
             nameTag.addLine("<player>", 0);
-            if (client.isStaff()) {
-                nameTag.addLine("<rank>", 1);
-            }
         });
     }
 
     @Override
     public void onDisable() {
-        Pipe pipe = Pipe.get();
-        JavaPlugin plugin = pipe.getPlugin();
+        BukkitPipe pipe = Pipe.getBukkit();
+        Plugin plugin = pipe.getPlugin();
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
@@ -86,7 +83,7 @@ public class BukkitClientModule extends BukkitModule {
         Logger.customDebug("Removing clients for %d players...", players.size());
 
         for (Player player : players) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
+            Client client = pipe.getClient(player.getUniqueId());
             pipe.getQuitCallbacks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(callback -> callback.accept(null, player, client));
@@ -103,8 +100,8 @@ public class BukkitClientModule extends BukkitModule {
 
     @Override
     public void onEnableFinish() {
-        Pipe pipe = Pipe.get();
-        JavaPlugin plugin = pipe.getPlugin();
+        BukkitPipe pipe = Pipe.getBukkit();
+        Plugin plugin = pipe.getPlugin();
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
         if (players.size() == 0) return;
@@ -122,7 +119,7 @@ public class BukkitClientModule extends BukkitModule {
         Logger.customDebug("Calling join callbacks for %d players...", players.size());
 
         for (Player player : players) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
+            Client client = pipe.getClient(player.getUniqueId());
             pipe.getJoinCallbacks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(callback -> callback.accept(null, player, client));
@@ -138,11 +135,12 @@ public class BukkitClientModule extends BukkitModule {
 
     @Override
     public void registerPlaceholders() {
-        PipeText text = Pipe.get().text();
+        Pipe pipe = Pipe.getBukkit();
+        PipeText text = pipe.text();
 
         text.registerPlaceHolder("rank", (placeHolderArguments, locale) -> {
             if (placeHolderArguments.next() instanceof Player player) {
-                Client client = Pipe.get().getClient(player.getUniqueId());
+                Client client = pipe.getClient(player.getUniqueId());
                 return client.getRank().getColoredRankName(locale);
             }
             return Component.text("Unknown").color(NamedTextColor.GRAY);
@@ -150,7 +148,7 @@ public class BukkitClientModule extends BukkitModule {
 
         text.registerPlaceHolder("player", (placeHolderArguments, locale) -> {
             if (placeHolderArguments.next() instanceof Player player) {
-                Client client = Pipe.get().getClient(player.getUniqueId());
+                Client client = pipe.getClient(player.getUniqueId());
                 return client.getRank().colorize(player.getName());
             }
             return Component.text("Unknown").color(NamedTextColor.GRAY);
@@ -159,7 +157,7 @@ public class BukkitClientModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new PlayerJoinListener());
         bukkitManager.registerBukkitListener(this, new PlayerLeftListener());
         bukkitManager.registerCustomListener(this, new ModelSavedListener(this));

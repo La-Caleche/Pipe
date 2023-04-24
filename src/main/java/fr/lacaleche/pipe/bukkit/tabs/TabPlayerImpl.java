@@ -30,14 +30,14 @@ public class TabPlayerImpl implements TabPlayer {
 
     public TabPlayerImpl(Player player) {
         this.player = player;
-        this.tabListPlayer = new TabListPlayerImpl(Pipe.get().getTabManager(), this);
-        this.scoreboard = new TabScoreboard(Pipe.get().getTabManager(), this);
-        this.nameTag = new PlayerNameTagImpl(Pipe.get().getTabManager(), this);
+        this.tabListPlayer = new TabListPlayerImpl(Pipe.getBukkit().getTabManager(), this);
+        this.scoreboard = new TabScoreboard(Pipe.getBukkit().getTabManager(), this);
+        this.nameTag = new PlayerNameTagImpl(Pipe.getBukkit().getTabManager(), this);
     }
 
     @Override
     public Client getClient() {
-        return Pipe.get().getClient(this.getUniqueId());
+        return Pipe.getBukkit().getClient(this.getUniqueId());
     }
 
     @Override

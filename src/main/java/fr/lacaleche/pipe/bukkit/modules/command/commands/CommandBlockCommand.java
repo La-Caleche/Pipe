@@ -29,10 +29,10 @@ public class CommandBlockCommand {
 
     @CommandExecutor
     public boolean execute(Command<CommandSender> command) {
-        Locale locale = Pipe.get().getDefaultLocale();
+        Locale locale = Pipe.getBukkit().getDefaultLocale();
 
         if (command.sender() instanceof Player player) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
+            Client client = Pipe.getBukkit().getClient(player.getUniqueId());
             locale = client.getLocale();
         }
 
@@ -70,7 +70,7 @@ public class CommandBlockCommand {
     }
 
     private DedicatedServerProperties getServerProperties() {
-        Plugin plugin = Pipe.get().getPlugin();
+        Plugin plugin = Pipe.getBukkit().getPlugin();
         DedicatedServer server = ((CraftServer) plugin.getServer()).getServer();
         return server.a();
     }

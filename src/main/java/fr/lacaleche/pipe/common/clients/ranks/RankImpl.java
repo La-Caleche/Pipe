@@ -88,7 +88,7 @@ public class RankImpl extends SqlModel implements Rank {
 
     @Override
     public boolean isStaff() {
-        return this.getPermissionLevel() > 20;
+        return this.getPermissionLevel() >= 20;
     }
 
     @Override

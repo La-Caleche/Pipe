@@ -24,7 +24,7 @@ public class BukkitRegisteredCommandArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        CommandManager commandManager = Pipe.get().getCommandManager();
+        CommandManager commandManager = Pipe.getBukkit().getCommandManager();
         List<String> commands = commandManager.getCommands().keySet().stream().toList();
         if (!withAliases) {
             commands = commands.stream().filter(s -> !s.startsWith("∅")).collect(Collectors.toList());

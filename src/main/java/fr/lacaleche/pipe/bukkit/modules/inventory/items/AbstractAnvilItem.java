@@ -32,13 +32,13 @@ public abstract class AbstractAnvilItem implements AnvilItem {
                 .title(title)
                 .itemLeft(left.getItem())
                 .onClose(player -> parent.showAndRefreshWithClose(1))
-                .plugin(Pipe.get().getPlugin());
+                .plugin(Pipe.getBukkit().getPlugin());
         return this.builder;
     }
 
     @Override
     public List<AnvilGUI.ResponseAction> closeThenReopenParent(PipeInventory parent) {
-        Pipe.get().getTaskManager().newTask(new TaskBuilder().callback((task) -> parent.showAndRefresh()).startAfter(1));
+        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback((task) -> parent.showAndRefresh()).startAfter(1));
         return Collections.singletonList(AnvilGUI.ResponseAction.close());
     }
 

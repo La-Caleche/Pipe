@@ -32,7 +32,7 @@ public class InventoryModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager listenerManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager listenerManager = Pipe.getBukkit().getListenerManager();
         listenerManager.registerBukkitListener(this, new InventoryListener(this));
     }
 

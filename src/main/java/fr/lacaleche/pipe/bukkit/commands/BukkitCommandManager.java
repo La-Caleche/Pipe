@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.commands;
 
 import fr.lacaleche.core.utils.logger.Logger;
+import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.GlobalCommandManager;
@@ -25,7 +26,7 @@ public class BukkitCommandManager extends GlobalCommandManager {
 
     @Override
     public MinecraftCommand registerNewCommand(IModule module, Class<?> newCommand) {
-        Pipe pipe = Pipe.get();
+        BukkitPipe pipe = Pipe.getBukkit();
 
         MinecraftCommand command = super.registerNewCommand(module, newCommand);
         PipeCommandUtils.registerCommandAsBukkit(pipe.getPlugin(), command, new SimpleBukkitPipeCommand(command));
@@ -35,7 +36,7 @@ public class BukkitCommandManager extends GlobalCommandManager {
     @Override
     public boolean unregisterCommand(IModule module, Class<?> unregistered) {
         Logger.customDebug("Unregistering command " + unregistered.getSimpleName() + " from module " + module.getClass().getName());
-        Pipe pipe = Pipe.get();
+        BukkitPipe pipe = Pipe.getBukkit();
 
         if(!super.unregisterCommand(module, unregistered)) return false;
         PipeCommandUtils.unregisterBukkitCommand(pipe.getPlugin(), CommandsUtils.validateCommand(unregistered));
@@ -61,7 +62,7 @@ public class BukkitCommandManager extends GlobalCommandManager {
     @Override
     public Client getClient(Object sender) {
         if (!(sender instanceof Player)) return null;
-        return Pipe.get().getClient(((Player) sender).getUniqueId());
+        return Pipe.getBukkit().getClient(((Player) sender).getUniqueId());
     }
 
     @Override
@@ -71,14 +72,14 @@ public class BukkitCommandManager extends GlobalCommandManager {
 
     @Override
     public boolean commandExist(String label) {
-        return PipeCommandUtils.commandExist(Pipe.get().getPlugin(), label);
+        return PipeCommandUtils.commandExist(Pipe.getBukkit().getPlugin(), label);
     }
 
     @Override
     public void parseCommandResult(CoreCommandImpl command, Object objectSender, CommandResult result) {
         if (!(objectSender instanceof CommandSender sender)) return;
-        Locale locale = Pipe.get().getDefaultLocale();
-        if (sender instanceof Player player) locale = Pipe.get().getClient(player.getUniqueId()).getLocale();
+        Locale locale = Pipe.getBukkit().getDefaultLocale();
+        if (sender instanceof Player player) locale = Pipe.getBukkit().getClient(player.getUniqueId()).getLocale();
 
         switch (result) {
             case MISSING_ARGUMENT -> {

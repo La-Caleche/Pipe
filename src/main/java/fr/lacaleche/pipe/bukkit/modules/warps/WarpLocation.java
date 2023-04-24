@@ -35,7 +35,7 @@ public class WarpLocation {
     }
 
     public Location toLocation() {
-        Plugin plugin = Pipe.get().getPlugin();
+        Plugin plugin = Pipe.getBukkit().getPlugin();
         return new Location(plugin.getServer().getWorld(this.world), this.x, this.y, this.z, this.yaw, this.pitch);
     }
 }

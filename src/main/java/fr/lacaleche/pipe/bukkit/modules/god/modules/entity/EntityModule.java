@@ -40,13 +40,13 @@ public class EntityModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new EntityListener(this));
     }
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, EntityCommand.class);
+        Pipe.getBukkit().getCommandManager().registerNewCommand(this, EntityCommand.class);
     }
 
     public void blackListDamageCause(EntityDamageEvent.DamageCause cause) {

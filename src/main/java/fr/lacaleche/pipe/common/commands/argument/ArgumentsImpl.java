@@ -92,12 +92,12 @@ public class ArgumentsImpl implements Arguments {
 
     @Override
     public boolean blank(String key) {
-        return !this.exist(key) ? true : this.get(key).getValue().isBlank();
+        return !this.exist(key) || this.get(key).getValue().isBlank();
     }
 
     @Override
     public boolean mandatory(String key) {
-        return this.exist(key) ? manager.getArgument(key).isMandatory() : false;
+        return this.exist(key) && manager.getArgument(key).isMandatory();
     }
 
     @Override

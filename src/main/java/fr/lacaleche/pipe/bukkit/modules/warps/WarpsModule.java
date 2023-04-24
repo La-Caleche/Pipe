@@ -30,6 +30,6 @@ public class WarpsModule extends BukkitModule {
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, WarpCommand.class);
+        Pipe.getBukkit().getCommandManager().registerNewCommand(this, WarpCommand.class);
     }
 }

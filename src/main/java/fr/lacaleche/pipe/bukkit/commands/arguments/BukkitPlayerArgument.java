@@ -17,6 +17,6 @@ public class BukkitPlayerArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        completer.addAll(Pipe.get().<JavaPlugin>getPlugin().getServer().getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
+        completer.addAll(Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
     }
 }

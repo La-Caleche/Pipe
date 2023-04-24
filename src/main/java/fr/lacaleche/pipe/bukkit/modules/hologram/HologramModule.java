@@ -18,7 +18,7 @@ public class HologramModule extends BukkitModule {
         super(handler);
         if (!Core.get().getCentralModuleManager().moduleEnabled(NMSModule.class)) {
             Logger.err("NMS module is not enabled !");
-            Pipe.get().shutdown("Please, enable NMS Module before registering this one !");
+            Pipe.getBukkit().shutdown("Please, enable NMS Module before registering this one !");
         }
 
         this.hologramManager = new HologramManager();

@@ -55,6 +55,11 @@ public class TabManagerImpl implements TabManager {
     }
 
     @Override
+    public TabPlayer getTabPlayer(Player player) {
+        return this.getTabPlayer(player.getUniqueId());
+    }
+
+    @Override
     public TabPlayer getTabPlayer(Client client) {
         return this.tabPlayers.stream().filter(tabPlayer -> tabPlayer.getClient().getUUID() == client.getUUID()).findFirst().orElse(null);
     }
@@ -109,7 +114,7 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public void loadPlayer(TabPlayer tabPlayer) {
-        Pipe.get().getTaskManager().newTask(new TaskBuilder().startAfter(10).callback(task -> {
+        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().startAfter(10).callback(task -> {
             this.getPlayerLoadCallbacks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(callback -> callback.accept(tabPlayer, tabPlayer.getPlayer(), tabPlayer.getClient()));
@@ -159,6 +164,14 @@ public class TabManagerImpl implements TabManager {
                 newGameMode.set(gameModeListener.onGameModeChange(packetReceiver, id, gameMode));
         }
         return newGameMode.get();
+    }
+
+    @Override
+    public void onWorldChange(TabPlayer player, String world) {
+        for (TabFeature tabFeature : this.features.values()) {
+            if (tabFeature instanceof WorldChangeListener worldChangeListener)
+                worldChangeListener.onWorldChange(player, world);
+        }
     }
 
     @Override

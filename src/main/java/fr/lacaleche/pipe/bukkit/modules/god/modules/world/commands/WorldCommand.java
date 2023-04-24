@@ -20,7 +20,7 @@ public class WorldCommand {
 
             @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.world.time.get")
             public boolean execute(Command<CommandSender> command) {
-                Plugin plugin = Pipe.get().getPlugin();
+                Plugin plugin = Pipe.getBukkit().getPlugin();
                 plugin.getServer().getWorlds().forEach(world -> {
                     command.sender().sendMessage(command.locale().t("pipe.command.world.time.get").arg("world", world.getName()).arg("time", world.getTime()).arg("full_time", world.getFullTime()).from("World").ct());
                 });

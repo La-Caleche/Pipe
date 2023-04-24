@@ -19,9 +19,9 @@ public class PlayerLeftListener implements Listener {
         PipeDebug.eventCalled(event);
         Player player = event.getPlayer();
 
-        Client client = Pipe.get().getClient(player.getUniqueId());
+        Client client = Pipe.getBukkit().getClient(player.getUniqueId());
 
-        Pipe.get().getQuitCallbacks().values().stream()
+        Pipe.getBukkit().getQuitCallbacks().values().stream()
                 .flatMap(Collection::stream)
                 .forEach(callback -> callback.accept(event, player, client));
 

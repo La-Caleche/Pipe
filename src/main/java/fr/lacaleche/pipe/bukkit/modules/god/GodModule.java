@@ -29,16 +29,16 @@ public class GodModule extends BukkitModule {
 
     @Override
     public void onEnable() {
-        Pipe.get().getCachedGodModules().forEach(clazz -> {
+        Pipe.getBukkit().getCachedGodModules().forEach(clazz -> {
             this.getGodModuleManager().enableModule(clazz);
         });
 
-        Pipe.get().getCachedGodModules().clear();
+        Pipe.getBukkit().getCachedGodModules().clear();
     }
 
     @Override
     public void onDisable() {
-        Pipe.get().getCachedGodModules().addAll(this.getGodModuleManager().getGodModules().stream().map(IModule::getClass).toList());
+        Pipe.getBukkit().getCachedGodModules().addAll(this.getGodModuleManager().getGodModules().stream().map(IModule::getClass).toList());
         List<IModule> cached = this.getGodModuleManager().getGodModules();
 
         cached.forEach(module -> Core.get().getCentralModuleManager().disableModule(module));

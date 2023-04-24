@@ -34,7 +34,7 @@ public class CommandModule extends BukkitModule {
         ICentralModuleManager centralModuleManager = Core.get().getCentralModuleManager();
         if (centralModuleManager.getModules().size() > 0) {
             Logger.err("Currently %d modules is registered", centralModuleManager.getModules().size());
-            Pipe.get().shutdown("Command module must be loaded first. Please disable all modules and restart the server.");
+            Pipe.getBukkit().shutdown("Command module must be loaded first. Please disable all modules and restart the server.");
         }
     }
 
@@ -62,14 +62,14 @@ public class CommandModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new CommandListeners());
         bukkitManager.registerCustomListener(this, new HelpListener());
     }
 
     @Override
     public void registerCommands() {
-        this.commands.forEach(command -> Pipe.get().getCommandManager().registerNewCommand(this, command));
+        this.commands.forEach(command -> Pipe.getBukkit().getCommandManager().registerNewCommand(this, command));
     }
 
     @Override

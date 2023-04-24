@@ -18,6 +18,7 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
@@ -35,7 +36,7 @@ public class PipeCommandUtils {
      * @param command the command to register as bukkit command
      * @since 1.0.0
      */
-    public static void registerCommandAsBukkit(JavaPlugin parent, MinecraftCommand command, BukkitCommand bukkitCommand) {
+    public static void registerCommandAsBukkit(Plugin parent, MinecraftCommand command, BukkitCommand bukkitCommand) {
         try {
             Server server = parent.getServer();
             final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");
@@ -53,10 +54,10 @@ public class PipeCommandUtils {
      * */
     public static PlayerResult getPlayerFromArgsOrSender(CommandSender sender, Arguments arguments, String key) {
         Player target;
-        Locale locale = Pipe.get().getDefaultLocale();
+        Locale locale = Pipe.getBukkit().getDefaultLocale();
 
         if (sender instanceof Player player) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
+            Client client = Pipe.getBukkit().getClient(player.getUniqueId());
             locale = client.getLocale();
         }
 
@@ -65,7 +66,7 @@ public class PipeCommandUtils {
             else {
                 return new PlayerResult(locale.t("global.only_for_players"));
             }
-        } else target = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
+        } else target = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
 
         if (target == null) {
             return new PlayerResult(locale.t("global.player_not_found").arg("player", arguments.getString("player")));
@@ -107,7 +108,7 @@ public class PipeCommandUtils {
      * @param command the command to be unregistered
      * @since 1.0.0
      */
-    public static void unregisterBukkitCommand(JavaPlugin parent, MinecraftCommand command) {
+    public static void unregisterBukkitCommand(Plugin parent, MinecraftCommand command) {
         try {
             Server server = (Server) parent.getServer();
             final Field bukkitCommandMap = server.getClass().getDeclaredField("commandMap");
@@ -138,7 +139,7 @@ public class PipeCommandUtils {
      * TODO
      * */
 
-    public static boolean commandExist(JavaPlugin parent, String label) {
+    public static boolean commandExist(Plugin parent, String label) {
         if (label.matches(".+:.+"))
             label = label.replace(label.split(":")[0] + ":", "");
         label = "/" + label;

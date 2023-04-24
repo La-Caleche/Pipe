@@ -13,7 +13,7 @@ public abstract class AbstractTabFeature implements TabFeature {
     private TabManager tab;
 
     public AbstractTabFeature() {
-        this.tab = Pipe.get().getTabManager();
+        this.tab = Pipe.getBukkit().getTabManager();
     }
 
     protected TabListEntry getTabListInfo(TabPlayer tabPlayer, TabPlayer viewer) {

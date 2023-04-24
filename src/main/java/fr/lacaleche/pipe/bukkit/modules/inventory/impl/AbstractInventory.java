@@ -48,13 +48,13 @@ public abstract class AbstractInventory implements PipeInventory {
         this.inventoryManager = Core.getModule(InventoryModule.class).getInventoryManager();
 
         this.player = player;
-        this.client = Pipe.get().getClient(player.getUniqueId());
+        this.client = Pipe.getBukkit().getClient(player.getUniqueId());
         this.inventoryStyle = inventoryStyle;
         this.parent = parent;
 
         this.clickEvents = new HashMap<>();
 
-        final Plugin plugin = Pipe.get().getPlugin();
+        final Plugin plugin = Pipe.getBukkit().getPlugin();
 
         if (this.getStyle().getType() == InventoryType.CHEST) this.inventory = plugin.getServer().createInventory(null, getStyle().getSize(), title);
         else this.inventory = plugin.getServer().createInventory(null, getStyle().getType(), title);
@@ -96,13 +96,13 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void showAndRefresh(int delay) {
-        Pipe.get().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
+        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
     }
 
     @Override
     public void showAndRefreshWithClose(int delay) {
         this.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
-        Pipe.get().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
+        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
     }
 
     @Override

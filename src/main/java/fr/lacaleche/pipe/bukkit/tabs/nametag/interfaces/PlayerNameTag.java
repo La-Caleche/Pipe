@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces;
 
+import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.NameTagController;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.PlayerNameTagImpl;
@@ -11,13 +12,15 @@ import java.util.Map;
 
 public interface PlayerNameTag {
 
-    Map<Integer, Object> getLines();
+    Map<Integer, IPair<String, Boolean>> getLines();
 
     Map<TabPlayer, List<NameTagController>> getTabPlayersLines();
 
     List<NameTagController> getLinesFor(TabPlayer viewer);
 
-    void addLine(Object text, int order);
+    void addLine(String rawText, int order);
+
+    void addLine(Component text, int order);
 
     void addLineFor(NameTagController line, TabPlayer viewer);
 
@@ -25,17 +28,27 @@ public interface PlayerNameTag {
 
     void removeLineFor(TabPlayer viewer, int order);
 
+    void removePlayer(TabPlayer viewer);
+
     boolean hasLine(int order);
 
-    Object getLine(int order);
+    boolean isPersistent(int order);
 
-    Object getFirstLine();
+    void lockPositionFor(TabPlayer viewer);
 
-    Object getSecondLine();
+    void unlockPositionFor(TabPlayer viewer);
 
-    Object getThirdLine();
+    boolean isPositionLockedFor(TabPlayer viewer);
 
-    Object getLastLine();
+    IPair<String, Boolean> getLine(int order);
+
+    IPair<String, Boolean> getFirstLine();
+
+    IPair<String, Boolean> getSecondLine();
+
+    IPair<String, Boolean> getThirdLine();
+
+    IPair<String, Boolean> getLastLine();
 
     void clearLines();
 

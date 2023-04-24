@@ -22,6 +22,8 @@ public interface TabManager {
 
     TabPlayer getTabPlayer(UUID uuid);
 
+    TabPlayer getTabPlayer(Player player);
+
     void registerFeature(String featureName, TabFeature feature);
 
     void loadFeatures();
@@ -45,6 +47,8 @@ public interface TabManager {
     void entityMove(TabPlayer viewer, TabPlayer player, boolean force);
 
     void onPlayerSneak(TabPlayer tabPlayer, boolean sneak);
+
+    void onWorldChange(TabPlayer player, String world);
 
     int onGameModeChange(TabPlayer packetReceiver, UUID id, int gameMode);
 

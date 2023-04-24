@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.modules.command.listeners;
 
 import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.core.utils.commons.pairs.Pair;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
@@ -29,7 +30,7 @@ public class CommandListeners implements Listener {
     @EventHandler
     public void onCommandExecute(PlayerCommandPreprocessEvent event) {
         PipeDebug.eventCalled(event);
-        Client client = Pipe.get().getClient(event.getPlayer().getUniqueId());
+        Client client = Pipe.getBukkit().getClient(event.getPlayer().getUniqueId());
         String message = event.getMessage().substring(1);
         IPair<CoreCommandImpl, CommandResult> command = parseCommand(event, event.getPlayer(), message);
         CoreCommandImpl commandImpl = command.getLeft();
@@ -45,7 +46,7 @@ public class CommandListeners implements Listener {
 
         CommandResult result = commandImpl.execute();
         if (result != CommandResult.COMMAND_SUCCESS) {
-            Pipe.get().getCommandManager().parseCommandResult(commandImpl, commandImpl.getCommandSender(), result);
+            Pipe.getBukkit().getCommandManager().parseCommandResult(commandImpl, commandImpl.getCommandSender(), result);
         }
     }
 
@@ -54,7 +55,7 @@ public class CommandListeners implements Listener {
      * */
     @EventHandler
     public void onConsoleExecute(ServerCommandEvent event) {
-        Locale locale = Pipe.get().getDefaultLocale();
+        Locale locale = Pipe.getBukkit().getDefaultLocale();
         String message = event.getCommand();
         IPair<CoreCommandImpl, CommandResult> command = parseCommand(event, event.getSender(), message);
         CoreCommandImpl commandImpl = command.getLeft();
@@ -70,14 +71,14 @@ public class CommandListeners implements Listener {
 
         CommandResult result = commandImpl.execute();
         if (result != CommandResult.COMMAND_SUCCESS) {
-            Pipe.get().getCommandManager().parseCommandResult(commandImpl, commandImpl.getCommandSender(), result);
+            Pipe.getBukkit().getCommandManager().parseCommandResult(commandImpl, commandImpl.getCommandSender(), result);
         }
     }
 
     @EventHandler
     public void onCommandSend(PlayerCommandSendEvent event) {
         PipeDebug.eventCalled(event);
-        for (Class<MinecraftCommand> value : Pipe.get().getCommandManager().getCommands().values()) {
+        for (Class<MinecraftCommand> value : Pipe.getBukkit().getCommandManager().getCommands().values()) {
             MinecraftCommand command = CommandsUtils.validateCommand(value);
             event.getCommands().add(command.label());
             event.getCommands().addAll(Arrays.asList(command.aliases()));
@@ -109,12 +110,12 @@ public class CommandListeners implements Listener {
         completer.setIndex(commandImpl.getUserArguments().length);
         completer.setNext(userArgumentsLength == 0 || buffer.endsWith(commandImpl.getUserArguments()[userArgumentsLength - 1] + " "));
 
-        Pipe.get().getCommandManager().parseCompleter(Pipe.get().getPlugin(), completer);
+        Pipe.getBukkit().getCommandManager().parseCompleter(Pipe.getBukkit().getPlugin(), completer);
         event.setCompletions(completer.getCompleter().stream().sorted().collect(Collectors.toList()));
     }
 
     private IPair<CoreCommandImpl, CommandResult> parseCommand(Cancellable event, Object sender, String message) {
-        CommandManager manager = Pipe.get().getCommandManager();
+        CommandManager manager = Pipe.getBukkit().getCommandManager();
         String[] fullArguments = message.split(" ");
         String label = fullArguments[0];
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
@@ -141,7 +142,7 @@ public class CommandListeners implements Listener {
     }
 
     private IPair<CoreCommandImpl, CommandResult> parseTabCommand(Cancellable event, Object sender, String message) {
-        CommandManager manager = Pipe.get().getCommandManager();
+        CommandManager manager = Pipe.getBukkit().getCommandManager();
         String[] fullArguments = message.split(" ");
         String label = fullArguments[0];
         String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);

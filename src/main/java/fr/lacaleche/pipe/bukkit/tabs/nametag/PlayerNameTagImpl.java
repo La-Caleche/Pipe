@@ -1,9 +1,16 @@
 package fr.lacaleche.pipe.bukkit.tabs.nametag;
 
+import fr.lacaleche.core.databases.generic.ModelFilter;
+import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
+import fr.lacaleche.core.utils.commons.pairs.IPair;
+import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.core.utils.logger.Logger;
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.models.PersistentNametag;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.models.PersistentNametagImpl;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
@@ -17,8 +24,11 @@ public class PlayerNameTagImpl implements PlayerNameTag {
     private final TabManager tab;
     private final TabPlayer tabPlayer;
 
-    private Map<Integer, Object> lines;
+    private Map<Integer, IPair<String, Boolean>> lines;
     private Map<TabPlayer, List<NameTagController>> tabPlayersLines;
+    private Map<TabPlayer, Boolean> positionLocked;
+
+    private List<PersistentNametagImpl> persistentNametags;
 
     public PlayerNameTagImpl(TabManager tab, TabPlayer tabPlayer) {
         this.tab = tab;
@@ -26,6 +36,16 @@ public class PlayerNameTagImpl implements PlayerNameTag {
 
         this.lines = new HashMap<>();
         this.tabPlayersLines = new HashMap<>();
+        this.positionLocked = new HashMap<>();
+
+        this.persistentNametags = new ModelFilter<PersistentNametagImpl>().model(PersistentNametagImpl.class)
+                .cache(persistentNametag -> persistentNametag.getClient().getId() == this.tabPlayer.getClient().getId())
+                .sql(sqlBuilder -> sqlBuilder.where(new Where("client_id", this.tabPlayer.getClient().getId())))
+                .getAll().toList();
+
+        if (!this.persistentNametags.isEmpty()) {
+            this.persistentNametags.forEach(persistentNametag -> this.lines.put(persistentNametag.getIndexOrder(), new Pair<>(persistentNametag.getRawText(), true)));
+        }
     }
 
     @Override
@@ -39,22 +59,49 @@ public class PlayerNameTagImpl implements PlayerNameTag {
     }
 
     @Override
-    public Map<Integer, Object> getLines() {
+    public Map<Integer, IPair<String, Boolean>> getLines() {
         return lines;
     }
 
     @Override
-    public void addLine(Object text, int order) {
-        this.lines.put(order, text);
-        this.tabPlayersLines.keySet().forEach(viewer -> {
-            this.tab.onLineChanged(viewer, this.tabPlayer, order);
-        });
+    public boolean isPersistent(int order) {
+        return this.lines.getOrDefault(order, new Pair<>(null, false)).getRight();
     }
+
+    @Override
+    public void lockPositionFor(TabPlayer viewer) {
+        this.positionLocked.put(viewer, true);
+    }
+
+    @Override
+    public boolean isPositionLockedFor(TabPlayer viewer) {
+        return this.positionLocked.getOrDefault(viewer, false);
+    }
+
+    @Override
+    public void unlockPositionFor(TabPlayer viewer) {
+        this.positionLocked.put(viewer, false);
+    }
+
+    @Override
+    public void addLine(Component text, int order) {
+        String rawText = Pipe.getBukkit().text().serialize(text);
+        this.addLine(rawText, order);
+    }
+
+    @Override
+    public void addLine(String rawText, int order) {
+        IPair<String, Boolean> line = this.lines.getOrDefault(order, null);
+
+        this.lines.put(order, new Pair<>(rawText, line != null && line.getRight()));
+        this.tabPlayersLines.keySet().forEach(viewer -> this.tab.onLineChanged(viewer, this.tabPlayer, order));
+    }
+
 
     @Override
     public void removeLine(int order) {
         this.lines.remove(order);
-        this.tabPlayersLines.values().stream().map(List::stream).flatMap(s -> s).filter(line -> line.getOrder() == order).forEach(NameTagController::setForRemoval);
+        this.tabPlayersLines.values().stream().flatMap(List::stream).filter(line -> line.getOrder() == order).forEach(NameTagController::setForRemoval);
     }
 
     @Override
@@ -71,22 +118,27 @@ public class PlayerNameTagImpl implements PlayerNameTag {
     }
 
     @Override
-    public Object getLine(int order) {
+    public void removePlayer(TabPlayer viewer) {
+        this.tabPlayersLines.remove(viewer);
+    }
+
+    @Override
+    public IPair<String, Boolean> getLine(int order) {
         return this.lines.getOrDefault(order, null);
     }
 
     @Override
-    public Object getFirstLine() {
+    public IPair<String, Boolean> getFirstLine() {
         return this.getLine(0);
     }
 
     @Override
-    public Object getSecondLine() {
+    public IPair<String, Boolean> getSecondLine() {
         return this.getLine(1);
     }
 
     @Override
-    public Object getThirdLine() {
+    public IPair<String, Boolean> getThirdLine() {
         return this.getLine(2);
     }
 
@@ -97,7 +149,7 @@ public class PlayerNameTagImpl implements PlayerNameTag {
     }
 
     @Override
-    public Object getLastLine() {
+    public IPair<String, Boolean> getLastLine() {
         int maxOrder = this.lines.keySet().stream().mapToInt(i -> i).max().orElse(-1);
         return this.getLine(maxOrder);
     }

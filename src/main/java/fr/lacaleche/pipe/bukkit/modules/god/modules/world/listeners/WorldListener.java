@@ -37,7 +37,7 @@ public class WorldListener implements BukkitPipeListener {
         IFeature<DayLightType> type = this.module.getFeatureManager().getFeatureByName("DN_TIME_TYPE");
         IFeature<Long> timeValueFeature = this.module.getFeatureManager().getFeatureByName("DN_TIME_VALUE");
         IFeature<Integer> speedMultiplierFeature = this.module.getFeatureManager().getFeatureByName("DN_SPEED_MULTIPLIER");
-        Plugin plugin = Pipe.get().getPlugin();
+        Plugin plugin = Pipe.getBukkit().getPlugin();
 
         switch (type.value().getValue()) {
             case VANILLA_CYCLE:

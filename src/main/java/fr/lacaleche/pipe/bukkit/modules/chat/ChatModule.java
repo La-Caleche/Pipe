@@ -18,13 +18,13 @@ public class ChatModule extends BukkitModule  {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new ChatListener());
     }
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, ChatCommand.class);
+        Pipe.getBukkit().getCommandManager().registerNewCommand(this, ChatCommand.class);
     }
 
 }

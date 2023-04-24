@@ -20,6 +20,7 @@ import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -29,8 +30,8 @@ public class HelpListener implements CoreListener {
     @PacketReader(packet = HelpPacket.class)
     public void onHelpPacket(PacketReadEvent event, HelpPacket packet) {
         if (packet.getPacketType() == PacketType.REQUEST && packet.getHost().equals(Core.get().getHost())) {
-            if (Pipe.get().getCommandManager().isRegistered(packet.getCommand())) {
-                JavaPlugin plugin = Pipe.get().getPlugin();
+            if (Pipe.getBukkit().getCommandManager().isRegistered(packet.getCommand())) {
+                Plugin plugin = Pipe.getBukkit().getPlugin();
                 Player player = plugin.getServer().getPlayer(packet.getPlayer());
                 if (player == null) return;
 
@@ -48,10 +49,10 @@ public class HelpListener implements CoreListener {
     @PacketReader(packet = CheckPermissionsPacket.class)
     public void onCheckPermissionsPacket(PacketReadEvent event, CheckPermissionsPacket packet) {
         if (packet.getPacketType() == PacketType.REQUEST) {
-            Pipe.get().getTaskManager().newTask(new TaskBuilder().callback(task -> {
-                JavaPlugin plugin = Pipe.get().getPlugin();
+            Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback(task -> {
+                Plugin plugin = Pipe.getBukkit().getPlugin();
                 Player player = plugin.getServer().getPlayer(packet.getPlayer());
-                Client client = Pipe.get().getClient(packet.getPlayer());
+                Client client = Pipe.getBukkit().getClient(packet.getPlayer());
                 if (player == null || client == null) return;
 
                 List<CheckPermissionsPacket.AllowedCommand> commands = packet.getResponse();
@@ -60,7 +61,7 @@ public class HelpListener implements CoreListener {
 
                 commands.forEach(command -> {
                     String label = command.getCommand().replace("∅", "");
-                    if (Pipe.get().getCommandManager().isRegistered(label)) {
+                    if (Pipe.getBukkit().getCommandManager().isRegistered(label)) {
                         Helper helper = new HelperImpl(client.getLocale(), label);
                         command.setAllowed(helper.senderCanUseCommand(player));
                         array.add(CoreSerializer.get().serialize(command).getJsonNode());

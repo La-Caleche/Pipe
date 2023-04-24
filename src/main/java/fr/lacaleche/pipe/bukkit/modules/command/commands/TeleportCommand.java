@@ -26,10 +26,10 @@ public class TeleportCommand {
                 return true;
             }
             playerArg = command.sender().getName();
-            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer((otherPlayerArg = command.args().getString("player")));
+            otherPlayer = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getPlayer((otherPlayerArg = command.args().getString("player")));
         } else {
-            player = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer((playerArg = command.args().getString("player")));
-            otherPlayer = Pipe.get().<JavaPlugin>getPlugin().getServer().getPlayer((otherPlayerArg = command.args().getString("otherPlayer")));
+            player = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getPlayer((playerArg = command.args().getString("player")));
+            otherPlayer = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getPlayer((otherPlayerArg = command.args().getString("otherPlayer")));
         }
 
         if (player == null) {

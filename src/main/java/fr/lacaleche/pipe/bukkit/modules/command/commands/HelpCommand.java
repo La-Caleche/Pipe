@@ -28,7 +28,7 @@ public class HelpCommand {
 
     @CommandExecutor(executor = CommandExecutor.Executor.SERVER)
     public boolean execute(Command<ConsoleCommandSender> command) {
-        CommandManager commandManager = Pipe.get().getCommandManager();
+        CommandManager commandManager = Pipe.getBukkit().getCommandManager();
         List<String> commands = commandManager.getCommands().keySet().stream().map(s -> s.replace("∅", "")).toList();
 
         if (command.args().blank("command")) {

@@ -2,30 +2,29 @@ package fr.lacaleche.pipe.bukkit.modules.tab;
 
 import com.google.common.collect.ImmutableList;
 import fr.lacaleche.core.Core;
+import fr.lacaleche.core.databases.generic.ModelFilter;
+import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.pipe.Pipe;
-import fr.lacaleche.pipe.bukkit.events.BukkitPipeListener;
+import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
-import fr.lacaleche.pipe.bukkit.modules.handler.BukkitPipeModuleHandler;
+import fr.lacaleche.pipe.bukkit.modules.tab.commands.TabCommand;
 import fr.lacaleche.pipe.bukkit.modules.tab.listeners.TabPlayerListener;
+import fr.lacaleche.pipe.bukkit.tabs.nametag.models.PersistentNametagImpl;
 import fr.lacaleche.pipe.bukkit.tabs.features.NameTagFeature;
 import fr.lacaleche.pipe.bukkit.tabs.features.PipelineInjectorFeature;
-import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.Refreshable;
-import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.TabFeature;
-import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.PlayerListFeature;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.playerlist.features.SortingFeature;
 import fr.lacaleche.pipe.common.clients.Client;
-import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
+import java.util.List;
 
 @AModule(target = ModuleTarget.BUKKIT)
 public class TabModule extends BukkitModule {
@@ -36,17 +35,17 @@ public class TabModule extends BukkitModule {
 
     @Override
     public void onEnable() {
-        Pipe pipe = Pipe.get();
+        BukkitPipe pipe = Pipe.getBukkit();
 
         pipe.addJoinCallback(this, (playerJoinEvent, player, client) -> {
-            TabPlayer tabPlayer = Pipe.get().getTabManager().createPlayer(player);
-            Pipe.get().getTabManager().loadPlayer(tabPlayer);
+            TabPlayer tabPlayer = Pipe.getBukkit().getTabManager().createPlayer(player);
+            Pipe.getBukkit().getTabManager().loadPlayer(tabPlayer);
         });
 
         pipe.addQuitCallbacks(this, (playerQuitEvent, player, client) -> {
             if (Core.get().isDisabling()) return;
-            TabPlayer tabPlayer = Pipe.get().getTabManager().getTabPlayer(player.getUniqueId());
-            Pipe.get().getTabManager().unloadPlayer(tabPlayer);
+            TabPlayer tabPlayer = Pipe.getBukkit().getTabManager().getTabPlayer(player.getUniqueId());
+            Pipe.getBukkit().getTabManager().unloadPlayer(tabPlayer);
         });
 
         pipe.getTabManager().registerFeature("PlayerList", new PlayerListFeature());
@@ -57,13 +56,18 @@ public class TabModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager listenerManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager listenerManager = Pipe.getBukkit().getListenerManager();
         listenerManager.registerBukkitListener(this, new TabPlayerListener());
     }
 
     @Override
+    public void registerCommands() {
+        Pipe.getBukkit().getCommandManager().registerNewCommand(this, TabCommand.class);
+    }
+
+    @Override
     public void onDisable() {
-        Pipe pipe = Pipe.get();
+        BukkitPipe pipe = Pipe.getBukkit();
 
         pipe.removeJoinCallbacks(this);
         pipe.removeQuitCallbacks(this);
@@ -78,7 +82,7 @@ public class TabModule extends BukkitModule {
 
     @Override
     public void onReload() {
-        Pipe pipe = Pipe.get();
+        BukkitPipe pipe = Pipe.getBukkit();
         Plugin plugin = pipe.getPlugin();
 
         Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
@@ -88,20 +92,20 @@ public class TabModule extends BukkitModule {
         }
 
         for (Player player : players) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
+            Client client = Pipe.getBukkit().getClient(player.getUniqueId());
             pipe.getQuitCallbacks().get(this).forEach(callback -> callback.accept(null, player, client));
         }
 
         super.onReload();
 
         for (Player player : players) {
-            Client client = Pipe.get().getClient(player.getUniqueId());
+            Client client = Pipe.getBukkit().getClient(player.getUniqueId());
             pipe.getJoinCallbacks().get(this).forEach(callback -> callback.accept(null, player, client));
         }
     }
 
     @Override
     public void onEnableFinish() {
-        Pipe.get().getTabManager().loadFeatures();
+        Pipe.getBukkit().getTabManager().loadFeatures();
     }
 }

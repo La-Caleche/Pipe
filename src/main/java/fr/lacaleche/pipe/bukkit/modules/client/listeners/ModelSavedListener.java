@@ -25,25 +25,25 @@ public class ModelSavedListener implements CoreListener {
 
     @PacketReader(packet = ModelSavedPacket.class)
     public void onModelUpdated(PacketReadEvent event, ModelSavedPacket packet) {
-        if (Pipe.get().getTabManager() != null && packet.getResourceClass().equals(ClientImpl.class.getName())) {
+        if (Pipe.getBukkit().getTabManager() != null && packet.getResourceClass().equals(ClientImpl.class.getName())) {
             Client client = new ModelFilter<ClientImpl>().model(ClientImpl.class)
                     .cache((model) -> model.getId() == packet.getResourceId())
                     .sql((sql) -> sql.where(new Where("id", packet.getResourceId()))).getOne();
 
-            Plugin plugin = Pipe.get().getPlugin();
+            Plugin plugin = Pipe.getBukkit().getPlugin();
             Player player = plugin.getServer().getPlayer(client.getUUID());
             if (player == null) return;
 
             client.refresh();
 
-            TabManager tabManager = Pipe.get().getTabManager();
+            TabManager tabManager = Pipe.getBukkit().getTabManager();
             TabPlayer tabPlayer = tabManager.getTabPlayer(player.getUniqueId());
 
-            if (!client.isStaff() && tabPlayer.getNameTag().hasLine(1)) {
-                tabPlayer.getNameTag().removeLine(1);
-            } else if (client.isStaff() && !tabPlayer.getNameTag().hasLine(1)) {
-                tabPlayer.getNameTag().addLine("<rank>", 1);
-            }
+//            if (!client.isStaff() && tabPlayer.getNameTag().hasLine(1)) {
+//                tabPlayer.getNameTag().removeLine(1);
+//            } else if (client.isStaff() && !tabPlayer.getNameTag().hasLine(1)) {
+//                tabPlayer.getNameTag().addLine("<rank>", 1);
+//            }
 
             tabManager.refreshPlayer(tabPlayer);
         }

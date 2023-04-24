@@ -10,6 +10,7 @@ import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @MinecraftCommand(label = "chat", aliases = {"c"}, description = "pipe.command.chat.description", arguments = {"message"})
@@ -22,11 +23,11 @@ public class ChatCommand {
 
     @CommandExecutor(executor = {CommandExecutor.Executor.SERVER})
     public boolean execute(Command<ConsoleCommandSender> command) {
-        JavaPlugin plugin = Pipe.get().getPlugin();
+        Plugin plugin = Pipe.getBukkit().getPlugin();
         String message = command.args().getString("text");
 
         PipeRenderer renderer = new PipeRenderer(command.sender());
-        Component messageComponent = Pipe.get().text().deserialize(message);
+        Component messageComponent = Pipe.getBukkit().text().deserialize(message);
         Component component = renderer.render(command.sender(), Component.text("Console"), messageComponent);
 
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage(component));

@@ -15,10 +15,10 @@ public class PlayerListFeature extends AbstractTabFeature implements Loadable, U
 
     @Override
     public void load() {
-        for (TabPlayer viewer : Pipe.get().getTabManager().getTabPlayers()) {
+        for (TabPlayer viewer : Pipe.getBukkit().getTabManager().getTabPlayers()) {
             List<TabListEntry> entries = new ArrayList<>();
 
-            for (TabPlayer tabPlayer : Pipe.get().getTabManager().getTabPlayers()) {
+            for (TabPlayer tabPlayer : Pipe.getBukkit().getTabManager().getTabPlayers()) {
                 if (shouldSee(viewer, tabPlayer)) entries.add(this.getTabListInfo(tabPlayer, viewer));
             }
             if (!entries.isEmpty()) viewer.getTabList().addTabListPlayers(entries);
@@ -28,7 +28,7 @@ public class PlayerListFeature extends AbstractTabFeature implements Loadable, U
     @Override
     public void join(TabPlayer tabPlayer) {
         List<TabListEntry> entries = new ArrayList<>();
-        for (TabPlayer all : Pipe.get().getTabManager().getTabPlayers()) {
+        for (TabPlayer all : Pipe.getBukkit().getTabManager().getTabPlayers()) {
             if (shouldSee(all, tabPlayer)) all.getTabList().addTabListPlayers(Collections.singletonList(this.getTabListInfo(tabPlayer, all)));
             if (shouldSee(tabPlayer, all)) entries.add(this.getTabListInfo(all, tabPlayer));
         }

@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.tabs.features;
 
+import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.*;
@@ -19,12 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static fr.lacaleche.pipe.bukkit.tabs.nms.enums.TabStorageClass.*;
 
-public class NameTagFeature extends AbstractTabFeature implements Loadable, Unloadable, Refreshable, JoinListener, QuitListener, PlayerSneakListener, EntityMoveListener, GameModeListener, NameTagLineChangedListener {
+public class NameTagFeature extends AbstractTabFeature implements Loadable, Unloadable, Refreshable, JoinListener, QuitListener, PlayerSneakListener, EntityMoveListener, GameModeListener, NameTagLineChangedListener, WorldChangeListener {
 
     private final Task task;
 
     public NameTagFeature() {
-        task = Pipe.get().getTaskManager().newTask(new TaskBuilder().loop(true).callback(task -> {
+        task = Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().loop(true).callback(task -> {
             for (TabPlayer player : this.tab().getTabPlayers()) {
                 player.update();
 
@@ -41,14 +42,27 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
         for (TabPlayer viewer : this.tab().getTabPlayers()) {
             if (tabPlayer == viewer) continue;
             this.updateNameTagsFor(tabPlayer, viewer, true);
+            this.tab().entityMove(viewer, tabPlayer, true);
         }
     }
 
     @Override
     public void onEntityMove(TabPlayer viewer, TabPlayer player, boolean force) {
         if (player != null && viewer != null) {
-            if (player.hasMoved() || force)
-                player.getNameTag().teleport(viewer);
+            if (player.hasMoved() || force) {
+                if (this.checkDistance(player, viewer)) {
+                    if (player.getNameTag().isPositionLockedFor(viewer)) {
+                        this.updateBothNameTags(player, viewer, true);
+                        this.unlockPositionForBoth(player, viewer);
+                    }
+
+                    player.getNameTag().teleport(viewer);
+                    viewer.getNameTag().teleport(player);
+                } else {
+                    this.updateBothNameTags(player, viewer, false);
+                    this.lockPositionForBoth(player, viewer);
+                }
+            }
         }
     }
 
@@ -56,8 +70,8 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
     public void join(TabPlayer newPlayer) {
         for (TabPlayer tabPlayer : this.tab().getTabPlayers()) {
             if (tabPlayer == newPlayer) continue;
-            this.updateNameTagsFor(tabPlayer, newPlayer, true);
-            this.updateNameTagsFor(newPlayer, tabPlayer, true);
+            this.updateBothNameTags(tabPlayer, newPlayer, true);
+            this.tab().entityMove(tabPlayer, newPlayer, true);
         }
     }
 
@@ -68,6 +82,7 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
         for (TabPlayer viewer : this.tab().getTabPlayers()) {
             if (viewer == tabPlayer) continue;
             this.updateNameTagsFor(tabPlayer, viewer, false);
+            viewer.getNameTag().removePlayer(tabPlayer);
         }
     }
 
@@ -84,6 +99,14 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
             this.updateNameTagsFor(tabPlayer, viewer, false);
         }
         return newGameMode;
+    }
+
+    @Override
+    public void onWorldChange(TabPlayer tabPlayer, String worldName) {
+        for (TabPlayer viewer : this.tab().getTabPlayers()) {
+            if (viewer == tabPlayer) continue;
+            this.updateBothNameTags(tabPlayer, viewer, false);
+        }
     }
 
     @Override
@@ -118,27 +141,34 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
         if (nameTag.getLinesFor(viewer) != null && !nameTag.getLinesFor(viewer).isEmpty())
             controllers.addAll(nameTag.getLinesFor(viewer));
 
+        this.removeControllers(tabPlayer, viewer, nameTag, controllers, updateText);
+        if (!this.shouldSee(viewer, tabPlayer)) return;
+        this.summonControllersFor(tabPlayer, viewer, nameTag, controllers);
+    }
+
+    private void removeControllers(TabPlayer tabPlayer, TabPlayer viewer, PlayerNameTag nameTag, List<NameTagController> controllers, boolean updateText) {
         for (NameTagController controller : controllers) {
             if (controller.needRemove() || !this.shouldSee(viewer, tabPlayer)) {
                 controller.hide(viewer.getPlayer());
                 controller.remove();
                 nameTag.removeLineFor(viewer, controller.getOrder());
 
-                continue ;
+                continue;
             }
 
             if (updateText) {
-                controller.updateText();
+                controller.setText(nameTag.getLine(controller.getOrder()).getLeft());
             }
         }
+    }
 
-        if (!this.shouldSee(viewer, tabPlayer)) return ;
-
+    private void summonControllersFor(TabPlayer tabPlayer, TabPlayer viewer, PlayerNameTag nameTag, List<NameTagController> controllers) {
         List<NameTagController> finalControllers = new ArrayList<>(controllers);
-        Map<Integer, Object> finalLines = new HashMap<>(nameTag.getLines());
+        Map<Integer, IPair<String, Boolean>> finalLines = new HashMap<>(nameTag.getLines());
         finalLines.forEach((order, text) -> {
             if (finalControllers.stream().noneMatch(nameTagController -> nameTagController.getOrder() == order)) {
-                NameTagController newLine = this.tab().getNmsManager().createEntity(NameTagController.class, new Location(viewer.getPlayer().getWorld(), 0, -100, 0));
+                Location location = tabPlayer.getPlayer().getLocation();
+                NameTagController newLine = this.tab().getNmsManager().createEntity(NameTagController.class, location.clone());
 
                 newLine.setTabPlayer(tabPlayer);
                 newLine.setOrder(order);
@@ -146,7 +176,7 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
                 newLine.setInvisible(true);
                 newLine.show(viewer.getPlayer());
 
-                newLine.setText(text);
+                newLine.setText(text.getLeft());
                 newLine.teleport();
 
                 nameTag.addLineFor(newLine, viewer);
@@ -154,10 +184,32 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
         });
     }
 
+    private boolean checkDistance(TabPlayer tabPlayer, TabPlayer viewer) {
+        return tabPlayer.getPlayer().getLocation().distance(viewer.getPlayer().getLocation()) <= 48;
+    }
+
+    private void updateBothNameTags(TabPlayer firstPlayer, TabPlayer secondPlayer, boolean updateText) {
+        this.updateNameTagsFor(firstPlayer, secondPlayer, updateText);
+        this.updateNameTagsFor(secondPlayer, firstPlayer, updateText);
+    }
+
+    private void lockPositionForBoth(TabPlayer firstPlayer, TabPlayer secondPlayer) {
+        firstPlayer.getNameTag().lockPositionFor(secondPlayer);
+        secondPlayer.getNameTag().lockPositionFor(firstPlayer);
+    }
+
+    void unlockPositionForBoth(TabPlayer firstPlayer, TabPlayer secondPlayer) {
+        firstPlayer.getNameTag().unlockPositionFor(secondPlayer);
+        secondPlayer.getNameTag().unlockPositionFor(firstPlayer);
+    }
+
     private boolean shouldSee(TabPlayer viewer, TabPlayer tabPlayer) {
         if (viewer == tabPlayer) return false;
-        if (viewer.getPlayer().getGameMode() != GameMode.SPECTATOR && tabPlayer.getPlayer().getGameMode() == GameMode.SPECTATOR) return false;
-        return viewer.getPlayer().canSee(tabPlayer.getPlayer());
+        if (!viewer.getPlayer().canSee(tabPlayer.getPlayer())) return false;
+        if (viewer.getPlayer().getLocation().getWorld() != tabPlayer.getPlayer().getLocation().getWorld()) return false;
+        if (viewer.getPlayer().getGameMode() != GameMode.SPECTATOR && tabPlayer.getPlayer().getGameMode() == GameMode.SPECTATOR)
+            return false;
+        return this.checkDistance(tabPlayer, viewer);
     }
 
 }

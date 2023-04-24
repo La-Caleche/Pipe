@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.modules.task;
 
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.events.GlobalListenerManager;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.annotations.AModule;
@@ -17,7 +18,7 @@ public class TaskModule extends Module {
 
     @Override
     public void registerListeners() {
-        Pipe.get().<GlobalListenerManager>getListenerManager().registerCustomListener(this, new UpdateTickListener());
+        Pipe.get().globalListenerManager().registerCustomListener(this, new UpdateTickListener());
     }
 
 }

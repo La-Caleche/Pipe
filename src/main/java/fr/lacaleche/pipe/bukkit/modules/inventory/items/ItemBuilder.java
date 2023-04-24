@@ -117,7 +117,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addPage(String... page) {
-        this.bookMeta().addPages(Arrays.stream(page).map((s) -> Pipe.get().text().deserialize(s).decoration(TextDecoration.ITALIC, false)).toArray(Component[]::new));
+        this.bookMeta().addPages(Arrays.stream(page).map((s) -> Pipe.getBukkit().text().deserialize(s).decoration(TextDecoration.ITALIC, false)).toArray(Component[]::new));
         return this;
     }
 

@@ -87,7 +87,7 @@ public class TabListPlayerImpl implements TabListPlayer {
 
     @Override
     public Component getTabFormat(Locale locale) {
-        return Pipe.get().text().deserialize(this.format, locale, this.getTabPlayer().getPlaceHolders());
+        return Pipe.getBukkit().text().deserialize(this.format, locale, this.getTabPlayer().getPlaceHolders());
     }
 
     @Override

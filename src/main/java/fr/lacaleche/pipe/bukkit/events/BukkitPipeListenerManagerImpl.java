@@ -5,6 +5,7 @@ import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.Pipe;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -19,9 +20,9 @@ public class BukkitPipeListenerManagerImpl extends GlobalListenerManager impleme
 
     @Override
     public void registerBukkitListener(IModule module, Listener listener) {
-        if (!(Pipe.get().getPlugin() instanceof JavaPlugin)) throw new IllegalStateException("Pipe is not on a Bukkit server");
+        if (!(Pipe.getBukkit().getPlugin() instanceof JavaPlugin)) throw new IllegalStateException("Pipe is not on a Bukkit server");
 
-        JavaPlugin plugin = (JavaPlugin) Pipe.get().getPlugin();
+        Plugin plugin = Pipe.getBukkit().getPlugin();
         List<Listener> listeners = bukkitListeners.get(module);
 
         if (listeners == null)
@@ -35,7 +36,7 @@ public class BukkitPipeListenerManagerImpl extends GlobalListenerManager impleme
 
     @Override
     public void unregisterBukkitListener(Listener listener) {
-        if (!(Pipe.get().getPlugin() instanceof JavaPlugin)) throw new IllegalStateException("Pipe is not on a Bukkit server");
+        if (!(Pipe.getBukkit().getPlugin() instanceof JavaPlugin)) throw new IllegalStateException("Pipe is not on a Bukkit server");
 
         IModule module = this.getModuleFor(listener);
         if (module != null) {
@@ -52,7 +53,7 @@ public class BukkitPipeListenerManagerImpl extends GlobalListenerManager impleme
 
     @Override
     public void unregisterBukkitListeners(IModule module) {
-        if (!(Pipe.get().getPlugin() instanceof JavaPlugin)) throw new IllegalStateException("Pipe is not on a Bukkit server");
+        if (!(Pipe.getBukkit().getPlugin() instanceof JavaPlugin)) throw new IllegalStateException("Pipe is not on a Bukkit server");
 
         List<Listener> listeners = this.getCustomListeners(module);
         if (listeners.isEmpty()) return;

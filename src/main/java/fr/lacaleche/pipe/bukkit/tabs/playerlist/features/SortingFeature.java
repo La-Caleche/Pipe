@@ -22,14 +22,14 @@ public class SortingFeature extends AbstractTabFeature implements JoinListener, 
 
     @Override
     public void join(TabPlayer tabPlayer) {
-        for (TabPlayer viewer : Pipe.get().getTabManager().getTabPlayers()) {
+        for (TabPlayer viewer : Pipe.getBukkit().getTabManager().getTabPlayers()) {
             this.constructTeams(viewer);
         }
     }
 
     @Override
     public void load() {
-        for (TabPlayer viewer : Pipe.get().getTabManager().getTabPlayers()) {
+        for (TabPlayer viewer : Pipe.getBukkit().getTabManager().getTabPlayers()) {
             this.constructTeams(viewer);
         }
     }
@@ -39,7 +39,7 @@ public class SortingFeature extends AbstractTabFeature implements JoinListener, 
         String cachedKey = cachedKeys.getOrDefault(tabPlayer, null);
         String newKey = getSortKey(tabPlayer);
         if (cachedKey == null || !cachedKey.equals(newKey)) {
-            for (TabPlayer viewer : Pipe.get().getTabManager().getTabPlayers()) {
+            for (TabPlayer viewer : Pipe.getBukkit().getTabManager().getTabPlayers()) {
                 if (cachedKey != null) {
                     viewer.getScoreboard().unregisterTeam(cachedKey);
                 }
@@ -50,7 +50,7 @@ public class SortingFeature extends AbstractTabFeature implements JoinListener, 
 
     private void constructTeams(TabPlayer viewer) {
         Map<String, Set<TabPlayer>> teams = new HashMap<>();
-        for (TabPlayer tabPlayer : Pipe.get().getTabManager().getTabPlayers()) {
+        for (TabPlayer tabPlayer : Pipe.getBukkit().getTabManager().getTabPlayers()) {
             String sortKey = getSortKey(tabPlayer);
             teams.putIfAbsent(sortKey, new HashSet<>());
             teams.get(sortKey).add(tabPlayer);

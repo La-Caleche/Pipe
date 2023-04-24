@@ -23,13 +23,13 @@ public class WorldModule extends BukkitModule {
 
     @Override
     public void registerListeners() {
-        BukkitPipeListenerManager bukkitManager = Pipe.get().getListenerManager();
+        BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBoth(this, new WorldListener(this));
     }
 
     @Override
     public void registerCommands() {
-        Pipe.get().getCommandManager().registerNewCommand(this, WorldCommand.class);
+        Pipe.getBukkit().getCommandManager().registerNewCommand(this, WorldCommand.class);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class NameTagController extends ArmorStandController {
 
     private TabPlayer tabPlayer;
     private int order;
-    private Object text;
+    private String rawText;
 
     private boolean toRemove;
 
@@ -59,6 +59,7 @@ public class NameTagController extends ArmorStandController {
 
     public void setTabPlayer(TabPlayer tabPlayer) {
         this.tabPlayer = tabPlayer;
+        this.location.setY(this.getYOffset(this.tabPlayer.getPlayer().getLocation().getY()));
     }
 
     public void setOrder(int order) {
@@ -74,20 +75,14 @@ public class NameTagController extends ArmorStandController {
         this.teleport(x, this.getYOffset(y), z);
     }
 
-    public void setText(Object newText) {
-        this.text = newText;
+    public void setText(String rawText) {
+        this.rawText = rawText;
 
         this.updateText();
     }
 
     public void updateText() {
-        if (this.text instanceof String string) {
-            this.setTitle(Pipe.get().text().deserialize(string, this.getViewer().getClient().getLocale(), this.tabPlayer.getPlaceHolders()));
-        } else if (this.text instanceof Component component) {
-            this.setTitle(component);
-        } else {
-            throw new IllegalArgumentException("Invalid text type");
-        }
+        this.setTitle(Pipe.getBukkit().text().deserialize(this.rawText, this.getViewer().getClient().getLocale(), this.tabPlayer.getPlaceHolders()));
 
         this.enqueueUpdateMetadata();
     }
@@ -105,13 +100,13 @@ public class NameTagController extends ArmorStandController {
     }
 
 
-    public Object getText() {
-        return text;
+    public String getRawText() {
+        return this.rawText;
     }
 
     public TabPlayer getViewer() {
         Optional<Player> player = this.getViewers().stream().findFirst();
-        return player.map(value -> Pipe.get().getTabManager().getTabPlayer(value.getUniqueId())).orElse(null);
+        return player.map(value -> Pipe.getBukkit().getTabManager().getTabPlayer(value.getUniqueId())).orElse(null);
     }
 
     @Override
