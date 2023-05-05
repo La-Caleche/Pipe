@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 @MinecraftCommand(label = "gamemode", aliases = {"gm"}, arguments = {"mode", "player"}, description = "pipe.command.gamemode.description")
 public class GameModeCommand {
@@ -26,16 +27,16 @@ public class GameModeCommand {
             return true;
         }
 
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
+        PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
         if (result.hasError()) {
             command.sender().sendMessage(result.getError().from("GameMode").ct());
             return true;
         }
 
-        Player target = result.getPlayer();
+        Collection<Player> targets = result.getPlayers();
+        targets.forEach(target -> target.setGameMode(gameMode.getBukkitGameMode()));
 
-        target.setGameMode(gameMode.getBukkitGameMode());
-        command.sender().sendMessage(command.locale().t("pipe.command.gamemode.success").arg("mode", requiredGameMode).arg("player", target.getName()).from("GameMode").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.gamemode.success.one", "pipe.command.gamemode.success.all", targets.size() == 1).arg("mode", requiredGameMode).arg("player", result.getPlayer().getName()).from("GameMode").ct());
 
         return true;
     }
@@ -43,7 +44,7 @@ public class GameModeCommand {
     @ArgumentsManager
     public void manager(ArgumentManager manager) {
         manager.addArgument(new CustomArgument("mode"));
-        manager.addArgument(new BukkitPlayerArgument("player").optional());
+        manager.addArgument(new BukkitPlayerArgument("player").allowFull().optional());
     }
 
     @TabCompleter
@@ -58,7 +59,7 @@ public class GameModeCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.gamemode.get")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("GameMode").ct());
                 return true;
@@ -73,7 +74,7 @@ public class GameModeCommand {
 
         @ArgumentsManager
         public void manager(ArgumentManager manager) {
-            manager.addArgument(new BukkitPlayerArgument("player"));
+            manager.addArgument(new BukkitPlayerArgument("player").allowRandom().allowSelf().allowNearest());
         }
 
     }

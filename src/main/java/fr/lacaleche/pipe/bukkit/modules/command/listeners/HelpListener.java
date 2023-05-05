@@ -49,7 +49,7 @@ public class HelpListener implements CoreListener {
     @PacketReader(packet = CheckPermissionsPacket.class)
     public void onCheckPermissionsPacket(PacketReadEvent event, CheckPermissionsPacket packet) {
         if (packet.getPacketType() == PacketType.REQUEST) {
-            Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback(task -> {
+            Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.run(task -> {
                 Plugin plugin = Pipe.getBukkit().getPlugin();
                 Player player = plugin.getServer().getPlayer(packet.getPlayer());
                 Client client = Pipe.getBukkit().getClient(packet.getPlayer());

@@ -38,7 +38,7 @@ public abstract class AbstractAnvilItem implements AnvilItem {
 
     @Override
     public List<AnvilGUI.ResponseAction> closeThenReopenParent(PipeInventory parent) {
-        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback((task) -> parent.showAndRefresh()).startAfter(1));
+        Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.run((task) -> parent.showAndRefresh()).startAfter(1));
         return Collections.singletonList(AnvilGUI.ResponseAction.close());
     }
 

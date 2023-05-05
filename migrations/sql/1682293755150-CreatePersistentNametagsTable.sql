@@ -14,7 +14,7 @@ createTable {
         index_order int                                 not null,
         raw_text    text                                not null,
         created_at  timestamp default current_timestamp null,
-        update_at   timestamp default current_timestamp null,
+        updated_at   timestamp default current_timestamp null,
         constraint persistent_nametags_pk
             primary key (id),
         constraint persistent_nametags_clients_id_fk

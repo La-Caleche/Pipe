@@ -47,7 +47,7 @@ public abstract class BaseController implements ICalecheEntity {
     public void setEntity(Entity entity) {
         this.entityTracker = new EntityTracker(this);
 
-        this.tick = Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().loop(true).callback(this::taskLoop));
+        this.tick = Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.loop(true).run(this::taskLoop));
         this.tick();
     }
 

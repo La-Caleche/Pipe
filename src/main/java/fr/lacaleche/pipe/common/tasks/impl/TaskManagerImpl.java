@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.tasks.impl;
 
 import fr.lacaleche.pipe.common.tasks.events.UpdateTickEvent;
+import fr.lacaleche.pipe.common.tasks.interfaces.BuilderPredicate;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 
 import java.util.*;
@@ -62,8 +63,8 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     }
 
     @Override
-    public Task newTask(TaskBuilder taskBuilder) {
-        return this.newTask(UUID.randomUUID().toString(), taskBuilder);
+    public Task newTask(BuilderPredicate builderPredicate) {
+        return this.newTask(UUID.randomUUID().toString(), builderPredicate.build(new TaskBuilder()));
     }
 
     @Override

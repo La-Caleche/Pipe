@@ -114,7 +114,7 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public void loadPlayer(TabPlayer tabPlayer) {
-        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().startAfter(10).callback(task -> {
+        Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.startAfter(10).run(task -> {
             this.getPlayerLoadCallbacks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(callback -> callback.accept(tabPlayer, tabPlayer.getPlayer(), tabPlayer.getClient()));

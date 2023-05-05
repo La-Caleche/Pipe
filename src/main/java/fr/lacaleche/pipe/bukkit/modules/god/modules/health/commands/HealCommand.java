@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,25 +24,27 @@ public class HealCommand {
 
     @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal")
     public boolean execute(Command<CommandSender> command) {
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
+        PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
         if (result.hasError()) {
             command.sender().sendMessage(result.getError().from("Heal").ct());
             return true;
         }
 
-        Player target = result.getPlayer();
+        Collection<Player> targets = result.getPlayers();
 
-        target.setHealth(target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        target.setFoodLevel(20);
+        targets.forEach(target -> {
+            target.setHealth(target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            target.setFoodLevel(20);
+        });
 
-        command.sender().sendMessage(command.locale().t("pipe.command.heal.success").arg("player", target.getName()).from("Heal").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.heal.success.one", "pipe.command.heal.success.all", targets.size() == 1).arg("player", result.getPlayer()).from("Heal").ct());
 
         return true;
     }
 
     @ArgumentsManager
     public void manager(ArgumentManager manager) {
-        manager.addArgument(new BukkitPlayerArgument("player").optional());
+        manager.addArgument(new BukkitPlayerArgument("player").allowFull().optional());
     }
 
     @CommandChild(label = "get", arguments = {"player"}, description = "pipe.command.heal.get.description")
@@ -49,7 +52,7 @@ public class HealCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.get")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("Heal").ct());
                 return true;
@@ -64,7 +67,7 @@ public class HealCommand {
 
         @ArgumentsManager
         public void manager(ArgumentManager manager) {
-            manager.addArgument(new BukkitPlayerArgument("player"));
+            manager.addArgument(new BukkitPlayerArgument("player").allowRandom().allowSelf().allowNearest());
         }
 
     }

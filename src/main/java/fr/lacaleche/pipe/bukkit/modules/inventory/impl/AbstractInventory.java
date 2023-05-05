@@ -96,13 +96,13 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void showAndRefresh(int delay) {
-        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
+        Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.run((task) -> this.showAndRefresh()).startAfter(delay));
     }
 
     @Override
     public void showAndRefreshWithClose(int delay) {
         this.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
-        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback((task) -> this.showAndRefresh()).startAfter(delay));
+        Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.run((task) -> this.showAndRefresh()).startAfter(delay));
     }
 
     @Override

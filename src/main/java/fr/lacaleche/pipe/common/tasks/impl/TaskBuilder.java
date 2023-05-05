@@ -45,12 +45,12 @@ public class TaskBuilder {
         return this;
     }
 
-    public TaskBuilder callback(TaskCallback callback) {
+    public TaskBuilder run(TaskCallback callback) {
         this.callback = callback;
         return this;
     }
 
-    public TaskBuilder stopCallback(SimpleCallback stopCallback) {
+    public TaskBuilder stopFunction(SimpleCallback stopCallback) {
         this.stopCallback = stopCallback;
         return this;
     }

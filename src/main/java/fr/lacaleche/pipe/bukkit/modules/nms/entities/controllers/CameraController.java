@@ -42,7 +42,7 @@ public class CameraController extends ZombieController {
     }
 
     public void startCamera(Player player) {
-        Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().callback(task -> this.setLocation(this.getLocation().clone())).startAfter(2)); // Force update location because of no gravity
+        Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.run(task -> this.setLocation(this.getLocation().clone())).startAfter(2)); // Force update location because of no gravity
 
         this.addSpectator(player);
         this.addAsPassenger(player);

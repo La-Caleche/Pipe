@@ -15,7 +15,7 @@ public interface TaskManager {
 
     boolean isRunning();
 
-    Task newTask(TaskBuilder taskBuilder);
+    Task newTask(BuilderPredicate builderPredicate);
 
     Task newTask(String name, TaskBuilder taskBuilder);
 

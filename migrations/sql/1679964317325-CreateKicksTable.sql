@@ -14,7 +14,7 @@ CreateKicksTable {
         client_id  int                                 not null,
         reason     varchar(255)                        null,
         created_at timestamp default current_timestamp null,
-        update_at  timestamp default current_timestamp null,
+        updated_at  timestamp default current_timestamp null,
         constraint kicks_pk
             primary key (id),
         constraint kicks_clients_id_fk

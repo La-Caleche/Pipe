@@ -25,7 +25,7 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
     private final Task task;
 
     public NameTagFeature() {
-        task = Pipe.getBukkit().getTaskManager().newTask(new TaskBuilder().loop(true).callback(task -> {
+        task = Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.loop(true).run(task -> {
             for (TabPlayer player : this.tab().getTabPlayers()) {
                 player.update();
 
@@ -185,6 +185,7 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
     }
 
     private boolean checkDistance(TabPlayer tabPlayer, TabPlayer viewer) {
+        if (tabPlayer.getPlayer().getWorld() != viewer.getPlayer().getWorld()) return false;
         return tabPlayer.getPlayer().getLocation().distance(viewer.getPlayer().getLocation()) <= 48;
     }
 

@@ -12,21 +12,27 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Collection;
+
 @MinecraftCommand(label = "invisible", aliases = {"invis"}, description = "pipe.command.invisible.description", arguments = {"player"})
 public class InvisibleCommand {
 
     @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.invisible")
     public boolean execute(Command<CommandSender> command) {
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
+        PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
         if (result.hasError()) {
             command.sender().sendMessage(result.getError().from("Invisible").ct());
             return true;
         }
 
-        Player target = result.getPlayer();
+        Collection<Player> targets = result.getPlayers();
+        targets.forEach(this::switchPlayer);
 
-        this.switchPlayer(target);
-        command.sender().sendMessage(command.locale().ct("pipe.command.invisible.success.invisible", "pipe.command.invisible.success.visible", target.hasPotionEffect(PotionEffectType.INVISIBILITY)).arg("player", target.getName()).from("Invisible").ct());
+        if (targets.size() == 1) {
+            command.sender().sendMessage(command.locale().ct("pipe.command.invisible.success.enabled", "pipe.command.invisible.success.disabled", result.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY)).arg("player", result.getPlayer().getName()).from("Invisible").ct());
+        } else {
+            command.sender().sendMessage(command.locale().t("pipe.command.invisible.success.all").from("Invisible").ct());
+        }
 
         return true;
     }
@@ -43,7 +49,7 @@ public class InvisibleCommand {
 
     @ArgumentsManager
     public void manager(ArgumentManager manager) {
-        manager.addArgument(new BukkitPlayerArgument("player").optional());
+        manager.addArgument(new BukkitPlayerArgument("player").allowFull().optional());
     }
 
 
@@ -52,7 +58,7 @@ public class InvisibleCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.invisible.get")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.getPlayerFromArgsOrSender(command.sender(), command.args(), "player");
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("Invisible").ct());
                 return true;
@@ -67,7 +73,7 @@ public class InvisibleCommand {
 
         @ArgumentsManager
         public void manager(ArgumentManager manager) {
-            manager.addArgument(new BukkitPlayerArgument("player").optional());
+            manager.addArgument(new BukkitPlayerArgument("player").allowRandom().allowSelf().allowNearest().optional());
         }
 
     }

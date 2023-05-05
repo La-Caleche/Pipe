@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.utils;
 
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
@@ -22,8 +23,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PipeCommandUtils {
@@ -52,8 +52,8 @@ public class PipeCommandUtils {
     /**
      * TODO
      * */
-    public static PlayerResult getPlayerFromArgsOrSender(CommandSender sender, Arguments arguments, String key) {
-        Player target;
+    public static PlayerResult parseSelector(CommandSender sender, Arguments arguments, String key) {
+        Collection<Player> targets = new ArrayList<>();
         Locale locale = Pipe.getBukkit().getDefaultLocale();
 
         if (sender instanceof Player player) {
@@ -62,26 +62,50 @@ public class PipeCommandUtils {
         }
 
         if (arguments.blank(key)) {
-            if (sender instanceof Player player) target = player;
+            if (sender instanceof Player player) targets.add(player);
             else {
                 return new PlayerResult(locale.t("global.only_for_players"));
             }
-        } else target = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getPlayer(arguments.getString("player"));
+        } else {
+            targets = getPlayers(sender, arguments, key);
+        }
 
-        if (target == null) {
+        if (targets.isEmpty()) {
             return new PlayerResult(locale.t("global.player_not_found").arg("player", arguments.getString("player")));
         }
 
-        return new PlayerResult(target);
+        return new PlayerResult(targets);
+    }
+
+
+    private static Collection<Player> getPlayers(CommandSender sender, Arguments arguments, String key) {
+        BukkitPlayerArgument argument = (BukkitPlayerArgument) arguments.get(key);
+        String selector = arguments.getString(key);
+        Collection<Player> onlinePlayers = new ArrayList<>(Pipe.getBukkit().getPlugin().getServer().getOnlinePlayers());
+
+        if (selector.matches("(@a|all|\\*)") && argument.isAllowAll())
+            return onlinePlayers;
+
+        if (selector.matches("(@s|self)") && argument.isAllowSelf() && sender instanceof Player player)
+            return List.of(player);
+
+        if (selector.matches("(@r|random)") && argument.isAllowRandom())
+            return onlinePlayers.stream().skip((int) (Math.random() * onlinePlayers.size())).limit(1).collect(Collectors.toList());
+
+        if (selector.matches("(@p|nearest)") && argument.isAllowNearest() && sender instanceof Player player)
+            return player.getWorld().getNearbyPlayers(player.getLocation(), 48).stream().filter(nearest -> nearest.getUniqueId() != player.getUniqueId()).limit(1).collect(Collectors.toList());
+
+        Player match = onlinePlayers.stream().filter(player -> player.getName().equals(selector)).findFirst().orElse(null);
+        return match == null ? List.of() : List.of(match);
     }
 
     public static class PlayerResult {
 
-        private Player player;
+        private Collection<Player> players;
         private TranslationBuilder error;
 
-        public PlayerResult(Player player) {
-            this.player = player;
+        public PlayerResult(Collection<Player> players) {
+            this.players = players;
         }
 
         public PlayerResult(TranslationBuilder error) {
@@ -89,7 +113,13 @@ public class PipeCommandUtils {
         }
 
         public Player getPlayer() {
-            return player;
+            Optional<Player> player = this.getPlayers().stream().findFirst();
+            if (this.hasError() || player.isEmpty()) return null;
+            return player.get();
+        }
+
+        public Collection<Player> getPlayers() {
+            return players;
         }
 
         public TranslationBuilder getError() {

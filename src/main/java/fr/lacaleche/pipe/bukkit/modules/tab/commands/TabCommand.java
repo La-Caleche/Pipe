@@ -8,6 +8,7 @@ import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.models.PersistentNametagImpl;
+import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
@@ -23,6 +24,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collection;
+
 @MinecraftCommand(label = "tab", description = "pipe.command.tab.description", aliases = {"t"})
 public class TabCommand {
 
@@ -31,7 +34,7 @@ public class TabCommand {
 
         @ArgumentsManager
         public void manager(ArgumentManager manager) {
-            manager.addArgument(new BukkitPlayerArgument("player"));
+            manager.addArgument(new BukkitPlayerArgument("player").allowRandom().allowSelf().allowNearest());
         }
 
         @CommandExecutor(minPermLevel = 20)
@@ -40,11 +43,13 @@ public class TabCommand {
             Plugin plugin = pipe.getPlugin();
             Locale locale = command.locale();
 
-            Player target = plugin.getServer().getPlayer(command.args().getString("player"));
-            if (target == null || !target.isOnline()) {
-                command.sender().sendMessage(locale.t("global.player_not_found").arg("player", command.args().getString("player")).ct());
+            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+            if (result.hasError()) {
+                command.sender().sendMessage(result.getError().from("GameMode").ct());
                 return true;
             }
+
+            Player target = result.getPlayer();
             TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
             PlayerNameTag targetNameTag = targetTab.getNameTag();
 
@@ -57,7 +62,7 @@ public class TabCommand {
 
             @ArgumentsManager
             public void manager(ArgumentManager manager) {
-                manager.addArgument(new BukkitPlayerArgument("player"));
+                manager.addArgument(new BukkitPlayerArgument("player").allowFull());
                 manager.addArgument(new IntegerArgument("order"));
             }
 
@@ -67,36 +72,38 @@ public class TabCommand {
                 Plugin plugin = pipe.getPlugin();
                 Locale locale = command.locale();
 
-                Player target = plugin.getServer().getPlayer(command.args().getString("player"));
-                if (target == null || !target.isOnline()) {
-                    command.sender().sendMessage(locale.t("global.player_not_found").arg("player", command.args().getString("player")).ct());
+                PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+                if (result.hasError()) {
+                    command.sender().sendMessage(result.getError().from("GameMode").ct());
                     return true;
                 }
 
-                Client targetClient = pipe.getClient(target.getUniqueId());
-                TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
-                PlayerNameTag targetNameTag = targetTab.getNameTag();
+                Collection<Player> targets = result.getPlayers();
 
-                int order = command.args().getInt("order");
+                targets.forEach(target -> {
+                    Client targetClient = pipe.getClient(target.getUniqueId());
+                    TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
+                    PlayerNameTag targetNameTag = targetTab.getNameTag();
 
-                if (!targetNameTag.hasLine(order)) {
-                    command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.not_found").arg("player", target.getName()).arg("order", order).ct());
-                    return true;
-                }
+                    int order = command.args().getInt("order");
 
-                PersistentNametagImpl newPersistentNametag = new ModelFilter<PersistentNametagImpl>().model(PersistentNametagImpl.class)
-                        .cache(persistentNametag -> persistentNametag.getClient().getId() == targetClient.getId() && persistentNametag.getIndexOrder() == order)
-                        .sql(sqlBuilder -> sqlBuilder.where(new Where("client_id", targetClient.getId())).where(new Where("index_order", order)))
-                        .def(() -> new PersistentNametagImpl((ClientImpl) targetClient, order, targetNameTag.getLine(order).getLeft()))
-                        .getOne();
+                    if (!targetNameTag.hasLine(order)) {
+                        command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.not_found").arg("player", target.getName()).arg("order", order).ct());
+                        return ;
+                    }
 
-                if (newPersistentNametag == null) {
-                    command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.error").arg("player", target.getName()).arg("order", order).ct());
-                    return true;
-                }
+                    PersistentNametagImpl newPersistentNametag = new ModelFilter<PersistentNametagImpl>().model(PersistentNametagImpl.class)
+                            .cache(persistentNametag -> persistentNametag.getClient().getId() == targetClient.getId() && persistentNametag.getIndexOrder() == order)
+                            .sql(sqlBuilder -> sqlBuilder.where(new Where("client_id", targetClient.getId())).where(new Where("index_order", order)))
+                            .def(() -> new PersistentNametagImpl((ClientImpl) targetClient, order, targetNameTag.getLine(order).getLeft()))
+                            .getOne();
 
-                command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.success").arg("player", target.getName()).arg("order", order).ct());
+                    if (newPersistentNametag == null) {
+                        command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.error").arg("player", target.getName()).arg("order", order).ct());
+                    }
+                });
 
+                command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.success").ct());
                 return true;
             }
 
@@ -107,7 +114,7 @@ public class TabCommand {
 
             @ArgumentsManager
             public void manager(ArgumentManager manager) {
-                manager.addArgument(new BukkitPlayerArgument("player"));
+                manager.addArgument(new BukkitPlayerArgument("player").allowFull());
                 manager.addArgument(new IntegerArgument("order"));
                 manager.addArgument(new StringArgument("text").setMultiple(true).optional());
             }
@@ -118,29 +125,33 @@ public class TabCommand {
                 Plugin plugin = pipe.getPlugin();
                 Locale locale = command.locale();
 
-                Player target = plugin.getServer().getPlayer(command.args().getString("player"));
-                if (target == null || !target.isOnline()) {
-                    command.sender().sendMessage(locale.t("global.player_not_found").arg("player", command.args().getString("player")).ct());
-                    return true;
-                }
-                TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
-                PlayerNameTag targetNameTag = targetTab.getNameTag();
-                int order = command.args().getInt("order");
-
-                if (command.args().blank("text")) {
-                    if (targetNameTag.hasLine(order)) {
-                        targetNameTag.removeLine(order);
-                        pipe.getTabManager().refreshPlayer(targetTab);
-                    }
-                    command.sender().sendMessage(locale.t("pipe.command.tab.lines.edit.removed").arg("player", target.getName()).arg("order", order).ct());
+                PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+                if (result.hasError()) {
+                    command.sender().sendMessage(result.getError().from("GameMode").ct());
                     return true;
                 }
 
+                Collection<Player> targets = result.getPlayers();
                 String text = command.args().getString("text");
-                targetNameTag.addLine(text, order);
-                pipe.getTabManager().refreshPlayer(targetTab);
 
-                command.sender().sendMessage(locale.t("pipe.command.tab.lines.edit.set").arg("player", target.getName()).arg("order", order).arg("text", text).ct());
+                targets.forEach(target -> {
+                    TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
+                    PlayerNameTag targetNameTag = targetTab.getNameTag();
+                    int order = command.args().getInt("order");
+
+                    if (command.args().blank("text")) {
+                        if (targetNameTag.hasLine(order)) {
+                            targetNameTag.removeLine(order);
+                            pipe.getTabManager().refreshPlayer(targetTab);
+                        }
+                        return ;
+                    }
+
+                    targetNameTag.addLine(text, order);
+                    pipe.getTabManager().refreshPlayer(targetTab);
+                });
+
+                command.sender().sendMessage(locale.ct("pipe.command.tab.lines.edit.removed", "pipe.command.tab.lines.edit.set", command.args().blank("text")).arg("text", text).ct());
                 return true;
             }
 
