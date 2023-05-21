@@ -1,7 +1,9 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory.interfaces;
 
+import fr.lacaleche.pipe.bukkit.modules.inventory.items.ItemBuilder;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -52,7 +54,23 @@ public interface PipeInventory {
 
     void setItem(int index, ItemStack item, Consumer<InventoryClickEvent> clickEvent);
 
+    void setBackSlot(int slot);
+
+    void setCloseSlot(int slot);
+
     void fillWith(ItemStack item);
+
+    void fillLine(int line, ItemStack item);
+
+    void fillColumn(int column, ItemStack item);
+
+    void fillLine(int line, int from, int size, ItemStack item);
+
+    void fillColumn(int column, int from, int size, ItemStack item);
+
+    void fillLine(int line, int size, ItemStack item);
+
+    void fillColumn(int column, int size, ItemStack item);
 
     void trigItem(InventoryClickEvent event);
 
@@ -63,6 +81,14 @@ public interface PipeInventory {
     Client getClient();
 
     Locale getLocale();
+
+    void setBackMaterial(Material material);
+
+    void setCloseMaterial(Material material);
+
+    void setBackground(Material material);
+
+    void setBackground(ItemBuilder itemBuilder);
 
     enum InventoryStyle {
 

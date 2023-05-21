@@ -38,7 +38,13 @@ public abstract class AbstractInventory implements PipeInventory {
 
     private boolean visible = false;
     private boolean allowClose = true;
+    private int backSlot;
+    private int closeSlot;
     private Map<UUID, Consumer<InventoryClickEvent>> clickEvents;
+
+    private Material closeMaterial = Material.BARRIER;
+    private Material backMaterial = Material.ARROW;
+    private ItemBuilder background = ItemBuilder.EMPTY;
 
     private InventoryManager inventoryManager;
 
@@ -53,6 +59,9 @@ public abstract class AbstractInventory implements PipeInventory {
         this.parent = parent;
 
         this.clickEvents = new HashMap<>();
+
+        this.backSlot = -1;
+        this.closeSlot = -1;
 
         final Plugin plugin = Pipe.getBukkit().getPlugin();
 
@@ -207,6 +216,61 @@ public abstract class AbstractInventory implements PipeInventory {
     }
 
     @Override
+    public void fillLine(int line, ItemStack item) {
+        int maxLines = getStyle().getSize() / 9;
+        if (line < 0 || line > maxLines) return;
+
+        int start = line * 9;
+        int end = start + 9;
+
+        for (int i = start; i < end; i++)
+            setItem(i, item);
+    }
+
+    @Override
+    public void fillColumn(int column, ItemStack item) {
+        int maxColumns = 9;
+        if (column < 0 || column > maxColumns) return;
+
+        for (int i = column; i < getStyle().getSize(); i += 9)
+            setItem(i, item);
+    }
+
+    @Override
+    public void fillLine(int line, int from, int size, ItemStack item) {
+        int maxLines = getStyle().getSize() / 9;
+        if (line < 0 || line > maxLines) return;
+
+        int start = line * 9 + from;
+        int end = start + size;
+
+        for (int i = start; i < end; i++)
+            setItem(i, item);
+    }
+
+    @Override
+    public void fillColumn(int column, int from, int size, ItemStack item) {
+        int maxColumns = 9;
+        if (column < 0 || column > maxColumns) return;
+
+        int start = column + (from * 9);
+        int end = start + (size * 9);
+
+        for (int i = start; i < end; i += 9)
+            setItem(i, item);
+    }
+
+    @Override
+    public void fillLine(int line, int size, ItemStack item) {
+        fillLine(line, 0, size, item);
+    }
+
+    @Override
+    public void fillColumn(int column, int size, ItemStack item) {
+        fillColumn(column, 0, size, item);
+    }
+
+    @Override
     public PipeInventory getParent() {
         return parent;
     }
@@ -241,23 +305,61 @@ public abstract class AbstractInventory implements PipeInventory {
         return this.getClient().getLocale();
     }
 
-    protected void defaultFill(Material fillWith, int closeSlot, int backSlot) {
-        this.defaultFill(new ItemBuilder(fillWith), closeSlot, backSlot);
+    @Override
+    public void setBackSlot(int backSlot) {
+        this.backSlot = backSlot;
     }
 
-    protected void defaultFill(ItemBuilder builder, int closeSlot, int backSlot) {
-        if (builder != null) fillWith(builder.build());
+    @Override
+    public void setCloseSlot(int closeSlot) {
+        this.closeSlot = closeSlot;
+    }
 
-        if (closeSlot > -1)
-            setItem(closeSlot, new ItemBuilder(Material.BARRIER).name(this.getLocale().t("pipe.inventory.items.quit").ct()).build(), (event) -> {
-                this.close();
-            });
+    @Override
+    public void setBackMaterial(Material backMaterial) {
+        this.backMaterial = backMaterial;
+    }
 
-        if (backSlot > -1 && this.getParent() != null)
-            setItem(backSlot, new ItemBuilder(Material.ARROW).name(this.getLocale().t("pipe.inventory.items.back").ct()).build(), (event) -> {
-                this.getParent().showAndRefresh();
-                this.unregister();
-            });
+    @Override
+    public void setCloseMaterial(Material closeMaterial) {
+        this.closeMaterial = closeMaterial;
+    }
+
+    @Override
+    public void setBackground(Material material) {
+        this.setBackground(new ItemBuilder(material).name(""));
+    }
+
+    @Override
+    public void setBackground(ItemBuilder itemBuilder) {
+        this.background = itemBuilder;
+    }
+
+    @Override
+    public void fill() {
+        this.drawBackground();
+        this.drawBackSlot();
+        this.drawCloseButton();
+    }
+
+    protected void drawBackground() {
+        if (this.background == null || this.background.getItem().getType() == Material.AIR) return ;
+        this.fillWith(this.background.build());
+    }
+
+    protected void drawCloseButton() {
+        if (this.closeSlot < 0) return ;
+        setItem(this.closeSlot, new ItemBuilder(this.closeMaterial).name(this.getLocale().t("pipe.inventory.items.quit").ct()).build(), (event) -> {
+            this.close();
+        });
+    }
+
+    protected void drawBackSlot() {
+        if (this.backSlot < 0) return;
+        setItem(this.backSlot, new ItemBuilder(this.backMaterial).name(this.getLocale().t("pipe.inventory.items.back").ct()).build(), (event) -> {
+            this.getParent().showAndRefresh();
+            this.unregister();
+        });
     }
 
 }

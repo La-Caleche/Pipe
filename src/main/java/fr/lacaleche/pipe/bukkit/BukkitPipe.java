@@ -5,8 +5,10 @@ import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.bukkit.modules.chat.renderers.AbstractRenderer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.clients.Client;
+import io.papermc.paper.chat.ChatRenderer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -73,5 +75,20 @@ public interface BukkitPipe extends Pipe {
      * TODO
      */
     Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> getQuitCallbacks();
+
+    /**
+     * TODO
+     */
+    void setChatRenderer(Class<? extends ChatRenderer> renderer);
+
+    /**
+     * TODO
+     */
+    Class<? extends ChatRenderer> getChatRenderer();
+
+    /**
+     * TODO
+     */
+    Client getClient(Player player);
 
 }

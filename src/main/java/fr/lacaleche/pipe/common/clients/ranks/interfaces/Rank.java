@@ -14,8 +14,6 @@ public interface Rank extends ISqlModel {
 
     String getSlug();
 
-    String getColorCode();
-
     String getFormattedColor();
 
     Component colorize(String text);

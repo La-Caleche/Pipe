@@ -7,8 +7,11 @@ import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.pipe.AbstractPipe;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
+import fr.lacaleche.pipe.bukkit.modules.chat.renderers.AbstractRenderer;
+import fr.lacaleche.pipe.bukkit.modules.chat.renderers.PipeRenderer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.clients.Client;
+import io.papermc.paper.chat.ChatRenderer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -32,6 +35,8 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
     private final Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> quitCallbacks;
     private final List<Class<? extends IModule>> cachedGodModules;
 
+    private Class<? extends ChatRenderer> chatRenderer;
+
     public BukkitPipeImpl() {
         super();
 
@@ -41,6 +46,8 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
         this.quitCallbacks = new HashMap<>();
 
         this.cachedGodModules = new ArrayList<>();
+
+        this.chatRenderer = PipeRenderer.class;
     }
 
     public static BukkitPipe get() {
@@ -117,6 +124,16 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
     }
 
     @Override
+    public Class<? extends ChatRenderer> getChatRenderer() {
+        return chatRenderer;
+    }
+
+    @Override
+    public void setChatRenderer(Class<? extends ChatRenderer> chatRenderer) {
+        this.chatRenderer = chatRenderer;
+    }
+
+    @Override
     public void removeJoinCallbacks(Module module) {
         this.joinCallbacks.remove(module);
     }
@@ -124,6 +141,11 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
     @Override
     public void removeQuitCallbacks(Module module) {
         this.quitCallbacks.remove(module);
+    }
+
+    @Override
+    public Client getClient(Player player) {
+        return this.getClient(player.getUniqueId());
     }
 
     @Override

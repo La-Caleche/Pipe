@@ -8,10 +8,13 @@ import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
+import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.modules.warps.WarpLocation;
 import fr.lacaleche.pipe.bukkit.mysql.annotations.BukkitBlob;
 import fr.lacaleche.pipe.bukkit.mysql.serializers.LocationSerializer;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
@@ -39,6 +42,20 @@ public class WarpImpl extends SqlModel implements IWarp {
 
         this.insertOrSave();
         this.cache();
+    }
+
+    @Override
+    public void loaded() {
+        if (this.location.getWorld() == null || !this.location.getWorld().getName().equals(this.getWorld())) {
+            BukkitPipe pipe = Pipe.getBukkit();
+            World thisWorld = pipe.getPlugin().getServer().getWorld(this.getWorld());
+            World locWorld = this.location.getWorld();
+            if (thisWorld == null && locWorld != null) this.world = locWorld.getName();
+            else if (thisWorld != null && locWorld == null) this.location.setWorld(thisWorld);
+            else if (thisWorld != null) this.location.setWorld(thisWorld);
+
+            this.save();
+        }
     }
 
     @Override

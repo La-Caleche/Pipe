@@ -4,6 +4,8 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.interfaces.AnvilItem;
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -25,10 +27,10 @@ public abstract class AbstractAnvilItem implements AnvilItem {
     }
 
     @Override
-    public AnvilGUI.Builder buildAnvil(PipeInventory parent, String title, String text, ItemBuilder left, Function<AnvilGUI.Completion, List<AnvilGUI.ResponseAction>> completeFunction) {
+    public AnvilGUI.Builder buildAnvil(PipeInventory parent, String title, Component componentText, ItemBuilder left, Function<AnvilGUI.Completion, List<AnvilGUI.ResponseAction>> completeFunction) {
         this.builder = new AnvilGUI.Builder()
                 .onComplete(completeFunction)
-                .text(text)
+                .text(LegacyComponentSerializer.legacyAmpersand().serialize(componentText))
                 .title(title)
                 .itemLeft(left.getItem())
                 .onClose(player -> parent.showAndRefreshWithClose(1))

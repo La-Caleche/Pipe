@@ -12,6 +12,7 @@ import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.modules.command.commands.*;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.HelpListener;
+import fr.lacaleche.pipe.bukkit.modules.command.listeners.TeleportListener;
 import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
 import fr.lacaleche.pipe.common.packets.HelpPacket;
 
@@ -42,6 +43,7 @@ public class CommandModule extends BukkitModule {
     public void onEnable() {
         this.commands = new ArrayList<>();
 
+        this.commands.add(BackCommand.class);
         this.commands.add(CommandBlockCommand.class);
         this.commands.add(FlyCommand.class);
         this.commands.add(GameModeCommand.class);
@@ -65,6 +67,7 @@ public class CommandModule extends BukkitModule {
         BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new CommandListeners());
         bukkitManager.registerCustomListener(this, new HelpListener());
+        bukkitManager.registerBukkitListener(this, new TeleportListener());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory.interfaces;
 
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public interface PaginatedInventory {
@@ -11,6 +12,8 @@ public interface PaginatedInventory {
     void renderPagination(boolean needPage, int pages);
 
     void renderSlot(int index, int slot);
+
+    void applyFilter();
 
     void setTotalSize(int totalSize);
 
@@ -25,6 +28,16 @@ public interface PaginatedInventory {
     void setNextSlot(int slot);
 
     void setPageSlot(int slot);
+
+    void filter(String filter);
+
+    void enableFiltering();
+
+    void disableFiltering();
+
+    void setFilterSlot(int slot);
+
+    void setFilterMaterial(Material material);
 
     int getPage();
 
@@ -43,5 +56,9 @@ public interface PaginatedInventory {
     int getPageSlot();
 
     int getMaxPages();
+
+    boolean filterEnabled();
+
+    String getFilter();
 
 }

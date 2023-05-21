@@ -28,8 +28,18 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public String getString(String key, String def) {
+        return this.blank(key) ? def : this.getString(key);
+    }
+
+    @Override
     public int getInt(String key) {
         return Integer.parseInt(this.getString(key));
+    }
+
+    @Override
+    public int getInt(String key, int def) {
+        return this.blank(key) ? def : this.getInt(key);
     }
 
     @Override
@@ -38,8 +48,18 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public double getDouble(String key, double def) {
+        return this.blank(key) ? def : this.getDouble(key);
+    }
+
+    @Override
     public boolean getBoolean(String key) {
         return Boolean.parseBoolean(this.getString(key));
+    }
+
+    @Override
+    public boolean getBoolean(String key, boolean def) {
+        return this.blank(key) ? def : this.getBoolean(key);
     }
 
     @Override
@@ -48,8 +68,18 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public long getLong(String key, long def) {
+        return this.blank(key) ? def : this.getLong(key);
+    }
+
+    @Override
     public float getFloat(String key) {
         return Float.parseFloat(this.getString(key));
+    }
+
+    @Override
+    public float getFloat(String key, float def) {
+        return this.blank(key) ? def : this.getFloat(key);
     }
 
     @Override
@@ -58,8 +88,18 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public short getShort(String key, short def) {
+        return this.blank(key) ? def : this.getShort(key);
+    }
+
+    @Override
     public byte getByte(String key) {
         return Byte.parseByte(this.getString(key));
+    }
+
+    @Override
+    public byte getByte(String key, byte def) {
+        return this.blank(key) ? def : this.getByte(key);
     }
 
     @Override
@@ -68,8 +108,18 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public char getChar(String key, char def) {
+        return this.blank(key) ? def : this.getChar(key);
+    }
+
+    @Override
     public Object getObject(String key) {
         return this.get(key).getValue();
+    }
+
+    @Override
+    public Object getObject(String key, Object def) {
+        return this.blank(key) ? def : this.getObject(key);
     }
 
     @Override

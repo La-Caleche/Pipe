@@ -113,4 +113,9 @@ public class ProxyPipeImpl extends AbstractPipe implements ProxyPipe {
     public Map<Module, List<TriConsumer<DisconnectEvent, Player, Client>>> getQuitCallbacks() {
         return this.quitCallbacks;
     }
+
+    @Override
+    public Client getClient(Player player) {
+        return this.getClient(player.getUniqueId());
+    }
 }

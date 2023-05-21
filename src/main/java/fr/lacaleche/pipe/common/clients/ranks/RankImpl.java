@@ -22,9 +22,6 @@ public class RankImpl extends SqlModel implements Rank {
     private String slug;
 
     @Property
-    private String colorCode;
-
-    @Property
     private String formattedColor;
 
     @Property
@@ -39,11 +36,6 @@ public class RankImpl extends SqlModel implements Rank {
     @Override
     public String getSlug() {
         return slug;
-    }
-
-    @Override
-    public String getColorCode() {
-        return colorCode;
     }
 
     @Override
@@ -93,6 +85,6 @@ public class RankImpl extends SqlModel implements Rank {
 
     @Override
     public String toString() {
-        return "RankImpl { slug='%s', colorCode='%s', staff='%b' }".formatted(slug, colorCode, isStaff());
+        return "RankImpl { slug='%s', formattedColorCode='%s', staff='%b' }".formatted(slug, formattedColor, isStaff());
     }
 }

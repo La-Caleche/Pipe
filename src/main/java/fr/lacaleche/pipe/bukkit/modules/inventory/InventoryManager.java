@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -28,7 +29,7 @@ public class InventoryManager {
         if ((pipeInventory = this.getInventory(inventory)) == null) return;
 
         if (reason == InventoryCloseEvent.Reason.PLAYER && !pipeInventory.allowClose()) {
-            pipeInventory.show();
+            pipeInventory.showAndRefresh(1);
             return;
         }
 

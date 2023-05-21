@@ -21,6 +21,7 @@ import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.core.databases.mysql.models.annotations.BelongsTo;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.bukkit.Location;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class ClientImpl extends SqlModel implements Client {
     private List<KickImpl> kicks;
 
     private List<String> allowedCommands;
+    private Location lastLocation;
 
     public ClientImpl(UUID uuid, String username) {
         super();
@@ -219,6 +221,16 @@ public class ClientImpl extends SqlModel implements Client {
     @Override
     public boolean isStaff() {
         return this.getRank().isStaff();
+    }
+
+    @Override
+    public Location getLastLocation() {
+        return lastLocation;
+    }
+
+    @Override
+    public void setLastLocation(Location lastLocation) {
+        this.lastLocation = lastLocation;
     }
 
     @Override

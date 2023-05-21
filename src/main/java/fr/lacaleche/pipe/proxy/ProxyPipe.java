@@ -66,4 +66,9 @@ public interface ProxyPipe extends Pipe {
      */
     Map<Module, List<TriConsumer<DisconnectEvent, Player, Client>>> getQuitCallbacks();
 
+    /**
+     * TODO
+     */
+    Client getClient(Player player);
+
 }

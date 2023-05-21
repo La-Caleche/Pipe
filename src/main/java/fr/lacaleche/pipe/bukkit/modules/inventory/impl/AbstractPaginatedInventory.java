@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PaginatedInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.ItemBuilder;
+import fr.lacaleche.pipe.bukkit.modules.inventory.items.anvilitems.StringItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,6 +20,10 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     private int nextSlot;
     private int pageSlot;
     private int maxPages;
+    private String filter;
+    private boolean filterEnabled;
+    private int filterSlot;
+    private Material filterMaterial;
 
     public AbstractPaginatedInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
         super(title, player, inventoryStyle, parent);
@@ -32,6 +37,11 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
         this.nextSlot = 35;
         this.pageSlot = 4;
 
+        this.filter = "";
+        this.filterEnabled = false;
+        this.filterSlot = -1;
+        this.filterMaterial = Material.COMPASS;
+
         this.setMaxPages();
     }
 
@@ -41,6 +51,8 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
 
     @Override
     public void fill() {
+        super.fill();
+
         for (int line = 0; line < this.height; line++) {
             int slot = this.startAt + line * 9;
             for (int j = slot; j < slot + this.width; j++) setItem(j, ItemBuilder.EMPTY.build());
@@ -62,7 +74,22 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
         }
 
         this.renderPagination(max < this.totalSize, this.maxPages);
+
+        if (this.filterEnabled() && this.filterSlot > -1) {
+            StringItem stringItem = new StringItem(new ItemBuilder(this.filterMaterial).name(this.getLocale().t("pipe.inventory.items.filter").ct()));
+
+            setItem(this.filterSlot, stringItem.buildAnvil(this, result -> {
+                this.filter(result.getText());
+                return stringItem.closeThenReopenParent(this);
+            }).build(), (event) -> {
+                this.hide();
+                stringItem.getAnvil().open(this.getPlayer());
+            });
+        }
     }
+
+    @Override
+    public void applyFilter() {}
 
     @Override
     public void next(InventoryClickEvent inventoryClickEvent) {
@@ -169,6 +196,42 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     @Override
     public int getMaxPages() {
         return maxPages;
+    }
+
+    @Override
+    public void filter(String filter) {
+        this.filter = filter;
+        this.applyFilter();
+    }
+
+    @Override
+    public void enableFiltering() {
+        this.filterEnabled = true;
+    }
+
+    @Override
+    public void disableFiltering() {
+        this.filterEnabled = false;
+    }
+
+    @Override
+    public boolean filterEnabled() {
+        return this.filterEnabled;
+    }
+
+    @Override
+    public String getFilter() {
+        return this.filter;
+    }
+
+    @Override
+    public void setFilterSlot(int filterSlot) {
+        this.filterSlot = filterSlot;
+    }
+
+    @Override
+    public void setFilterMaterial(Material filterMaterial) {
+        this.filterMaterial = filterMaterial;
     }
 
     private void setMaxPages() {

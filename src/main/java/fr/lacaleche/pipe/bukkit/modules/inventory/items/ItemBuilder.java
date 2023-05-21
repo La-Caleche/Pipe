@@ -32,6 +32,10 @@ public class ItemBuilder {
 
     public static final ItemBuilder EMPTY = new ItemBuilder(Material.AIR);
     public static final ItemBuilder BLACK_BACKGROUND = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name("");
+    public static final ItemBuilder DARK_GRAY_BACKGROUND = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name("");
+    public static final ItemBuilder GRAY_BACKGROUND = new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("");
+    public static final ItemBuilder WHITE_BACKGROUND = new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).name("");
+
 
     public ItemBuilder(ItemStack item) {
         this.item = item;
@@ -145,6 +149,11 @@ public class ItemBuilder {
 
     public ItemBuilder setPlayerHead(Player player) {
         this.nbt(nbt -> nbt.setString("SkullOwner", player.getName()));
+        return this;
+    }
+
+    public ItemBuilder customModel(int model) {
+        this.nbt(nbt -> nbt.setInteger("CustomModelData", model));
         return this;
     }
 
