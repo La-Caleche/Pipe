@@ -6,6 +6,7 @@ import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
+import fr.lacaleche.core.utils.CalecheDebug;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
 import fr.lacaleche.pipe.Pipe;

@@ -139,17 +139,23 @@ public class BukkitClientModule extends BukkitModule {
         PipeText text = pipe.text();
 
         text.registerPlaceHolder("rank", (placeHolderArguments, locale) -> {
-            if (placeHolderArguments.next() instanceof Player player) {
+            Object argument = placeHolderArguments.next();
+            if (argument instanceof Player player) {
                 Client client = pipe.getClient(player.getUniqueId());
+                return client.getRank().getColoredRankName(locale);
+            } else if (argument instanceof Client client) {
                 return client.getRank().getColoredRankName(locale);
             }
             return Component.text("Unknown").color(NamedTextColor.GRAY);
         });
 
         text.registerPlaceHolder("player", (placeHolderArguments, locale) -> {
-            if (placeHolderArguments.next() instanceof Player player) {
+            Object argument = placeHolderArguments.next();
+            if (argument instanceof Player player) {
                 Client client = pipe.getClient(player.getUniqueId());
                 return client.getRank().colorize(player.getName());
+            } else if (argument instanceof Client client) {
+                return client.getRank().colorize(client.getUsername());
             }
             return Component.text("Unknown").color(NamedTextColor.GRAY);
         });

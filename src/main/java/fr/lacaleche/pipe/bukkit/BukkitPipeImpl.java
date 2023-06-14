@@ -12,6 +12,7 @@ import fr.lacaleche.pipe.bukkit.modules.chat.renderers.PipeRenderer;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import io.papermc.paper.chat.ChatRenderer;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -33,9 +34,12 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
 
     private final Map<Module, List<TriConsumer<PlayerJoinEvent, Player, Client>>> joinCallbacks;
     private final Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> quitCallbacks;
+    private Map<Client, Location> lastLocations;
+
     private final List<Class<? extends IModule>> cachedGodModules;
 
     private Class<? extends ChatRenderer> chatRenderer;
+
 
     public BukkitPipeImpl() {
         super();
@@ -44,6 +48,7 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
 
         this.joinCallbacks = new HashMap<>();
         this.quitCallbacks = new HashMap<>();
+        this.lastLocations = new HashMap<>();
 
         this.cachedGodModules = new ArrayList<>();
 
@@ -158,4 +163,13 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
         return quitCallbacks;
     }
 
+    @Override
+    public Location getLastLocation(Client client) {
+        return this.lastLocations.get(client);
+    }
+
+    @Override
+    public void setLastLocation(Client client, Location location) {
+        this.lastLocations.put(client, location);
+    }
 }

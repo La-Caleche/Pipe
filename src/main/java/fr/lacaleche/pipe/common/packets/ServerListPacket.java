@@ -21,9 +21,12 @@ import fr.lacaleche.pipe.common.utils.server.PipeServerImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Packet(name = "ServerListPacket")
 public class ServerListPacket extends TransactionalPacket {
+
+    private UUID uuid;
 
     public ServerListPacket() {}
 
@@ -32,7 +35,8 @@ public class ServerListPacket extends TransactionalPacket {
         this.setPacketType(PacketType.ANSWER);
     }
 
-    public ServerListPacket(Resolve<Object> resolve, Reject<Object> reject) {
+    public ServerListPacket(UUID uuid, Resolve<Object> resolve, Reject<Object> reject) {
+        this.uuid = uuid;
         this.setResponse(new ArrayList<>());
         this.setToken(new Token(64));
         this.setResolve(resolve);
@@ -45,7 +49,10 @@ public class ServerListPacket extends TransactionalPacket {
         this.setToken(new Token(data.next()));
         this.setPacketType(PacketType.valueOf(data.next()));
 
-        if (this.getPacketType() == PacketType.REQUEST) return;
+        if (this.getPacketType() == PacketType.REQUEST) {
+            this.uuid = UUID.fromString(data.next());
+            return;
+        }
 
         try {
             this.setResponse(this.parseJson(new ObjectMapper().readValue(data.<String>next(), JsonNode.class)));
@@ -54,6 +61,10 @@ public class ServerListPacket extends TransactionalPacket {
         }
 
         this.setResult(TransactionResult.valueOf(data.next()));
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     private List<PipeServer> parseJson(JsonNode jsonNode) {
@@ -82,7 +93,7 @@ public class ServerListPacket extends TransactionalPacket {
 
             this.buildDefault();
 
-            return getBuilder().toString();
+            return getBuilder().build(this.uuid).toString();
         }
 
         buildDefault().build(getResponse());

@@ -3,7 +3,9 @@ package fr.lacaleche.pipe.bukkit.modules.warps.commands;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
+import fr.lacaleche.core.utils.CalecheDebug;
 import fr.lacaleche.core.utils.Token;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.warps.arguments.WarpArgument;
 import fr.lacaleche.pipe.bukkit.modules.warps.events.WarpCreatedEvent;
@@ -68,9 +70,12 @@ public class WarpCommand {
                 return true;
             }
 
-            new WarpDeletedEvent(warp).call();
-            warp.delete();
-            command.sender().sendMessage(client.getLocale().t("pipe.command.warps.delete.success").arg("name", warpName).ct());
+            Pipe.getBukkit().getTaskManager().newTask(builder -> builder.run(task -> {
+                new WarpDeletedEvent(warp).call();
+                warp.delete();
+                command.sender().sendMessage(client.getLocale().t("pipe.command.warps.delete.success").arg("name", warpName).ct());
+            }).async(true));
+
             return true;
         }
     }
@@ -99,15 +104,19 @@ public class WarpCommand {
             Location location = command.sender().getLocation();
             String newWarpName = command.args().getString("name");
 
-            WarpImpl existingWarp = new ModelFilter<WarpImpl>().model(WarpImpl.class).cache(w -> w.getName().equalsIgnoreCase(newWarpName)).getOne();
+            WarpImpl existingWarp = new ModelFilter<WarpImpl>().model(WarpImpl.class)
+                    .cache(w -> w.getName().equalsIgnoreCase(newWarpName))
+                    .sql(sql -> sql.where(new Where("name", newWarpName))).getOne();
             if (existingWarp != null) {
                 command.sender().sendMessage(client.getLocale().t("pipe.command.warps.already_exist").arg("name", newWarpName).ct());
                 return true;
             }
 
-            WarpImpl warp = new WarpImpl(newWarpName, location);
-            new WarpCreatedEvent(warp).call();
-            command.sender().sendMessage(client.getLocale().t("pipe.command.warps.create.success").arg("name", newWarpName).ct());
+            Pipe.getBukkit().getTaskManager().newTask(builder -> builder.run(task -> {
+                WarpImpl warp = new WarpImpl(newWarpName, location);
+                new WarpCreatedEvent(warp).call();
+                command.sender().sendMessage(client.getLocale().t("pipe.command.warps.create.success").arg("name", newWarpName).ct());
+            }).async(true));
             return true;
         }
     }
@@ -142,8 +151,11 @@ public class WarpCommand {
                 return true;
             }
 
-            warp.setName(newName);
-            command.sender().sendMessage(client.getLocale().t("pipe.command.warps.rename.success").arg("oldName", oldName).arg("name", newName).ct());
+            Pipe.getBukkit().getTaskManager().newTask(builder -> builder.run(task -> {
+                warp.setName(newName);
+                command.sender().sendMessage(client.getLocale().t("pipe.command.warps.rename.success").arg("oldName", oldName).arg("name", newName).ct());
+            }).async(true));
+
             return true;
         }
     }
@@ -169,9 +181,11 @@ public class WarpCommand {
                 return true;
             }
 
-            warp.setLocation(newLocation);
+            Pipe.getBukkit().getTaskManager().newTask(builder -> builder.run(task -> {
+                warp.setLocation(newLocation);
+                command.sender().sendMessage(client.getLocale().t("pipe.command.warps.move.success").arg("name", warp.getName()).ct());
+            }).async(true));
 
-            command.sender().sendMessage(client.getLocale().t("pipe.command.warps.move.success").arg("name", warp.getName()).ct());
             return true;
         }
     }

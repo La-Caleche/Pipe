@@ -12,7 +12,7 @@ public class TeleportListener implements Listener {
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         Client client = Pipe.getBukkit().getClient(event.getPlayer());
-        client.setLastLocation(event.getFrom());
+        Pipe.getBukkit().setLastLocation(client, event.getFrom());
     }
 
 }

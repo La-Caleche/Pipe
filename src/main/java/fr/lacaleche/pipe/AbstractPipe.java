@@ -30,6 +30,7 @@ public abstract class AbstractPipe implements Pipe {
     private Runnable shutdownHook;
     private TaskManager taskManager;
     private final PipeText pipeText;
+    private Locale defaultLocale;
 
     private long serverTick;
 
@@ -57,7 +58,9 @@ public abstract class AbstractPipe implements Pipe {
 
     @Override
     public Locale getDefaultLocale() {
-        return new ModelFilter<LocaleImpl>().model(LocaleImpl.class).cache(LocaleImpl::isDefault).getOne();
+        if (this.defaultLocale == null)
+            this.defaultLocale = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).cache(LocaleImpl::isDefault).getOne();
+        return this.defaultLocale;
     }
 
     @Override

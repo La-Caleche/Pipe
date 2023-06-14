@@ -8,7 +8,6 @@ import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
 import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import org.bukkit.Location;
 
 import java.util.Date;
 import java.util.List;
@@ -56,9 +55,5 @@ public interface Client extends ISqlModel {
     List<BanImpl> getBans();
 
     List<KickImpl> getKicks();
-
-    Location getLastLocation();
-
-    void setLastLocation(Location location);
 
 }
