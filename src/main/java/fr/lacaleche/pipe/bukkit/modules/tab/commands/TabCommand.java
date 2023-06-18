@@ -5,10 +5,10 @@ import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
+import fr.lacaleche.pipe.bukkit.modules.command.utils.BukkitEntitySelector;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabPlayer;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.models.PersistentNametagImpl;
-import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
@@ -19,6 +19,7 @@ import fr.lacaleche.pipe.common.commands.argument.arguments.IntegerArgument;
 import fr.lacaleche.pipe.common.commands.argument.arguments.StringArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
+import fr.lacaleche.pipe.common.commands.utils.EntitySelectorResult;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,17 +44,17 @@ public class TabCommand {
             Plugin plugin = pipe.getPlugin();
             Locale locale = command.locale();
 
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+            EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("GameMode").ct());
                 return true;
             }
 
-            Player target = result.getPlayer();
+            Player target = result.first();
             TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
             PlayerNameTag targetNameTag = targetTab.getNameTag();
 
-            command.sender().sendMessage(locale.t("pipe.command.tab.lines.list").arg("player", target.getName()).arg("lines", targetNameTag.getLines()).ct());
+            command.sender().sendMessage(locale.t("pipe.command.tab.lines.list").ph("player", target).arg("lines", targetNameTag.getLines()).ct());
             return true;
         }
 
@@ -72,13 +73,13 @@ public class TabCommand {
                 Plugin plugin = pipe.getPlugin();
                 Locale locale = command.locale();
 
-                PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+                EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
                 if (result.hasError()) {
                     command.sender().sendMessage(result.getError().from("GameMode").ct());
                     return true;
                 }
 
-                Collection<Player> targets = result.getPlayers();
+                Collection<Player> targets = result.getEntities();
 
                 targets.forEach(target -> {
                     Client targetClient = pipe.getClient(target.getUniqueId());
@@ -88,7 +89,7 @@ public class TabCommand {
                     int order = command.args().getInt("order");
 
                     if (!targetNameTag.hasLine(order)) {
-                        command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.not_found").arg("player", target.getName()).arg("order", order).ct());
+                        command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.not_found").ph("player", target).arg("order", order).ct());
                         return ;
                     }
 
@@ -99,7 +100,7 @@ public class TabCommand {
                             .getOne();
 
                     if (newPersistentNametag == null) {
-                        command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.error").arg("player", target.getName()).arg("order", order).ct());
+                        command.sender().sendMessage(locale.t("pipe.command.tab.lines.save.error").ph("player", target).arg("order", order).ct());
                     }
                 });
 
@@ -125,13 +126,13 @@ public class TabCommand {
                 Plugin plugin = pipe.getPlugin();
                 Locale locale = command.locale();
 
-                PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+                EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
                 if (result.hasError()) {
                     command.sender().sendMessage(result.getError().from("GameMode").ct());
                     return true;
                 }
 
-                Collection<Player> targets = result.getPlayers();
+                Collection<Player> targets = result.getEntities();
                 String text = command.args().getString("text");
 
                 targets.forEach(target -> {

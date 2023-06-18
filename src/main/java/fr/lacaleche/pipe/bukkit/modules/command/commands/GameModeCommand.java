@@ -1,12 +1,13 @@
 package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
-import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
+import fr.lacaleche.pipe.bukkit.modules.command.utils.BukkitEntitySelector;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.CustomArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
+import fr.lacaleche.pipe.common.commands.utils.EntitySelectorResult;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,16 +28,16 @@ public class GameModeCommand {
             return true;
         }
 
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+        EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
         if (result.hasError()) {
             command.sender().sendMessage(result.getError().from("GameMode").ct());
             return true;
         }
 
-        Collection<Player> targets = result.getPlayers();
+        Collection<Player> targets = result.getEntities();
         targets.forEach(target -> target.setGameMode(gameMode.getBukkitGameMode()));
 
-        command.sender().sendMessage(command.locale().ct("pipe.command.gamemode.success.one", "pipe.command.gamemode.success.all", targets.size() == 1).arg("mode", requiredGameMode).arg("player", result.getPlayer().getName()).from("GameMode").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.gamemode.success.one", "pipe.command.gamemode.success.all", targets.size() == 1).arg("mode", requiredGameMode).ph("player", result.first()).from("GameMode").ct());
 
         return true;
     }
@@ -59,15 +60,15 @@ public class GameModeCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.gamemode.get")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+            EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("GameMode").ct());
                 return true;
             }
 
-            Player target = result.getPlayer();
+            Player target = result.first();
 
-            command.sender().sendMessage(command.locale().t("pipe.command.gamemode.player_mode").arg("mode", target.getGameMode().name()).arg("player", target.getName()).from("GameMode").ct());
+            command.sender().sendMessage(command.locale().t("pipe.command.gamemode.player_mode").arg("mode", target.getGameMode().name()).ph("player", target).from("GameMode").ct());
 
             return true;
         }

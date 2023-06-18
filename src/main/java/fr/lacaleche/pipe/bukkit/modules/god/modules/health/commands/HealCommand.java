@@ -2,13 +2,14 @@ package fr.lacaleche.pipe.bukkit.modules.god.modules.health.commands;
 
 import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
+import fr.lacaleche.pipe.bukkit.modules.command.utils.BukkitEntitySelector;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.health.HealthModule;
-import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
 import fr.lacaleche.pipe.common.commands.annotations.*;
 import fr.lacaleche.pipe.common.commands.argument.arguments.CustomArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
+import fr.lacaleche.pipe.common.commands.utils.EntitySelectorResult;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,20 +25,20 @@ public class HealCommand {
 
     @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal")
     public boolean execute(Command<CommandSender> command) {
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+        EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
         if (result.hasError()) {
             command.sender().sendMessage(result.getError().from("Heal").ct());
             return true;
         }
 
-        Collection<Player> targets = result.getPlayers();
+        Collection<Player> targets = result.getEntities();
 
         targets.forEach(target -> {
             target.setHealth(target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             target.setFoodLevel(20);
         });
 
-        command.sender().sendMessage(command.locale().ct("pipe.command.heal.success.one", "pipe.command.heal.success.all", targets.size() == 1).arg("player", result.getPlayer()).from("Heal").ct());
+        command.sender().sendMessage(command.locale().ct("pipe.command.heal.success.one", "pipe.command.heal.success.all", targets.size() == 1).ph("player", result.first()).from("Heal").ct());
 
         return true;
     }
@@ -52,15 +53,15 @@ public class HealCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.heal.get")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+            EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("Heal").ct());
                 return true;
             }
 
-            Player target = result.getPlayer();
+            Player target = result.first();
 
-            command.sender().sendMessage(command.locale().t("pipe.command.heal.get_health").arg("player", target.getName()).arg("health", target.getHealth()).arg("max_health", target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).from("Heal").ct());
+            command.sender().sendMessage(command.locale().t("pipe.command.heal.get_health").ph("player", target).arg("health", target.getHealth()).arg("max_health", target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).from("Heal").ct());
 
             return true;
         }

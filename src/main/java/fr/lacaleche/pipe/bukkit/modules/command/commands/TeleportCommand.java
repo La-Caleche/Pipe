@@ -43,7 +43,7 @@ public class TeleportCommand {
         }
 
         player.teleport(otherPlayer.getLocation().add(0, 1, 0));
-        command.sender().sendMessage(command.locale().t("pipe.command.tp.success").arg("player", player.getName()).arg("otherPlayer", otherPlayer.getName()).from("Teleport").ct());
+        command.sender().sendMessage(command.locale().t("pipe.command.tp.success").ph("player", player).arg("otherPlayer", otherPlayer.getName()).from("Teleport").ct());
 
         return true;
     }

@@ -52,7 +52,7 @@ public class BukkitClientModule extends BukkitModule {
 
             pipe.getPlugin().getServer().getOnlinePlayers().forEach(onlinePlayer -> {
                 Client onlineClient = pipe.getClient(onlinePlayer.getUniqueId());
-                onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_join").arg("player", player.getName()).ph("player", player).ct());
+                onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_join").ph("player", player).ct());
             });
         });
 
@@ -62,7 +62,7 @@ public class BukkitClientModule extends BukkitModule {
 
             pipe.getPlugin().getServer().getOnlinePlayers().forEach(onlinePlayer -> {
                 Client onlineClient = pipe.getClient(onlinePlayer.getUniqueId());
-                onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_quit").arg("player", player.getName()).ph("player", player).ct());
+                onlinePlayer.sendMessage(onlineClient.getLocale().t("global.player_quit").ph("player", player).ct());
             });
         });
 

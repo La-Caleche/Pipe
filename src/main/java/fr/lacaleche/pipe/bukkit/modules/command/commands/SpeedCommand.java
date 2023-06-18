@@ -1,7 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.command.commands;
 
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
-import fr.lacaleche.pipe.bukkit.utils.PipeCommandUtils;
+import fr.lacaleche.pipe.bukkit.modules.command.utils.BukkitEntitySelector;
 import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
@@ -9,7 +9,7 @@ import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
 import fr.lacaleche.pipe.common.commands.argument.arguments.IntegerArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import fr.lacaleche.pipe.common.commands.utils.EntitySelectorResult;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,13 +20,13 @@ public class SpeedCommand {
 
     @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.speed")
     public boolean execute(Command<CommandSender> command) {
-        PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+        EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
         if (result.hasError()) {
             command.sender().sendMessage(result.getError().from("Speed").ct());
             return true;
         }
 
-        Collection<Player> targets = result.getPlayers();
+        Collection<Player> targets = result.getEntities();
         int speed = command.args().getInt("speed");
 
         if (speed < 0 || speed > 10) {
@@ -40,7 +40,7 @@ public class SpeedCommand {
         });
 
         if (targets.size() == 1) {
-            command.sender().sendMessage(command.locale().ct("pipe.command.speed.success.fly", "pipe.command.speed.success.walk", result.getPlayer().isFlying()).arg("speed", speed).arg("player", result.getPlayer().getName()).from("Speed").ct());
+            command.sender().sendMessage(command.locale().ct("pipe.command.speed.success.fly", "pipe.command.speed.success.walk", result.first().isFlying()).arg("speed", speed).ph("player", result.first()).from("Speed").ct());
         } else {
             command.sender().sendMessage(command.locale().t("pipe.command.speed.success.all").from("Speed").ct());
         }
@@ -59,18 +59,18 @@ public class SpeedCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.speed.get")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+            EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("Speed").ct());
                 return true;
             }
 
-            Player target = result.getPlayer();
+            Player target = result.first();
 
             int flySpeed = (int) (target.getFlySpeed() * 10);
             int walkSpeed = (int) (target.getWalkSpeed() * 10);
 
-            command.sender().sendMessage(command.locale().t("pipe.command.speed.target_speed").arg("player", target.getName()).arg("fly_speed", flySpeed).arg("walk_speed", walkSpeed).from("Speed").ct());
+            command.sender().sendMessage(command.locale().t("pipe.command.speed.target_speed").ph("player", target).arg("fly_speed", flySpeed).arg("walk_speed", walkSpeed).from("Speed").ct());
 
             return true;
         }
@@ -87,13 +87,13 @@ public class SpeedCommand {
 
         @CommandExecutor(minPermLevel = 20, permissions = "pipe.command.speed.reset")
         public boolean execute(Command<CommandSender> command) {
-            PipeCommandUtils.PlayerResult result = PipeCommandUtils.parseSelector(command.sender(), command.args(), "player");
+            EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
             if (result.hasError()) {
                 command.sender().sendMessage(result.getError().from("Speed").ct());
                 return true;
             }
 
-            Collection<Player> targets = result.getPlayers();
+            Collection<Player> targets = result.getEntities();
 
             targets.forEach(target -> {
                 if (target.isFlying()) target.setFlySpeed(0.1F);
@@ -101,7 +101,7 @@ public class SpeedCommand {
             });
 
             if (targets.size() == 1) {
-                command.sender().sendMessage(command.locale().ct("pipe.command.speed.reset.flying", "pipe.command.speed.reset.walking", result.getPlayer().isFlying()).arg("player", result.getPlayer().getName()).from("Speed").ct());
+                command.sender().sendMessage(command.locale().ct("pipe.command.speed.reset.flying", "pipe.command.speed.reset.walking", result.first().isFlying()).ph("player", result.first()).from("Speed").ct());
             } else {
                 command.sender().sendMessage(command.locale().t("pipe.command.speed.reset.all").from("Speed").ct());
             }
