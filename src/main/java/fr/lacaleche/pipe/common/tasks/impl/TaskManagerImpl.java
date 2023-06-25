@@ -1,10 +1,12 @@
 package fr.lacaleche.pipe.common.tasks.impl;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.tasks.events.UpdateTickEvent;
 import fr.lacaleche.pipe.common.tasks.interfaces.BuilderPredicate;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interfaces.TaskManager {
 
@@ -16,8 +18,8 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     private Map<String, Task> nextCallbacks;
 
     public TaskManagerImpl() {
-        this.callbacks = new HashMap<>();
-        this.nextCallbacks = new HashMap<>();
+        this.callbacks = new ConcurrentHashMap<>();
+        this.nextCallbacks = new ConcurrentHashMap<>();
         this.done = new ArrayList<>();
     }
 
@@ -32,14 +34,16 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     }
 
     @Override
-    public void update(UpdateTickEvent event) {
-        this.nextCallbacks.forEach((name, task) -> {
-            task.startNow();
-            this.callbacks.put(name, task);
-        });
-        this.nextCallbacks.clear();
+    public synchronized void update(UpdateTickEvent event) {
+        synchronized (this.nextCallbacks) {
+            this.nextCallbacks.forEach((name, task) -> {
+                task.startNow();
+                this.callbacks.put(name, task);
+            });
+            this.nextCallbacks.clear();
+        }
 
-        getCallbacks().forEach((name, task) -> {
+        this.callbacks.forEach((name, task) -> {
             task.tick(event.getTick());
             if (!task.canBeExecuted()) return;
 
@@ -68,7 +72,7 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     }
 
     @Override
-    public Task newTask(String name, TaskBuilder taskBuilder) {
+    public synchronized Task newTask(String name, TaskBuilder taskBuilder) {
         if (this.getCallbacks().containsKey(name) || this.nextCallbacks.containsKey(name)) return null;
         Task task = taskBuilder.build();
         this.nextCallbacks.put(name, task);
