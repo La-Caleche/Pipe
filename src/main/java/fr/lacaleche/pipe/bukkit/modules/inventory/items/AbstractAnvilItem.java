@@ -16,21 +16,22 @@ import java.util.function.Function;
 public abstract class AbstractAnvilItem implements AnvilItem {
 
     private AnvilGUI.Builder builder;
+    private final ItemBuilder itemBuilder;
 
-    public AbstractAnvilItem() {
-        super();
+    public AbstractAnvilItem(ItemBuilder builder) {
+        this.itemBuilder = builder;
     }
 
     @Override
     public ItemBuilder get() {
-        return null;
+        return this.itemBuilder;
     }
 
     @Override
     public AnvilGUI.Builder buildAnvil(PipeInventory parent, String title, Component componentText, ItemBuilder left, Function<AnvilGUI.Completion, List<AnvilGUI.ResponseAction>> completeFunction) {
         this.builder = new AnvilGUI.Builder()
                 .onComplete(completeFunction)
-                .text(LegacyComponentSerializer.legacyAmpersand().serialize(componentText))
+                .text(LegacyComponentSerializer.legacySection().serialize(componentText))
                 .title(title)
                 .itemLeft(left.getItem())
                 .onClose(player -> parent.showAndRefreshWithClose(1))

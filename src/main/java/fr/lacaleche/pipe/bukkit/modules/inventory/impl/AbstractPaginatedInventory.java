@@ -7,6 +7,7 @@ import fr.lacaleche.pipe.bukkit.modules.inventory.items.anvilitems.StringItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public abstract class AbstractPaginatedInventory extends AbstractInventory implements PaginatedInventory {
@@ -19,23 +20,27 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     private int previousSlot;
     private int nextSlot;
     private int pageSlot;
+    private int scrollOffset;
+    private boolean alwaysRenderPagination;
     private int maxPages;
     private String filter;
     private boolean filterEnabled;
     private int filterSlot;
     private Material filterMaterial;
 
-    public AbstractPaginatedInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
-        super(title, player, inventoryStyle, parent);
+    public AbstractPaginatedInventory(Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
+        super(player, inventoryStyle, parent);
 
         this.startAt = 10;
         this.width = 7;
         this.height = 2;
         this.totalSize = 0;
+        this.scrollOffset = this.height;
 
         this.previousSlot = 27;
         this.nextSlot = 35;
         this.pageSlot = 4;
+        this.alwaysRenderPagination = false;
 
         this.filter = "";
         this.filterEnabled = false;
@@ -45,8 +50,8 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
         this.setMaxPages();
     }
 
-    public AbstractPaginatedInventory(Component title, Player player, InventoryStyle inventoryStyle) {
-        this(title, player, inventoryStyle, null);
+    public AbstractPaginatedInventory(Player player, InventoryStyle inventoryStyle) {
+        this(player, inventoryStyle, null);
     }
 
     @Override
@@ -58,7 +63,7 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
             for (int j = slot; j < slot + this.width; j++) setItem(j, ItemBuilder.EMPTY.build());
         }
 
-        double max = this.height * this.width;
+        double max = this.scrollOffset * this.width;
         int itemsIndex = (int) Math.ceil(max * page);
 
         for (int line = 0; line < this.height; line++) {
@@ -77,13 +82,21 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
 
         if (this.filterEnabled() && this.filterSlot > -1) {
             StringItem stringItem = new StringItem(new ItemBuilder(this.filterMaterial).name(this.getLocale().t("pipe.inventory.items.filter").ct()));
+            if (!this.getFilter().isBlank()) {
+                stringItem.get().addLine(Component.empty()).addLine(this.getLocale().t("pipe.inventory.items.filter.active-filter").arg("filter", this.getFilter()).ct());
+            }
+            stringItem.get().addLine(Component.empty()).addLine(this.getLocale().t("pipe.inventory.items.filter.description").ct());
 
             setItem(this.filterSlot, stringItem.buildAnvil(this, result -> {
                 this.filter(result.getText());
                 return stringItem.closeThenReopenParent(this);
             }).build(), (event) -> {
-                this.hide();
-                stringItem.getAnvil().open(this.getPlayer());
+                if (event.getClick() == ClickType.RIGHT) {
+                    this.filter("");
+                } else {
+                    this.hide();
+                    stringItem.getAnvil().open(this.getPlayer());
+                }
             });
         }
     }
@@ -93,24 +106,31 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
 
     @Override
     public void next(InventoryClickEvent inventoryClickEvent) {
+        if (this.page == this.maxPages - 1) return ;
         this.page++;
         this.refresh();
     }
 
     @Override
     public void previous(InventoryClickEvent inventoryClickEvent) {
+        if (this.page == 0) return ;
         this.page--;
         this.refresh();
+    }
+
+    @Override
+    public void alwaysRenderPagination(boolean alwaysRenderPagination) {
+        this.alwaysRenderPagination = alwaysRenderPagination;
     }
 
     @Override
     public void renderPagination(boolean needPage, int pages) {
         setItem(this.pageSlot, new ItemBuilder(Material.NAME_TAG).name(this.getLocale().t("pipe.inventory.items.page").arg("page", page + 1).arg("max_page", pages).ct()).build());
 
-        if (needPage) {
-            if (page > 0)
+        if (needPage || this.alwaysRenderPagination) {
+            if (page > 0 || this.alwaysRenderPagination)
                 setItem(this.previousSlot, new ItemBuilder(Material.ARROW).name(this.getLocale().t("pipe.inventory.items.previous_page").ct()).build(), this::previous);
-            if (page < pages - 1)
+            if (page < pages - 1 || this.alwaysRenderPagination)
                 setItem(this.nextSlot, new ItemBuilder(Material.ARROW).name(this.getLocale().t("pipe.inventory.items.next_page").ct()).build(), this::next);
         }
     }
@@ -129,7 +149,19 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
 
     @Override
     public void setHeight(int height) {
+        this.setHeight(height, true);
+    }
+
+    @Override
+    public void setHeight(int height, boolean updateOffset) {
         this.height = height;
+        if (updateOffset) this.scrollOffset = height;
+        this.setMaxPages();
+    }
+
+    @Override
+    public void setScrollOffset(int scrollOffset) {
+        this.scrollOffset = scrollOffset;
         this.setMaxPages();
     }
 
@@ -151,6 +183,11 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     @Override
     public void setPageSlot(int slot) {
         this.pageSlot = slot;
+    }
+
+    @Override
+    public void setPage(int page) {
+        this.page = page;
     }
 
     @Override
@@ -199,6 +236,11 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
     }
 
     @Override
+    public int getScrollOffset() {
+        return scrollOffset;
+    }
+
+    @Override
     public void filter(String filter) {
         this.filter = filter;
         this.applyFilter();
@@ -240,7 +282,7 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
             return;
         }
 
-        double max = this.height * this.width;
+        double max = this.scrollOffset * this.width;
         int maxPages = (int) Math.ceil(this.totalSize / max);
 
         if (maxPages == 0) maxPages = 1;

@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.inventory.interfaces;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.ItemBuilder;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -74,6 +75,8 @@ public interface PipeInventory {
 
     void trigItem(InventoryClickEvent event);
 
+    void allowInteract(boolean allow);
+
     PipeInventory getParent();
 
     void unregisterParents();
@@ -89,6 +92,10 @@ public interface PipeInventory {
     void setBackground(Material material);
 
     void setBackground(ItemBuilder itemBuilder);
+
+    void buildContainer(Component title);
+
+    void setTitle(Component title);
 
     enum InventoryStyle {
 

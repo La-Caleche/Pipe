@@ -2,22 +2,35 @@ package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 
 import de.tr7zw.nbtapi.NBT;
 import fr.lacaleche.core.Core;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryManager;
 import fr.lacaleche.pipe.bukkit.modules.inventory.InventoryModule;
 import fr.lacaleche.pipe.bukkit.modules.inventory.events.InventoryFillEvent;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.ItemBuilder;
+import fr.lacaleche.pipe.bukkit.modules.nms.NMSManager;
+import fr.lacaleche.pipe.bukkit.modules.nms.NMSModule;
+import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import net.kyori.adventure.text.Component;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.world.IInventory;
+import net.minecraft.world.inventory.Containers;
 import org.bukkit.Material;
+import org.bukkit.block.Container;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -25,6 +38,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR;
+import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.PACKET_PLAY_OUT_OPEN_SCREEN_CONSTRUCTOR;
 
 public abstract class AbstractInventory implements PipeInventory {
 
@@ -38,6 +54,7 @@ public abstract class AbstractInventory implements PipeInventory {
 
     private boolean visible = false;
     private boolean allowClose = true;
+    private boolean allowInteract = false;
     private int backSlot;
     private int closeSlot;
     private Map<UUID, Consumer<InventoryClickEvent>> clickEvents;
@@ -48,7 +65,7 @@ public abstract class AbstractInventory implements PipeInventory {
 
     private InventoryManager inventoryManager;
 
-    public AbstractInventory(Component title, Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
+    public AbstractInventory(Player player, InventoryStyle inventoryStyle, PipeInventory parent) {
         if (!Core.get().getCentralModuleManager().moduleEnabled(InventoryModule.class)) throw new IllegalStateException("Inventory module is not enabled !");
 
         this.inventoryManager = Core.getModule(InventoryModule.class).getInventoryManager();
@@ -62,7 +79,14 @@ public abstract class AbstractInventory implements PipeInventory {
 
         this.backSlot = -1;
         this.closeSlot = -1;
+    }
 
+    public AbstractInventory(Player player, InventoryStyle inventoryStyle) {
+        this(player, inventoryStyle, null);
+    }
+
+    @Override
+    public void buildContainer(Component title) {
         final Plugin plugin = Pipe.getBukkit().getPlugin();
 
         if (this.getStyle().getType() == InventoryType.CHEST) this.inventory = plugin.getServer().createInventory(null, getStyle().getSize(), title);
@@ -71,8 +95,18 @@ public abstract class AbstractInventory implements PipeInventory {
         this.inventoryManager.registerInventory(this);
     }
 
-    public AbstractInventory(Component title, Player player, InventoryStyle inventoryStyle) {
-        this(title, player, inventoryStyle, null);
+    @Override
+    public void setTitle(Component title) {
+        BukkitPipe pipe = Pipe.getBukkit();
+        NMSManager nmsManager = Core.getModule(NMSModule.class).getNmsManager();
+        IChatBaseComponent vanillaComponent = nmsManager.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
+
+        EntityPlayer entityPlayer = nmsManager.getPlayerHandle(this.getPlayer());
+        int containerId = entityPlayer.bP.j;
+        Containers<?> menuType = entityPlayer.bP.a();
+
+        Object packet = nmsManager.getStorage().construct(PACKET_PLAY_OUT_OPEN_SCREEN_CONSTRUCTOR, containerId, menuType, vanillaComponent);
+        nmsManager.sendPacket(this.getPlayer(), packet);
     }
 
     @Override
@@ -192,7 +226,7 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void trigItem(InventoryClickEvent event) {
-        event.setCancelled(true);
+        if (event.getClickedInventory() != event.getWhoClicked().getInventory() || !allowInteract) event.setCancelled(true);
         if (event.getClickedInventory() != getInventory() || event.getCurrentItem() == null) return;
 
         String stringUUID = NBT.get(event.getCurrentItem(), readableNBT -> readableNBT.getString("clickActionID") );
@@ -206,6 +240,7 @@ public abstract class AbstractInventory implements PipeInventory {
         Consumer<InventoryClickEvent> clickEvent = this.clickEvents.get(uuid);
         if (clickEvent == null) return;
 
+        event.setCancelled(true);
         clickEvent.accept(event);
     }
 
@@ -333,6 +368,11 @@ public abstract class AbstractInventory implements PipeInventory {
     @Override
     public void setBackground(ItemBuilder itemBuilder) {
         this.background = itemBuilder;
+    }
+
+    @Override
+    public void allowInteract(boolean allow) {
+        this.allowInteract = allow;
     }
 
     @Override

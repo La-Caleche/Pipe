@@ -4,6 +4,7 @@ import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.events.GlobalListenerManager;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.utils.CalecheDebug;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.adventure.PipeText;

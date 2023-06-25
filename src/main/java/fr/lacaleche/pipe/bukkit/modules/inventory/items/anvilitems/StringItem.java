@@ -14,17 +14,14 @@ import java.util.function.Function;
 
 public class StringItem extends AbstractAnvilItem {
 
-    private final ItemBuilder itemBuilder;
-
     public StringItem(ItemBuilder itemBuilder) {
-        super();
-        this.itemBuilder = itemBuilder;
+        super(itemBuilder);
     }
 
     @Override
     public ItemBuilder buildAnvil(PipeInventory parent, Function<AnvilGUI.Completion, List<AnvilGUI.ResponseAction>> completeFunction) {
-        this.buildAnvil(parent, "Enter a text", Component.text("Prompt", NamedTextColor.GOLD), this.itemBuilder, completeFunction);
-        return this.itemBuilder;
+        this.buildAnvil(parent, "Enter a text", Component.text("Prompt", NamedTextColor.GOLD), this.get(), completeFunction);
+        return this.get();
     }
 
 }

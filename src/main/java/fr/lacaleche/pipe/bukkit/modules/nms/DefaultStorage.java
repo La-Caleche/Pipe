@@ -31,6 +31,7 @@ import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.monster.EntityMonster;
+import net.minecraft.world.inventory.Containers;
 import net.minecraft.world.level.EnumGamemode;
 import net.minecraft.world.phys.Vec3D;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class DefaultStorage implements IStorage {
@@ -110,6 +112,7 @@ public class DefaultStorage implements IStorage {
     @Override
     public <T> T invoke(IStorageMethods storageMethod, Object instance, Object... args) {
         try {
+            this.method(storageMethod).setAccessible(true);
             return (T) this.method(storageMethod).invoke(instance, args);
         } catch (Exception exception) {
             SentryAPIImpl.getInstance().captureException(exception);
@@ -168,6 +171,16 @@ public class DefaultStorage implements IStorage {
     }
 
     @Override
+    public <T> Method getDeclaredMethod(IStorageClass storageClass, String name, Class<?>... args) {
+        try {
+            return this.clazz(storageClass).getDeclaredMethod(name, args);
+        } catch (Exception exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+        return null;
+    }
+
+    @Override
     public <T> Field getField(IStorageClass storageClass, String name) {
         return this.getField(this.clazz(storageClass), name);
     }
@@ -213,6 +226,44 @@ public class DefaultStorage implements IStorage {
         }
     }
 
+    @Override
+    public void setFinal(IStorageFields storageFields, Object instance, Object value) {
+        try {
+            Field field = this.field(storageFields);
+            field.setAccessible(true);
+
+            Field modifiersField = getModifiersField();
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(instance, value);
+        } catch (Exception exception) {
+            SentryAPIImpl.getInstance().captureException(exception);
+        }
+    }
+
+    private Field getModifiersField() throws NoSuchFieldException {
+        try {
+            return Field.class.getDeclaredField("modifiers");
+        }
+        catch (NoSuchFieldException e) {
+            try {
+                Method getDeclaredFields0 = Class.class.getDeclaredMethod("getDeclaredFields0", boolean.class);
+                getDeclaredFields0.setAccessible(true);
+                Field[] fields = (Field[]) getDeclaredFields0.invoke(Field.class, false);
+                for (Field field : fields) {
+                    if ("modifiers".equals(field.getName())) {
+                        return field;
+                    }
+                }
+            }
+            catch (ReflectiveOperationException ex) {
+                e.addSuppressed(ex);
+            }
+            throw e;
+        }
+    }
+
     private void registerDefaults() {
         this.registerDefaultClass();
         this.registerDefaultConstructor();
@@ -249,6 +300,7 @@ public class DefaultStorage implements IStorage {
         this.registerClass(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, classFinder.protocolClass("game.PacketPlayOutEntityHeadRotation"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_VELOCITY, classFinder.protocolClass("game.PacketPlayOutEntityVelocity"));
         this.registerClass(PACKET_PLAY_OUT_ENTITY_EQUIPMENT, classFinder.protocolClass("game.PacketPlayOutEntityEquipment"));
+        this.registerClass(PACKET_PLAY_OUT_OPEN_SCREEN, classFinder.protocolClass("game.PacketPlayOutOpenWindow"));
 
         this.registerClass(ADVENTURE_COMPONENT, classFinder.getAbsoluteClass("io.papermc.paper.adventure.AdventureComponent"));
 
@@ -268,6 +320,7 @@ public class DefaultStorage implements IStorage {
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_HEAD_ROTATION, this.clazz(ENTITY), byte.class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_VELOCITY_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_VELOCITY, int.class, Vec3D.class));
         this.registerConstructor(PACKET_PLAY_OUT_ENTITY_EQUIPMENT_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_ENTITY_EQUIPMENT, int.class, List.class));
+        this.registerConstructor(PACKET_PLAY_OUT_OPEN_SCREEN_CONSTRUCTOR, this.getConstructor(PACKET_PLAY_OUT_OPEN_SCREEN, int.class, Containers.class, IChatBaseComponent.class));
 
         this.registerConstructor(ADVENTURE_COMPONENT_CONSTRUCTOR, this.getConstructor(ADVENTURE_COMPONENT, Component.class));
 

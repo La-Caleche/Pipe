@@ -153,7 +153,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder customModel(int model) {
-        this.nbt(nbt -> nbt.setInteger("CustomModelData", model));
+        this.itemMeta().setCustomModelData(model);
         return this;
     }
 

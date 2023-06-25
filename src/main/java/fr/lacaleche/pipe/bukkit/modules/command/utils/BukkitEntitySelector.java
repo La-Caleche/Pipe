@@ -18,10 +18,10 @@ public class BukkitEntitySelector {
 
     public static EntitySelectorResult<Player> parsePlayers(Command<? extends CommandSender> command, String key) {
         Collection<Player> targets = new ArrayList<>();
-        Locale locale = Pipe.getProxy().getDefaultLocale();
+        Locale locale = Pipe.getBukkit().getDefaultLocale();
 
         if (command.sender() instanceof Player player) {
-            Client client = Pipe.getProxy().getClient(player.getUniqueId());
+            Client client = Pipe.getBukkit().getClient(player.getUniqueId());
             locale = client.getLocale();
         }
 
@@ -43,7 +43,7 @@ public class BukkitEntitySelector {
 
     public static EntitySelectorResult<Client> parseClients(Command<? extends CommandSender> command, String key) {
         Collection<Client> targets = new ArrayList<>();
-        Locale locale = Pipe.getProxy().getDefaultLocale();
+        Locale locale = Pipe.getBukkit().getDefaultLocale();
 
         if (command.sender() instanceof Player player) {
             locale = Pipe.getBukkit().getClient(player).getLocale();

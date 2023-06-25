@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.bukkit.modules.god.modules.world.commands;
 
-import com.velocitypowered.api.proxy.Player;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;

@@ -44,9 +44,13 @@ public interface IStorage {
 
     void set(IStorageFields storageFields, Object instance, Object value);
 
+    void setFinal(IStorageFields storageFields, Object instance, Object value);
+
     <T> Constructor<T> getConstructor(IStorageClass storageClass, Class<?>... args);
 
     <T> Method getMethod(IStorageClass storageClass, String name, Class<?>... args);
+
+    <T> Method getDeclaredMethod(IStorageClass storageClass, String name, Class<?>... args);
 
     <T> Field getField(IStorageClass storageClass, String name);
 

@@ -21,6 +21,10 @@ public interface PaginatedInventory {
 
     void setHeight(int height);
 
+    void setHeight(int height, boolean updateOffset);
+
+    void setScrollOffset(int offset);
+
     void setStartAt(int startAt);
 
     void setPreviousSlot(int slot);
@@ -28,6 +32,8 @@ public interface PaginatedInventory {
     void setNextSlot(int slot);
 
     void setPageSlot(int slot);
+
+    void alwaysRenderPagination(boolean alwaysRenderPagination);
 
     void filter(String filter);
 
@@ -38,6 +44,8 @@ public interface PaginatedInventory {
     void setFilterSlot(int slot);
 
     void setFilterMaterial(Material material);
+
+    void setPage(int page);
 
     int getPage();
 
@@ -56,6 +64,8 @@ public interface PaginatedInventory {
     int getPageSlot();
 
     int getMaxPages();
+
+    int getScrollOffset();
 
     boolean filterEnabled();
 
