@@ -62,6 +62,7 @@ public class ClientImpl extends SqlModel implements Client {
         this.locale = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).cache(LocaleImpl::isDefault).getOne();
         this.bans = new ArrayList<BanImpl>();
         this.kicks = new ArrayList<KickImpl>();
+        this.permissions = new ArrayList<PermissionImpl>();
 
         this.insertOrSave();
         this.cache();

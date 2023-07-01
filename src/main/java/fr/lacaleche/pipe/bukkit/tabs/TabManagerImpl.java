@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.tabs;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.tabs.features.interfaces.*;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
@@ -115,6 +116,11 @@ public class TabManagerImpl implements TabManager {
     @Override
     public void loadPlayer(TabPlayer tabPlayer) {
         Pipe.getBukkit().getTaskManager().newTask(taskBuilder -> taskBuilder.startAfter(10).run(task -> {
+            if (!tabPlayer.getPlayer().isOnline()) {
+                this.unloadPlayer(tabPlayer, true);
+                return ;
+            }
+
             this.getPlayerLoadCallbacks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(callback -> callback.accept(tabPlayer, tabPlayer.getPlayer(), tabPlayer.getClient()));
@@ -136,14 +142,21 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public void unloadPlayer(TabPlayer tabPlayer) {
-        for (TabFeature tabFeature : this.features.values()) {
-            if (tabFeature instanceof QuitListener quitListener)
-                quitListener.quit(tabPlayer);
-        }
+        this.unloadPlayer(tabPlayer, false);
+    }
 
-        this.getPlayerUnloadCallbacks().values().stream()
-                .flatMap(Collection::stream)
-                .forEach(callback -> callback.accept(tabPlayer, tabPlayer.getPlayer(), tabPlayer.getClient()));
+    @Override
+    public void unloadPlayer(TabPlayer tabPlayer, boolean crashed) {
+        if (!crashed) {
+            for (TabFeature tabFeature : this.features.values()) {
+                if (tabFeature instanceof QuitListener quitListener)
+                    quitListener.quit(tabPlayer);
+            }
+
+            this.getPlayerUnloadCallbacks().values().stream()
+                    .flatMap(Collection::stream)
+                    .forEach(callback -> callback.accept(tabPlayer, tabPlayer.getPlayer(), tabPlayer.getClient()));
+        } else Logger.warn("It seems that %s has crashed, skipping unload.", tabPlayer.getPlayer().getName());
 
         this.tabPlayers.remove(tabPlayer);
     }

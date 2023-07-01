@@ -40,6 +40,8 @@ public interface TabManager {
 
     void refreshPlayer(TabPlayer tabPlayer);
 
+    void unloadPlayer(TabPlayer tabPlayer, boolean crashed);
+
     void unloadPlayer(TabPlayer tabPlayer);
 
     void writePacket(TabPlayer tabPlayer, Object packet);

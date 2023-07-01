@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@MinecraftCommand(label = "damage", description = "pipe.command.entity.description")
+@MinecraftCommand(label = "entity", description = "pipe.command.entity.description")
 public class EntityCommand {
 
     @CommandChild(label = "damage-causes", description = "pipe.command.entity.damage_causes.description")
