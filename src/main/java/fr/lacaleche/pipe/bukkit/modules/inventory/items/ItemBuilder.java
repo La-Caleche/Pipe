@@ -136,7 +136,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setGlowing() {
-        this.getItem().addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        this.itemMeta().addEnchant(Enchantment.DURABILITY, 1, true);
         this.itemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
         return this;
     }
@@ -200,6 +200,11 @@ public class ItemBuilder {
         this.item.setItemMeta(this.itemMeta());
 
         return this;
+    }
+
+    public ItemBuilder clone() {
+        this.applyItemMeta();
+        return ItemBuilder.from(this.getItem().clone());
     }
 
 }
