@@ -10,6 +10,11 @@ public interface Task {
 
     boolean runAsync();
 
+    /**
+     * @return true if the task is executed immediately without ticking or loop.
+     * */
+    boolean zeroTickExecution();
+
     void stop();
 
     void run();

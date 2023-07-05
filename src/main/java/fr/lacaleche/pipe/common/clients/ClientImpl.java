@@ -63,6 +63,7 @@ public class ClientImpl extends SqlModel implements Client {
         this.bans = new ArrayList<BanImpl>();
         this.kicks = new ArrayList<KickImpl>();
         this.permissions = new ArrayList<PermissionImpl>();
+        this.allowedCommands = new ArrayList<>();
 
         this.insertOrSave();
         this.cache();

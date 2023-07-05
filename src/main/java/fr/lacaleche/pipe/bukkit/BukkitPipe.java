@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit;
 
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
@@ -27,6 +28,8 @@ public interface BukkitPipe extends Pipe {
     void registerNewPlugin(Plugin plugin);
 
     List<Plugin> getRegisteredPlugins();
+
+    void registerNewHandler(Plugin plugin, IModuleHandler handler);
 
     void unregister(Plugin plugin);
 
@@ -76,6 +79,8 @@ public interface BukkitPipe extends Pipe {
      * TODO
      */
     Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> getQuitCallbacks();
+
+    Map<Plugin, IModuleHandler> getHandlers();
 
     /**
      * TODO

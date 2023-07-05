@@ -99,7 +99,7 @@ public class BukkitClientModule extends BukkitModule {
     }
 
     @Override
-    public void onEnableFinish() {
+    public void ready() {
         BukkitPipe pipe = Pipe.getBukkit();
         Plugin plugin = pipe.getPlugin();
 
@@ -110,10 +110,10 @@ public class BukkitClientModule extends BukkitModule {
 
         for (Player player : players) {
             new ModelFilter<ClientImpl>()
-                    .model(ClientImpl.class)
+                    .model((Class<ClientImpl>) Pipe.clientClass())
                     .cache(c -> c.getUUID().equals(player.getUniqueId()))
                     .sql((sql) -> sql.where(new Where("uuid", player.getUniqueId())))
-                    .def(() -> new ClientImpl(player.getUniqueId(), player.getName())).getOne();
+                    .def(() -> (ClientImpl) Pipe.get().instanciateClient(player.getUniqueId(), player.getName())).getOne();
         }
 
         Logger.customDebug("Calling join callbacks for %d players...", players.size());

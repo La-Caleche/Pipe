@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PaginatedInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.ItemBuilder;
@@ -7,8 +8,13 @@ import fr.lacaleche.pipe.bukkit.modules.inventory.items.anvilitems.StringItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.InventoryView;
+
+import java.util.Set;
 
 public abstract class AbstractPaginatedInventory extends AbstractInventory implements PaginatedInventory {
 
@@ -99,6 +105,38 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
                 }
             });
         }
+    }
+
+    @Override
+    public void dragItem(InventoryDragEvent event) {
+        super.dragItem(event);
+
+        InventoryView view = event.getView();
+        for (int rawSlot : event.getRawSlots()) {
+            if (rawSlot < view.getTopInventory().getSize()) {
+                event.setResult(Event.Result.DENY);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public boolean insidePaginatedView(int slot) {
+        if(slot < this.startAt || slot >= this.startAt + this.height * 9) {
+            return false;
+        }
+        return (slot - this.startAt) % 9 < this.width;
+    }
+
+    protected boolean dragInTopInventory(InventoryDragEvent event) {
+        InventoryView view = event.getView();
+        for (int rawSlot : event.getRawSlots()) {
+            if (rawSlot < view.getTopInventory().getSize()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

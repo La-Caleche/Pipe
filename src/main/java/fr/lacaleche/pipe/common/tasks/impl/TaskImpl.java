@@ -21,6 +21,7 @@ public class TaskImpl implements Task {
     private boolean loop;
     private boolean retry;
     private boolean async;
+    private boolean zeroTickExecution;
 
     private int taskTick;
     private int externalTick;
@@ -28,7 +29,7 @@ public class TaskImpl implements Task {
     private long startedAtTick;
     private boolean stopped;
 
-    public TaskImpl(int delay, int everyXTick, boolean loop, boolean async, TaskCallback callback, SimpleCallback stopCallback) {
+    public TaskImpl(int delay, int everyXTick, boolean loop, boolean async, boolean zeroTickExecution, TaskCallback callback, SimpleCallback stopCallback) {
         this.uuid = UUID.randomUUID();
 
         this.delay = delay;
@@ -37,6 +38,7 @@ public class TaskImpl implements Task {
         this.everyXTick = everyXTick;
         this.loop = loop;
         this.async = async;
+        this.zeroTickExecution = zeroTickExecution;
         this.callback = callback;
         this.stopCallback = stopCallback;
 
@@ -62,6 +64,11 @@ public class TaskImpl implements Task {
     @Override
     public boolean runAsync() {
         return async;
+    }
+
+    @Override
+    public boolean zeroTickExecution() {
+        return zeroTickExecution;
     }
 
     @Override

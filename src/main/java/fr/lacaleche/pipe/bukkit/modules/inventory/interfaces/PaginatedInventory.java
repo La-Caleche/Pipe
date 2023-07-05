@@ -13,6 +13,8 @@ public interface PaginatedInventory {
 
     void renderSlot(int index, int slot);
 
+    boolean insidePaginatedView(int slot);
+
     void applyFilter();
 
     void setTotalSize(int totalSize);

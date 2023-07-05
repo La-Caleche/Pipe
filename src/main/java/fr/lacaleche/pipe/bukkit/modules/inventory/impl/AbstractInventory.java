@@ -26,8 +26,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -245,6 +247,11 @@ public abstract class AbstractInventory implements PipeInventory {
     }
 
     @Override
+    public void dragItem(InventoryDragEvent event) {
+        if (event.getInventory() != getInventory() || !allowInteract) event.setResult(Event.Result.DENY);
+    }
+
+    @Override
     public void fillWith(ItemStack item) {
         for (int i = 0; i < getStyle().getSize(); i++)
             setItem(i, item);
@@ -373,6 +380,11 @@ public abstract class AbstractInventory implements PipeInventory {
     @Override
     public void allowInteract(boolean allow) {
         this.allowInteract = allow;
+    }
+
+    @Override
+    public boolean allowInteract() {
+        return this.allowInteract;
     }
 
     @Override

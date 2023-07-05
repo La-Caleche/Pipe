@@ -3,7 +3,9 @@ package fr.lacaleche.pipe.bukkit;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.modules.Module;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.AbstractPipe;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
@@ -29,6 +31,7 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
 
     private Plugin plugin;
     private final List<Plugin> plugins;
+    private Map<Plugin, IModuleHandler> handlers;
 
     private TabManager tabManager;
 
@@ -45,6 +48,7 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
         super();
 
         this.plugins = new ArrayList<>();
+        this.handlers = new HashMap<>();
 
         this.joinCallbacks = new HashMap<>();
         this.quitCallbacks = new HashMap<>();
@@ -81,8 +85,22 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
     }
 
     @Override
+    public void registerNewHandler(Plugin plugin, IModuleHandler handler) {
+        if (handlers.containsKey(plugin)) {
+            Logger.warn("Handler for plugin " + plugin.getName() + " is already registered");
+            return ;
+        }
+        handlers.putIfAbsent(plugin, handler);
+    }
+
+    @Override
     public List<Plugin> getRegisteredPlugins() {
         return this.plugins;
+    }
+
+    @Override
+    public Map<Plugin, IModuleHandler> getHandlers() {
+        return handlers;
     }
 
     @Override

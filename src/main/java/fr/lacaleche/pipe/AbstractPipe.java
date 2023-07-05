@@ -33,6 +33,8 @@ public abstract class AbstractPipe implements Pipe {
     private final PipeText pipeText;
     private Locale defaultLocale;
 
+    private Class<? extends ClientImpl> clientClass;
+
     private long serverTick;
 
     public AbstractPipe() {
@@ -40,6 +42,7 @@ public abstract class AbstractPipe implements Pipe {
         this.pipeText = new PipeTextImpl();
 
         this.serverTick = 0;
+        this.clientClass = ClientImpl.class;
     }
 
     public static Pipe get() {
@@ -66,12 +69,31 @@ public abstract class AbstractPipe implements Pipe {
 
     @Override
     public Client getClient(UUID uuid) {
-        return new ModelFilter<ClientImpl>().model(ClientImpl.class).cache((client) -> client.getUUID().equals(uuid)).getOne();
+        return new ModelFilter<ClientImpl>().model((Class<ClientImpl>) Pipe.clientClass()).cache((client) -> client.getUUID().equals(uuid)).disableSql().getOne();
     }
 
     @Override
     public Client getClientById(int id) {
-        return new ModelFilter<ClientImpl>().model(ClientImpl.class).cache((client) -> client.getId() == id).getOne();
+        return new ModelFilter<ClientImpl>().model((Class<ClientImpl>) Pipe.clientClass()).cache((client) -> client.getId() == id).disableSql().getOne();
+    }
+
+    @Override
+    public Client instanciateClient(UUID uuid, String username) {
+        try {
+            return this.clientClass.getConstructor(UUID.class, String.class).newInstance(uuid, username);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
+    public Class<? extends ClientImpl> getClientClass() {
+        return clientClass;
+    }
+
+    @Override
+    public void setClientClass(Class<? extends ClientImpl> clientClass) {
+        this.clientClass = clientClass;
     }
 
     @Override

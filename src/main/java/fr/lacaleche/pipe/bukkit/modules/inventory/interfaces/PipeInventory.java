@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -75,7 +76,11 @@ public interface PipeInventory {
 
     void trigItem(InventoryClickEvent event);
 
+    void dragItem(InventoryDragEvent event);
+
     void allowInteract(boolean allow);
+
+    boolean allowInteract();
 
     PipeInventory getParent();
 

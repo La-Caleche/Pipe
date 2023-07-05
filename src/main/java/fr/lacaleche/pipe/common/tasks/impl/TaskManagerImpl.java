@@ -75,6 +75,12 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     public synchronized Task newTask(String name, TaskBuilder taskBuilder) {
         if (this.getCallbacks().containsKey(name) || this.nextCallbacks.containsKey(name)) return null;
         Task task = taskBuilder.build();
+
+        if (task.zeroTickExecution()) {
+            task.run();
+            return task;
+        }
+
         this.nextCallbacks.put(name, task);
         return task;
     }

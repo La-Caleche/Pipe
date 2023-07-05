@@ -105,7 +105,7 @@ public class TabModule extends BukkitModule {
     }
 
     @Override
-    public void onEnableFinish() {
+    public void ready() {
         Pipe.getBukkit().getTabManager().loadFeatures();
     }
 }

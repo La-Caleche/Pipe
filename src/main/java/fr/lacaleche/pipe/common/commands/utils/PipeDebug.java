@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.commands.utils;
 
+import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.CalecheDebug;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.SimpleCallback;
@@ -8,6 +9,8 @@ import org.joor.Reflect;
 public class PipeDebug {
 
     public static void eventCalled(Object event) {
+        if (!Core.get().inDev() || !Core.get().debugEnabled())
+            return ;
         String from = CalecheDebug.getFrom();
         Logger.customDebugWCheck("[%s] Event called from : '%s'", event.getClass().getSimpleName(), from);
     }
