@@ -19,6 +19,8 @@ public interface TaskManager {
 
     Task newTask(String name, TaskBuilder taskBuilder);
 
+    Task newTask(TaskBuilder taskBuilder);
+
     Task get(String name);
 
     boolean exist(String name);

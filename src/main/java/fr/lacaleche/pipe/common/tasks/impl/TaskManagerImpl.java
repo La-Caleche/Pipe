@@ -72,6 +72,11 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     }
 
     @Override
+    public Task newTask(TaskBuilder taskBuilder) {
+        return this.newTask(UUID.randomUUID().toString(), taskBuilder);
+    }
+
+    @Override
     public synchronized Task newTask(String name, TaskBuilder taskBuilder) {
         if (this.getCallbacks().containsKey(name) || this.nextCallbacks.containsKey(name)) return null;
         Task task = taskBuilder.build();

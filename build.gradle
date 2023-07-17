@@ -16,6 +16,7 @@ dependencies {
 
     compileOnly rootProject.lcDependencies.nbtApi
     compileOnly rootProject.lcDependencies.anvilGui
+    compileOnly rootProject.lcDependencies.customBlockData
 
     testImplementation project(":library:CalecheCore")
     testImplementation rootProject.lcDependencies.adventureApi

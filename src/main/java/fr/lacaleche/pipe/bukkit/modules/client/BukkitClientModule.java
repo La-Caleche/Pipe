@@ -10,6 +10,7 @@ import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
 import fr.lacaleche.pipe.bukkit.tabs.nametag.interfaces.PlayerNameTag;
+import fr.lacaleche.pipe.bukkit.tabs.playerlist.interfaces.TabListPlayer;
 import fr.lacaleche.pipe.common.adventure.PipeText;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.bukkit.modules.client.listeners.ModelSavedListener;

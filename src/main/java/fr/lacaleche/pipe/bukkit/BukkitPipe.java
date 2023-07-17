@@ -7,6 +7,7 @@ import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.chat.renderers.AbstractRenderer;
+import fr.lacaleche.pipe.bukkit.persistentsblocks.interfaces.PersistentsBlocksManager;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import io.papermc.paper.chat.ChatRenderer;
@@ -106,5 +107,15 @@ public interface BukkitPipe extends Pipe {
      * TODO
      */
     void setLastLocation(Client client, Location location);
+
+    /**
+     * TODO
+     */
+    PersistentsBlocksManager getPersistentsBlocksManager();
+
+    /**
+     * TODO
+     */
+    void setPersistentsBlocksManager(PersistentsBlocksManager persistentsBlocksManager);
 
 }

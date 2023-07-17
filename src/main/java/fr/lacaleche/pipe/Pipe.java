@@ -122,6 +122,10 @@ public interface Pipe {
         return get().getTaskManager().newTask(builder -> builder.run(callback::done).async(true));
     }
 
+    static Task sync(Callback<Task> callback) {
+        return get().getTaskManager().newTask(builder -> builder.run(callback::done));
+    }
+
     static Task asyncZeroTick(Callback<Task> callback) {
         return get().getTaskManager().newTask(builder -> builder.run(callback::done).async(true).zeroTickExecution(true));
     }

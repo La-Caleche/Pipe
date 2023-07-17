@@ -11,6 +11,7 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.chat.renderers.AbstractRenderer;
 import fr.lacaleche.pipe.bukkit.modules.chat.renderers.PipeRenderer;
+import fr.lacaleche.pipe.bukkit.persistentsblocks.interfaces.PersistentsBlocksManager;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.clients.Client;
 import io.papermc.paper.chat.ChatRenderer;
@@ -34,6 +35,7 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
     private Map<Plugin, IModuleHandler> handlers;
 
     private TabManager tabManager;
+    private PersistentsBlocksManager persistentsBlocksManager;
 
     private final Map<Module, List<TriConsumer<PlayerJoinEvent, Player, Client>>> joinCallbacks;
     private final Map<Module, List<TriConsumer<PlayerQuitEvent, Player, Client>>> quitCallbacks;
@@ -120,6 +122,16 @@ public class BukkitPipeImpl extends AbstractPipe implements BukkitPipe {
     @Override
     public void setTabManager(TabManager tabManager) {
         this.tabManager = tabManager;
+    }
+
+    @Override
+    public PersistentsBlocksManager getPersistentsBlocksManager() {
+        return persistentsBlocksManager;
+    }
+
+    @Override
+    public void setPersistentsBlocksManager(PersistentsBlocksManager persistentsBlocksManager) {
+        this.persistentsBlocksManager = persistentsBlocksManager;
     }
 
     @Override

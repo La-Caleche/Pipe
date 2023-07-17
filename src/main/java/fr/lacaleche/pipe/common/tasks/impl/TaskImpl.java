@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.tasks.impl;
 
+import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import fr.lacaleche.pipe.common.tasks.interfaces.SimpleCallback;
@@ -129,7 +130,14 @@ public class TaskImpl implements Task {
 
     @Override
     public void run() {
-        if (async) CompletableFuture.runAsync(() -> this.getCallback().execute(this));
+        if (async) CompletableFuture.runAsync(() -> {
+            try {
+                this.getCallback().execute(this);
+            } catch (Exception exception) {
+                // Because of async execution, we need to catch the exception here
+                SentryAPIImpl.getInstance().captureException(exception);
+            }
+        });
         else this.getCallback().execute(this);
     }
 
