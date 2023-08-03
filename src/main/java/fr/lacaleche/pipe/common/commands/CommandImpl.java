@@ -1,9 +1,11 @@
 package fr.lacaleche.pipe.common.commands;
 
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.Arguments;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.jetbrains.annotations.Nullable;
 import org.joor.Reflect;
 import org.joor.ReflectException;
 
@@ -47,4 +49,19 @@ public class CommandImpl<T> implements Command<T> {
         return locale;
     }
 
+    @Nullable
+    @Override
+    public Client clientSender() {
+        Reflect reflect = Reflect.on(sender);
+        try {
+            UUID uuid = reflect.call("getUniqueId").get();
+            if (uuid != null) {
+                return Pipe.get().getClient(uuid);
+            }
+        } catch (ReflectException ignored) {
+            // Exception ignored because the sender is not a player
+            // and we don't want to crash the server or show any error message
+        }
+        return null;
+    }
 }

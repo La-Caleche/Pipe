@@ -7,6 +7,7 @@ import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -14,7 +15,7 @@ import java.util.Collection;
 
 public class PlayerLeftListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLeft(PlayerQuitEvent event) {
         PipeDebug.eventCalled(event);
         Player player = event.getPlayer();

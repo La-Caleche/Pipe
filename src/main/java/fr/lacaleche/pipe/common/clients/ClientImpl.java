@@ -2,15 +2,10 @@ package fr.lacaleche.pipe.common.clients;
 
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
-import fr.lacaleche.core.logs.LogsImpl;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
-import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.moderation.BanImpl;
 import fr.lacaleche.pipe.common.clients.moderation.KickImpl;
-import fr.lacaleche.pipe.common.clients.moderation.interfaces.IBan;
-import fr.lacaleche.pipe.common.clients.moderation.serializers.Ban;
-import fr.lacaleche.pipe.common.clients.moderation.serializers.Kick;
-import fr.lacaleche.pipe.common.clients.moderation.serializers.Unban;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission;
 import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
@@ -27,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public class ClientImpl extends SqlModel implements Client {
@@ -158,54 +154,59 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
-    public boolean kick(ClientImpl author, String reason) {
+    public boolean kick(Client author, String reason) {
         if (author == null) {
             SentryAPIImpl.getInstance().captureException(new Exception("Client kick, author is null."));
             return false;
         }
-        try {
-            new LogsImpl("GlobalKickCommand", CoreSerializer.get().serialize(new Kick(author.getUsername(), this.getUsername(), reason)).get());
-            new KickImpl(author, this, reason);
+
+        AtomicBoolean success = new AtomicBoolean(false);
+
+        Pipe.get().getTaskManager().newTask(builder -> builder.run(task -> {
+            new KickImpl((ClientImpl) author, this, reason);
             this.refresh();
-            return true;
-        } catch (Exception e) {
-            SentryAPIImpl.getInstance().captureException(e);
-            return false;
-        }
+        }).error(exception -> {
+            SentryAPIImpl.getInstance().captureException(exception);
+            success.set(false);
+        }).async(true).zeroTickExecution(true));
+
+        return success.get();
     }
 
     @Override
-    public boolean ban(ClientImpl author, String reason, Date endAt) {
+    public boolean ban(Client author, String reason, Date endAt) {
         String end = (endAt == null) ? "Definitive." :  new SimpleDateFormat("dd/MM/yyyy HH:mm").format(endAt);
 
         if (author == null) {
             SentryAPIImpl.getInstance().captureException(new Exception("Client ban, author is null."));
             return false;
         }
-        try {
-            new LogsImpl("GlobalBanCommand", CoreSerializer.get().serialize(new Ban(author.getUsername(), this.getUsername(), reason, end)).get());
-            new BanImpl(author, this, reason, endAt);
+
+        AtomicBoolean success = new AtomicBoolean(true);
+
+        Pipe.get().getTaskManager().newTask(builder -> builder.run(task -> {
+            new BanImpl((ClientImpl) author, this, reason, endAt);
             this.refresh();
-            return true;
-        } catch (Exception e) {
-            SentryAPIImpl.getInstance().captureException(e);
-            return false;
-        }
+        }).error(exception -> {
+            SentryAPIImpl.getInstance().captureException(exception);
+            success.set(false);
+        }).async(true).zeroTickExecution(true));
+
+        return success.get();
     }
 
     @Override
-    public boolean unban(ClientImpl author) {
-        if (author == null)
-            new LogsImpl("GlobalUnbanCommand", CoreSerializer.get().serialize(new Unban("Console", this.getUsername())).get());
-        else
-            new LogsImpl("GlobalUnbanCommand", CoreSerializer.get().serialize(new Unban(author.getUsername(), this.getUsername())).get());
-        try {
-            this.bans.stream().filter(BanImpl::isActive).findFirst().ifPresent(ban -> ban.unban(author));
-            return true;
-        } catch (Exception e) {
-            SentryAPIImpl.getInstance().captureException(e);
-            return false;
-        }
+    public boolean unban(Client author) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
+        Pipe.get().getTaskManager().newTask(builder -> builder.run(task -> {
+            this.bans.stream().filter(BanImpl::isActive).findFirst().ifPresent(ban -> ban.unban((ClientImpl) author));
+        }).error(exception -> {
+            SentryAPIImpl.getInstance().captureException(exception);
+            success.set(false);
+        }).async(true).zeroTickExecution(true));
+
+        return success.get();
     }
 
     @Override

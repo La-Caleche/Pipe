@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.tasks.impl;
 
+import fr.lacaleche.pipe.common.tasks.interfaces.ErrorCallback;
 import fr.lacaleche.pipe.common.tasks.interfaces.SimpleCallback;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskCallback;
@@ -13,6 +14,7 @@ public class TaskBuilder {
     private boolean loop;
     private TaskCallback callback;
     private SimpleCallback stopCallback;
+    private ErrorCallback errorCallback;
 
     private boolean async;
     private boolean zeroTickExecution;
@@ -67,8 +69,13 @@ public class TaskBuilder {
         return this;
     }
 
+    public TaskBuilder error(ErrorCallback errorCallback) {
+        this.errorCallback = errorCallback;
+        return this;
+    }
+
     public Task build() {
-        return new TaskImpl(delay, everyXTick, loop, async, zeroTickExecution, callback, stopCallback);
+        return new TaskImpl(delay, everyXTick, loop, async, zeroTickExecution, callback, stopCallback, errorCallback);
     }
 
 }

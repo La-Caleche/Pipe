@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.bukkit.persistentsblocks.interfaces;
 
 import fr.lacaleche.pipe.bukkit.persistentsblocks.datatypes.*;
 import fr.lacaleche.pipe.bukkit.persistentsblocks.interfaces.DataType;
+import org.bukkit.block.BlockFace;
 import org.bukkit.persistence.PersistentDataType;
 
 public interface DataTypes {
@@ -14,5 +15,6 @@ public interface DataTypes {
     DataType<Float> FLOAT = new FloatDataType();
     DataType<Double> DOUBLE = new DoubleDataType();
     DataType<String> STRING = new StringDataType();
+    DataType<BlockFace> BLOCK_FACE = new BlockFaceDataType();
 
 }

@@ -9,7 +9,7 @@ You can run your migration by using DatabaseMigration artifact and running
 CreateKicksTable {
     create table kicks
     (
-        id         int                                 null,
+        id         int auto_increment,
         author_id  int                                 not null,
         client_id  int                                 not null,
         reason     varchar(255)                        null,

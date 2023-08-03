@@ -13,6 +13,7 @@ import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
+import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
 import fr.lacaleche.pipe.proxy.ProxyPipe;

@@ -17,7 +17,9 @@ public interface Task {
 
     void stop();
 
-    void run();
+    void run() throws RuntimeException;
+
+    void crash(RuntimeException exception);
 
     int getDelay();
 
@@ -50,5 +52,7 @@ public interface Task {
     TaskCallback getCallback();
 
     SimpleCallback getStopCallback();
+
+    ErrorCallback getErrorCallback();
 
 }

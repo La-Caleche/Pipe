@@ -46,11 +46,11 @@ public interface Client extends ISqlModel {
 
     BanImpl getLastBan();
 
-    boolean kick(ClientImpl author, String reason);
+    boolean kick(Client author, String reason);
 
-    boolean ban(ClientImpl author, String reason, Date endAt);
+    boolean ban(Client author, String reason, Date endAt);
 
-    boolean unban(ClientImpl author);
+    boolean unban(Client author);
 
     List<BanImpl> getBans();
 

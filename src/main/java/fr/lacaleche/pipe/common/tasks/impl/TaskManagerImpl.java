@@ -47,7 +47,12 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
             task.tick(event.getTick());
             if (!task.canBeExecuted()) return;
 
-            task.run();
+            try {
+                task.run();
+            } catch (RuntimeException exception) {
+                this.done.add(name);
+                task.crash(exception);
+            }
 
             if (!task.isLoop() && !task.retry()) this.done.add(name);
         });

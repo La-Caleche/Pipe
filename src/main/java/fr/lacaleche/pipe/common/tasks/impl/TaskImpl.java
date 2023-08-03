@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.common.tasks.impl;
 
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.tasks.interfaces.ErrorCallback;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import fr.lacaleche.pipe.common.tasks.interfaces.SimpleCallback;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskCallback;
@@ -19,6 +20,7 @@ public class TaskImpl implements Task {
     private final int everyXTick;
     private final TaskCallback callback;
     private final SimpleCallback stopCallback;
+    private final ErrorCallback errorCallback;
     private boolean loop;
     private boolean retry;
     private boolean async;
@@ -30,7 +32,7 @@ public class TaskImpl implements Task {
     private long startedAtTick;
     private boolean stopped;
 
-    public TaskImpl(int delay, int everyXTick, boolean loop, boolean async, boolean zeroTickExecution, TaskCallback callback, SimpleCallback stopCallback) {
+    public TaskImpl(int delay, int everyXTick, boolean loop, boolean async, boolean zeroTickExecution, TaskCallback callback, SimpleCallback stopCallback, ErrorCallback errorCallback) {
         this.uuid = UUID.randomUUID();
 
         this.delay = delay;
@@ -42,6 +44,7 @@ public class TaskImpl implements Task {
         this.zeroTickExecution = zeroTickExecution;
         this.callback = callback;
         this.stopCallback = stopCallback;
+        this.errorCallback = errorCallback;
 
         this.taskTick = -1;
 
@@ -129,16 +132,22 @@ public class TaskImpl implements Task {
     }
 
     @Override
-    public void run() {
+    public void run() throws RuntimeException {
         if (async) CompletableFuture.runAsync(() -> {
             try {
                 this.getCallback().execute(this);
             } catch (Exception exception) {
                 // Because of async execution, we need to catch the exception here
                 SentryAPIImpl.getInstance().captureException(exception);
+                throw new RuntimeException(exception);
             }
         });
         else this.getCallback().execute(this);
+    }
+
+    @Override
+    public void crash(RuntimeException exception) {
+        this.getErrorCallback().execute(exception);
     }
 
     @Override
@@ -189,4 +198,10 @@ public class TaskImpl implements Task {
     public SimpleCallback getStopCallback() {
         return stopCallback;
     }
+
+    @Override
+    public ErrorCallback getErrorCallback() {
+        return errorCallback;
+    }
+
 }
