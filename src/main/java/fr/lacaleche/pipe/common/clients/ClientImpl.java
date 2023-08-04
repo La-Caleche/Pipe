@@ -68,6 +68,12 @@ public class ClientImpl extends SqlModel implements Client {
     @Override
     public void loaded() {
         this.allowedCommands = new ArrayList<>();
+        this.startExpiration();
+    }
+
+    @Override
+    public void startExpiration() {
+        this.expireIn(5 * 60 * 1000);
     }
 
     @Override
@@ -228,4 +234,5 @@ public class ClientImpl extends SqlModel implements Client {
     public String toString() {
         return "ClientImpl { id='%d', uuid='%s', rank='%s', locale='%s' }".formatted(this.getId(), uuid, rank, locale);
     }
+
 }

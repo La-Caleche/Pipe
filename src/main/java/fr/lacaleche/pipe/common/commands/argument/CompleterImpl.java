@@ -151,4 +151,9 @@ public class CompleterImpl implements Completer {
     public void setNext(boolean next) {
         this.next = next;
     }
+
+    @Override
+    public void distinct() {
+        this.completer = this.completer.stream().distinct().toList();
+    }
 }

@@ -57,4 +57,7 @@ public interface Completer {
     void cancelValidation();
 
     void setValidation(boolean validation);
+
+    void distinct();
+
 }

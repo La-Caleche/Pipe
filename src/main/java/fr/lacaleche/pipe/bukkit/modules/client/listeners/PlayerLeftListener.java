@@ -26,7 +26,7 @@ public class PlayerLeftListener implements Listener {
                 .flatMap(Collection::stream)
                 .forEach(callback -> callback.accept(event, player, client));
 
-        client.expireIn(10 * 1000);
+        client.startExpiration();
     }
 
 }
