@@ -10,12 +10,11 @@ import fr.lacaleche.core.utils.promises.interfaces.Resolve;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
-import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
-import fr.lacaleche.core.utils.serializer.annotations.Serializer;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 import fr.lacaleche.pipe.common.utils.server.PipeServer;
 import fr.lacaleche.pipe.common.utils.server.PipeServerImpl;
 
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Packet(name = "ServerListPacket")
+@Serializer(variables = {"uuid"})
 public class ServerListPacket extends TransactionalPacket {
 
     private UUID uuid;
@@ -43,66 +43,9 @@ public class ServerListPacket extends TransactionalPacket {
         this.setReject(reject);
         this.setPacketType(PacketType.REQUEST);
     }
-    
-    @Override
-    public void read(IPacketData data) {
-        this.setToken(new Token(data.next()));
-        this.setPacketType(PacketType.valueOf(data.next()));
-
-        if (this.getPacketType() == PacketType.REQUEST) {
-            this.uuid = UUID.fromString(data.next());
-            return;
-        }
-
-        try {
-            this.setResponse(this.parseJson(new ObjectMapper().readValue(data.<String>next(), JsonNode.class)));
-        } catch (JsonProcessingException e) {
-            SentryAPIImpl.getInstance().captureException(e);
-        }
-
-        this.setResult(TransactionResult.valueOf(data.next()));
-    }
 
     public UUID getUuid() {
         return uuid;
-    }
-
-    private List<PipeServer> parseJson(JsonNode jsonNode) {
-        List<PipeServer> servers = new ArrayList<>();
-        ArrayNode arrayNode = jsonNode.withArray("servers");
-        arrayNode.forEach(elem -> {
-            PipeServer serverInfo = new PipeServerImpl(
-                    elem.get("app").asText(),
-                    elem.get("host").asText(),
-                    elem.get("serverIcon").asText(),
-                    elem.get("maxPlayers").asInt(),
-                    elem.get("devServer").asBoolean()
-            );
-            serverInfo.setOnlinePlayers(elem.get("onlinePlayers").asInt());
-            serverInfo.setOnline(elem.get("online").asBoolean());
-
-            servers.add(serverInfo);
-        });
-        return servers;
-    }
-
-    @Override
-    public String write() {
-        if (this.getPacketType() == PacketType.REQUEST) {
-            Core.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
-
-            this.buildDefault();
-
-            return getBuilder().build(this.uuid).toString();
-        }
-
-        buildDefault().build(getResponse());
-
-        if (this.getPacketType() == PacketType.ANSWER) {
-            getBuilder().build(this.getResult());
-        }
-
-        return getBuilder().toString();
     }
 
 }

@@ -1,11 +1,11 @@
-package fr.lacaleche.pipe.bukkit.modules.god.modules.world.listeners;
+package fr.lacaleche.pipe.bukkit.modules.god.modules.time.listeners;
 
 import fr.lacaleche.core.events.annotations.CoreEventHandler;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListener;
-import fr.lacaleche.pipe.bukkit.modules.god.modules.world.DayLightType;
-import fr.lacaleche.pipe.bukkit.modules.god.modules.world.WorldModule;
+import fr.lacaleche.pipe.bukkit.modules.god.modules.time.DayLightType;
+import fr.lacaleche.pipe.bukkit.modules.god.modules.time.TimeModule;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.tasks.events.UpdateTickEvent;
 import org.bukkit.event.EventHandler;
@@ -14,12 +14,12 @@ import org.bukkit.plugin.Plugin;
 
 public class WorldListener implements BukkitPipeListener {
 
-    private WorldModule module;
+    private TimeModule module;
 
     private static long timeMillis = 0;
     private static long lastTime = 0;
 
-    public WorldListener(WorldModule module) {
+    public WorldListener(TimeModule module) {
         this.module = module;
     }
 

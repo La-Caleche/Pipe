@@ -2,12 +2,13 @@ package fr.lacaleche.pipe.common.packets;
 
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
-import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Packet(name = "RegisterNewServerPacket")
+@Serializer(variables = {"app", "host", "serverIcon", "maxPlayers", "devServer", "commands"})
 public class RegisterServerPacket extends PacketImpl {
 
     private String app;
@@ -28,21 +29,6 @@ public class RegisterServerPacket extends PacketImpl {
         this.maxPlayers = maxPlayers;
         this.devServer = devServer;
         this.commands = commands;
-    }
-
-    @Override
-    public void read(IPacketData data) {
-        this.commands = new ArrayList<>();
-
-        this.app = data.next();
-        this.host = data.next();
-        this.serverIcon = data.next();
-        this.maxPlayers = Integer.parseInt(data.next());
-        this.devServer = Boolean.parseBoolean(data.next());
-        int size = Integer.parseInt(data.next());
-        for (int i = 0; i < size; i++) {
-            this.commands.add(data.next());
-        }
     }
 
     public int getMaxPlayers() {
@@ -67,13 +53,6 @@ public class RegisterServerPacket extends PacketImpl {
 
     public boolean isDevServer() {
         return devServer;
-    }
-
-    @Override
-    public String write() {
-        buildDefault().build(this.app).build(this.host).build(this.serverIcon).build(this.maxPlayers).build(this.devServer).build(this.commands.size());
-        this.commands.forEach(getBuilder()::build);
-        return getBuilder().toString();
     }
 
 }

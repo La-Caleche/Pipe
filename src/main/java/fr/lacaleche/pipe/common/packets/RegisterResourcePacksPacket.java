@@ -2,12 +2,13 @@ package fr.lacaleche.pipe.common.packets;
 
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
-import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Packet(name = "RegisterResourcePacksPacket")
+@Serializer(variables = {"resourcePacks"})
 public class RegisterResourcePacksPacket extends PacketImpl {
 
     private Map<String, String> resourcePacks;
@@ -22,22 +23,5 @@ public class RegisterResourcePacksPacket extends PacketImpl {
 
     public Map<String, String> getResourcePacks() {
         return resourcePacks;
-    }
-
-    @Override
-    public void read(IPacketData data) {
-        int size = Integer.parseInt(data.next());
-        for (int i = 0; i < size; i++) {
-            this.resourcePacks.put(data.next(), data.next());
-        }
-    }
-
-    @Override
-    public String write() {
-        buildDefault().build(this.resourcePacks.size());
-        for (Map.Entry<String, String> entry : this.resourcePacks.entrySet()) {
-            getBuilder().build(entry.getKey()).build(entry.getValue());
-        }
-        return getBuilder().toString();
     }
 }

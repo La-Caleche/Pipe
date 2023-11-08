@@ -37,18 +37,18 @@ public class ShulkerController extends MobController {
         }
 
         @Override
-        public EnumMonsterType eJ() {
+        public EnumMonsterType eN() {
             return EnumMonsterType.b;
         }
 
         @Override
         protected float b(EntityPose entitypose, EntitySize entitysize) {
-            return this.y_() ? 0.93F : 1.74F;
+            return this.h_() ? 0.93F : 1.74F;
         }
 
         @Override
-        public double bu() {
-            return this.y_() ? 0.0 : -0.45;
+        public double bw() {
+            return this.h_() ? 0.0 : -0.45;
         }
     }
 

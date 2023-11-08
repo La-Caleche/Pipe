@@ -73,7 +73,7 @@ public class ClientImpl extends SqlModel implements Client {
 
     @Override
     public void startExpiration() {
-        this.expireIn(5 * 60 * 1000);
+        this.expireIn(30 * 1000);
     }
 
     @Override

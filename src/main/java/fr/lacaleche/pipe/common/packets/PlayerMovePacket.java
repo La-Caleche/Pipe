@@ -2,11 +2,12 @@ package fr.lacaleche.pipe.common.packets;
 
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
-import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 
 import java.util.UUID;
 
 @Packet(name = "PlayerMovePacket")
+@Serializer(variables = {"player", "server"})
 public class PlayerMovePacket extends PacketImpl {
 
     private UUID             player;
@@ -19,12 +20,6 @@ public class PlayerMovePacket extends PacketImpl {
         this.player = player;
         this.server = server;
     }
-    
-    @Override
-    public void read(IPacketData data) {
-        this.player = UUID.fromString(data.next());
-        this.server = data.next();
-    }
 
     public UUID getPlayer() {
         return player;
@@ -32,11 +27,6 @@ public class PlayerMovePacket extends PacketImpl {
 
     public String getServer() {
         return server;
-    }
-
-    @Override
-    public String write() {
-        return buildDefault().build(this.player).build(this.server).toString();
     }
 
 }

@@ -13,7 +13,7 @@ import fr.lacaleche.pipe.bukkit.modules.god.interfaces.IGodModuleManager;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.portal.PortalModule;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.spawn.SpawnModule;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.weather.WeatherModule;
-import fr.lacaleche.pipe.bukkit.modules.god.modules.world.WorldModule;
+import fr.lacaleche.pipe.bukkit.modules.god.modules.time.TimeModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class GodModuleManager implements IGodModuleManager {
         this.enableModule(new PortalModule(this.handler));
         this.enableModule(new SpawnModule(this.handler));
         this.enableModule(new WeatherModule(this.handler));
-        this.enableModule(new WorldModule(this.handler));
+        this.enableModule(new TimeModule(this.handler));
     }
 
     public IModuleHandler getHandler() {

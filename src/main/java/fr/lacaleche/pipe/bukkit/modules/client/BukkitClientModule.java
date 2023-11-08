@@ -48,6 +48,7 @@ public class BukkitClientModule extends BukkitModule {
         BukkitPipe pipe = Pipe.getBukkit();
 
         pipe.addJoinCallback(this, (listener, player, client) -> {
+            client.cancelExpiration();
             if (listener == null) return;
             listener.joinMessage(null);
 
@@ -69,6 +70,7 @@ public class BukkitClientModule extends BukkitModule {
 
         pipe.getTabManager().addPlayerLoadCallback(this, (tabPlayer, player, client) -> {
             PlayerNameTag nameTag = tabPlayer.getNameTag();
+            if (nameTag.isPersistent(0)) return ;
             nameTag.addLine("<player>", 0);
         });
     }

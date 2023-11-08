@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @MinecraftCommand(label = "tab", description = "pipe.command.tab.description", aliases = {"t"})
 public class TabCommand {
@@ -67,7 +68,7 @@ public class TabCommand {
                 manager.addArgument(new IntegerArgument("order"));
             }
 
-            @CommandExecutor(minPermLevel = 70)
+            @CommandExecutor(minPermLevel = 20)
             public boolean execute(Command<CommandSender> command) {
                 BukkitPipe pipe = Pipe.getBukkit();
                 Plugin plugin = pipe.getPlugin();
@@ -120,7 +121,7 @@ public class TabCommand {
                 manager.addArgument(new StringArgument("text").setMultiple(true).optional());
             }
 
-            @CommandExecutor(minPermLevel = 70)
+            @CommandExecutor(minPermLevel = 20)
             public boolean execute(Command<CommandSender> command) {
                 BukkitPipe pipe = Pipe.getBukkit();
                 Plugin plugin = pipe.getPlugin();
@@ -136,6 +137,12 @@ public class TabCommand {
                 String text = command.args().getString("text");
 
                 targets.forEach(target -> {
+                    if (command.sender() instanceof Player player && target.getUniqueId() != player.getUniqueId()) {
+                        if (command.clientSender().getRank().getPermissionLevel() < 70) {
+                            return ;
+                        }
+                    }
+
                     TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);
                     PlayerNameTag targetNameTag = targetTab.getNameTag();
                     int order = command.args().getInt("order");

@@ -1,7 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.warps;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.lacaleche.core.utils.serializer.annotations.Serializer;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 import fr.lacaleche.pipe.Pipe;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;

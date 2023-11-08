@@ -69,20 +69,20 @@ public class ArmorStandController extends LivingController {
 
         @Override
         protected float b(EntityPose entitypose, EntitySize entitysize) {
-            return entitysize.b * (this.y_() ? 0.5F : 0.9F);
+            return entitysize.b * (this.h_() ? 0.5F : 0.9F);
         }
 
         @Override
-        public double bu() {
+        public double bw() {
             return 0;
         }
 
         public void setMarker(boolean marker) {
-            this.am.b(DATA_CLIENT_FLAGS, this.setBit((Byte) this.am.a(DATA_CLIENT_FLAGS), 16, marker));
+            this.am.b(DATA_CLIENT_FLAGS, this.setBit((Byte) this.am.b(DATA_CLIENT_FLAGS), 16, marker));
         }
 
         public boolean isMarker() {
-            return ((Byte) this.am.a(DATA_CLIENT_FLAGS) & 16) != 0;
+            return ((Byte) this.am.b(DATA_CLIENT_FLAGS) & 16) != 0;
         }
 
         private byte setBit(byte value, int bitField, boolean set) {

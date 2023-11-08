@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.common.i18n.interfaces;
 
 import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 import fr.lacaleche.pipe.common.i18n.TranslationImpl;
 import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilder;
 import fr.lacaleche.pipe.common.i18n.builder.TranslationBuilderImpl;

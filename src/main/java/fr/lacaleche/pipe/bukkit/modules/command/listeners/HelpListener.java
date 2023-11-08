@@ -9,19 +9,17 @@ import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
 import fr.lacaleche.core.utils.redis.packet.events.PacketReadEvent;
 import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
 import fr.lacaleche.core.utils.redis.reader.PacketReader;
-import fr.lacaleche.core.utils.serializer.interfaces.CoreSerializer;
+import fr.lacaleche.core.utils.seripet.interfaces.CoreSerializer;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.helper.command.HelperImpl;
 import fr.lacaleche.pipe.common.commands.helper.interfaces.Helper;
 import fr.lacaleche.pipe.common.packets.CheckPermissionsPacket;
 import fr.lacaleche.pipe.common.packets.HelpPacket;
-import fr.lacaleche.pipe.common.tasks.impl.TaskBuilder;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 

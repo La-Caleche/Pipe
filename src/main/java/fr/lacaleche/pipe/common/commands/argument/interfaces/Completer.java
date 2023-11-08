@@ -16,6 +16,8 @@ public interface Completer {
 
     List<String> getCompleter();
 
+    List<String> getSortedCompleter();
+
     int index();
 
     void incrementIndex();

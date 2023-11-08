@@ -14,6 +14,7 @@ import fr.lacaleche.pipe.common.commands.utils.CommandsUtils;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +23,8 @@ import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandListeners implements Listener {
@@ -111,7 +113,7 @@ public class CommandListeners implements Listener {
         completer.setNext(userArgumentsLength == 0 || buffer.endsWith(commandImpl.getUserArguments()[userArgumentsLength - 1] + " "));
 
         Pipe.getBukkit().getCommandManager().parseCompleter(Pipe.getBukkit().getPlugin(), completer);
-        event.setCompletions(completer.getCompleter().stream().sorted().collect(Collectors.toList()));
+        event.setCompletions(completer.getSortedCompleter());
     }
 
     private IPair<CoreCommandImpl, CommandResult> parseCommand(Cancellable event, Object sender, String message) {

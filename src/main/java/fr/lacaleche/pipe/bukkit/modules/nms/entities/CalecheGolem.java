@@ -40,18 +40,18 @@ public abstract class CalecheGolem extends EntityGolem {
     }
 
     /**
-     * isBaby y_
+     * isBaby h_
      */
     @Override
-    public boolean y_() {
+    public boolean h_() {
         return false;
     }
 
     /**
-     * getExperienceReward dX
+     * getExperienceReward ea
      */
     @Override
-    public int dX() {
+    public int ea() {
         return 0;
     }
 
@@ -110,10 +110,10 @@ public abstract class CalecheGolem extends EntityGolem {
     }
 
     /**
-     * getDeathSound x_
+     * getDeathSound g_
      */
     @Override
-    protected SoundEffect x_() {
+    protected SoundEffect g_() {
         return null;
     }
 
@@ -124,9 +124,9 @@ public abstract class CalecheGolem extends EntityGolem {
     protected void b(BlockPosition blockposition, IBlockData iblockdata) {}
 
     /**
-     * getMobType eJ
+     * getMobType eN
      */
-    public abstract EnumMonsterType eJ();
+    public abstract EnumMonsterType eN();
 
     /**
      * populateDefaultEquipmentSlots a
@@ -188,10 +188,10 @@ public abstract class CalecheGolem extends EntityGolem {
     }
 
     /**
-     * getMyRidingOffset bu
+     * getMyRidingOffset bw
      */
     @Override
-    public abstract double bu();
+    public abstract double bw();
 
     /**
      * dropCustomDeathLoot a

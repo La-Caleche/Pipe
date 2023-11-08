@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class StringItem extends AbstractAnvilItem {
@@ -19,8 +20,8 @@ public class StringItem extends AbstractAnvilItem {
     }
 
     @Override
-    public ItemBuilder buildAnvil(PipeInventory parent, Function<AnvilGUI.Completion, List<AnvilGUI.ResponseAction>> completeFunction) {
-        this.buildAnvil(parent, "Enter a text", Component.text("Prompt", NamedTextColor.GOLD), this.get(), completeFunction);
+    public ItemBuilder buildAnvil(PipeInventory parent, BiFunction<Integer, AnvilGUI.StateSnapshot, List<AnvilGUI.ResponseAction>> clickHandler) {
+        this.buildAnvil(parent, "Enter a text", Component.text("Prompt", NamedTextColor.GOLD), this.get(), clickHandler);
         return this.get();
     }
 

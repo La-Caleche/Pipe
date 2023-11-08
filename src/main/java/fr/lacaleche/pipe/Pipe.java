@@ -7,6 +7,7 @@ import fr.lacaleche.core.utils.Callback;
 import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.BukkitPipeImpl;
+import fr.lacaleche.pipe.common.CommonPipe;
 import fr.lacaleche.pipe.common.adventure.PipeText;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
@@ -141,6 +142,10 @@ public interface Pipe {
 
     static ProxyPipe getProxy() {
         return ProxyPipeImpl.get();
+    }
+
+    static Pipe getCommon() {
+        return CommonPipe.get();
     }
 
     static Pipe get() {

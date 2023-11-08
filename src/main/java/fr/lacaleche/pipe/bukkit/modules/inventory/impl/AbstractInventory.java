@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.inventory.impl;
 
 import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadableItemNBT;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
@@ -24,7 +25,6 @@ import net.minecraft.world.IInventory;
 import net.minecraft.world.inventory.Containers;
 import org.bukkit.Material;
 import org.bukkit.block.Container;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.PACKET_PLAY_OUT_ENTITY_TELEPORT_CONSTRUCTOR;
 import static fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageConstructor.PACKET_PLAY_OUT_OPEN_SCREEN_CONSTRUCTOR;
@@ -104,8 +105,8 @@ public abstract class AbstractInventory implements PipeInventory {
         IChatBaseComponent vanillaComponent = nmsManager.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
 
         EntityPlayer entityPlayer = nmsManager.getPlayerHandle(this.getPlayer());
-        int containerId = entityPlayer.bP.j;
-        Containers<?> menuType = entityPlayer.bP.a();
+        int containerId = entityPlayer.bR.j;
+        Containers<?> menuType = entityPlayer.bR.a();
 
         Object packet = nmsManager.getStorage().construct(PACKET_PLAY_OUT_OPEN_SCREEN_CONSTRUCTOR, containerId, menuType, vanillaComponent);
         nmsManager.sendPacket(this.getPlayer(), packet);
@@ -231,7 +232,7 @@ public abstract class AbstractInventory implements PipeInventory {
         if (event.getClickedInventory() != event.getWhoClicked().getInventory() || !allowInteract) event.setCancelled(true);
         if (event.getClickedInventory() != getInventory() || event.getCurrentItem() == null) return;
 
-        String stringUUID = NBT.get(event.getCurrentItem(), readableNBT -> readableNBT.getString("clickActionID") );
+        String stringUUID = NBT.get(event.getCurrentItem(), (Function<ReadableItemNBT, String>) readableNBT -> readableNBT.getString("clickActionID"));
         if (stringUUID.isBlank()) return;
 
         UUID uuid;

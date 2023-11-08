@@ -20,4 +20,6 @@ dependencies {
 
     testImplementation project(":library:CalecheCore")
     testImplementation rootProject.lcDependencies.adventureApi
+    testImplementation rootProject.lcDependencies.commonLang
+    testImplementation rootProject.lcDependencies.spigot
 }

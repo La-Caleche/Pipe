@@ -27,8 +27,11 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.network.syncher.DataWatcher;
+import net.minecraft.server.level.BlockPosition2D;
+import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityInsentient;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.monster.EntityMonster;
 import net.minecraft.world.inventory.Containers;
@@ -337,8 +340,8 @@ public class DefaultStorage implements IStorage {
         this.registerMethod(GET_ID, this.getMethod(ENTITY, "hashCode"));
         this.registerMethod(SET_LOCATION, this.getMethod(ENTITY, "b", double.class, double.class, double.class, float.class, float.class));
         this.registerMethod(START_RIDING, this.getMethod(ENTITY, "a", this.clazz(ENTITY), boolean.class));
-        this.registerMethod(STOP_RIDING, this.getMethod(ENTITY, "bz"));
-        this.registerMethod(GET_PASSENGERS, this.getMethod(ENTITY, "cM"));
+        this.registerMethod(STOP_RIDING, this.getMethod(ENTITY, "bA"));
+        this.registerMethod(GET_PASSENGERS, this.getMethod(ENTITY, "cN"));
         this.registerMethod(TICK, this.getMethod(ENTITY, "l"));
         this.registerMethod(SET_CUSTOM_NAME, this.getMethod(ENTITY, "b", IChatBaseComponent.class));
         this.registerMethod(SET_CUSTOM_NAME_VISIBLE, this.getMethod(ENTITY, "n", boolean.class));
@@ -346,19 +349,19 @@ public class DefaultStorage implements IStorage {
         this.registerMethod(SET_GLOWING, this.getMethod(ENTITY, "i", boolean.class));
 
         this.registerMethod(SET_INVISIBLE, this.getMethod(ENTITY, "j", boolean.class));
-        this.registerMethod(IS_INVISIBLE, this.getMethod(ENTITY, "ca"));
+        this.registerMethod(IS_INVISIBLE, this.getMethod(ENTITY, "cb"));
 
         this.registerMethod(SET_NO_GRAVITY, this.getMethod(ENTITY, "e", boolean.class));
-        this.registerMethod(IS_NO_GRAVITY, this.getMethod(ENTITY, "aP"));
+        this.registerMethod(IS_NO_GRAVITY, this.getMethod(ENTITY, "aR"));
 
         this.registerMethod(AI_STEP, this.getMethod(ENTITY_LIVING, "b_"));
         this.registerMethod(SET_ITEM_SLOT, this.getMethod(ENTITY_LIVING, "a", this.clazz(EQUIPMENT_SLOT), this.clazz(ITEM_STACK)));
 
         this.registerMethod(SET_NO_AI, this.getMethod(ENTITY_INSENTIENT, "t", boolean.class));
-        this.registerMethod(IS_NO_AI, this.getMethod(ENTITY_INSENTIENT, "fK"));
+        this.registerMethod(IS_NO_AI, this.getMethod(ENTITY_INSENTIENT, "fQ"));
 
         this.registerMethod(SET_SHIFT_KEY_DOWN, this.getMethod(ENTITY, "f", boolean.class));
-        this.registerMethod(IS_SHIFT_KEY_DOWN, this.getMethod(ENTITY, "bO"));
+        this.registerMethod(IS_SHIFT_KEY_DOWN, this.getMethod(ENTITY, "bP"));
 
         this.registerMethod(PLAYER_CONNECTION$SEND_PACKET, this.getMethod(PLAYER_CONNECTION, "a", this.clazz(PACKET)));
 
@@ -374,12 +377,12 @@ public class DefaultStorage implements IStorage {
     private void registerDefaultField() {
         this.registerField(MDP_ITEMS_BY_ID, this.getField(DATA_WATCHER, "e"));
         this.registerField(NETWORK_MANAGER$CHANNEL, this.getField(NETWORK_MANAGER, "m"));
-        this.registerField(PLAYER_HANDLER$PLAYER_CONNECTION, this.getField(ENTITY_PLAYER, "b"));
+        this.registerField(PLAYER_HANDLER$PLAYER_CONNECTION, this.getField(ENTITY_PLAYER, "c"));
         this.registerField(PLAYER_CONNECTION$NETWORK_MANAGER, this.getField(PLAYER_CONNECTION, "h"));
 
-        this.registerField(ENTITY$POSITION, this.getField(ENTITY, "t"));
-        this.registerField(ENTITY$BLOCK_POSITION, this.getField(ENTITY, "u"));
-        this.registerField(ENTITY$CHUNK_POSITION, this.getField(ENTITY, "aC"));
+        this.registerField(ENTITY$POSITION, this.getField(ENTITY, "u"));
+        this.registerField(ENTITY$BLOCK_POSITION, this.getField(ENTITY, "aD"));
+        this.registerField(ENTITY$CHUNK_POSITION, this.getField(ENTITY, "aE"));
 
         this.registerField(CHUNK_POSITION$X, this.getField(CHUNK_COORD_INT_PAIR, "e"));
         this.registerField(CHUNK_POSITION$Z, this.getField(CHUNK_COORD_INT_PAIR, "f"));

@@ -1,6 +1,6 @@
 package fr.lacaleche.pipe.common.utils.server;
 
-import fr.lacaleche.core.utils.serializer.annotations.Serializer;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 import fr.lacaleche.pipe.common.packets.RegisterServerPacket;
 
 @Serializer(variables = {"app", "host", "serverIcon", "maxPlayers", "onlinePlayers", "online", "devServer"})

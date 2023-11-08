@@ -1,4 +1,4 @@
-package fr.lacaleche.pipe.bukkit.modules.god.modules.world;
+package fr.lacaleche.pipe.bukkit.modules.god.modules.time;
 
 public enum DayLightType {
 

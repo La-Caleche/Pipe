@@ -56,20 +56,20 @@ public abstract class CalecheLiving extends EntityLiving {
 
     @Override
     public float getBukkitYaw() {
-        return this.dw();
+        return this.cm();
     }
 
     /**
-     * refreshDimensions c_
+     * refreshDimensions d_
      * */
     @Override
-    public void c_() {}
+    public void d_() {}
 
     /**
-     * isEffectiveAi cU
+     * isEffectiveAi cV
      * */
     @Override
-    public boolean cU() {
+    public boolean cV() {
         return false;
     }
 
@@ -82,18 +82,18 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * getHandSlots bH
+     * getHandSlots bI
      * */
     @Override
-    public Iterable<ItemStack> bH() {
+    public Iterable<ItemStack> bI() {
         return NonNullList.a();
     }
 
     /**
-     * getArmorSlots bI
+     * getArmorSlots bJ
      * */
     @Override
-    public Iterable<ItemStack> bI() {
+    public Iterable<ItemStack> bJ() {
         return NonNullList.a();
     }
 
@@ -148,10 +148,10 @@ public abstract class CalecheLiving extends EntityLiving {
     protected void A(Entity entity) {}
 
     /**
-     * pushEntities eZ
+     * pushEntities fd
      * */
     @Override
-    protected void eZ() {}
+    protected void fd() {}
 
     /**
      * interactAt a
@@ -200,10 +200,10 @@ public abstract class CalecheLiving extends EntityLiving {
     protected abstract float b(EntityPose entitypose, EntitySize entitysize);
 
     /**
-     * getMyRidingOffset bu
+     * getMyRidingOffset bw
      * */
     @Override
-    public abstract double bu();
+    public abstract double bw();
 
     /**
      * travel h
@@ -212,16 +212,16 @@ public abstract class CalecheLiving extends EntityLiving {
     public void h(Vec3D vec3d) {}
 
     /**
-     * setYBodyRot s
+     * setYBodyRot o
      * */
     @Override
-    public void s(float f) {}
+    public void o(float f) {}
 
     /**
-     * setYHeadRot r
+     * setYHeadRot n
      * */
     @Override
-    public void r(float f) {}
+    public void n(float f) {}
 
     /**
      * tick l
@@ -232,18 +232,18 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * isBaby y_
+     * isBaby h_
      * */
     @Override
-    public boolean y_() {
+    public boolean h_() {
         return false;
     }
 
     /**
-     * shouldDropExperience dV
+     * shouldDropExperience dY
      * */
     @Override
-    public boolean dV() {
+    public boolean dY() {
         return false;
     }
 
@@ -256,26 +256,26 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * ignoreExplosion cI
+     * ignoreExplosion cJ
      * */
     @Override
-    public boolean cI() {
+    public boolean cJ() {
         return true;
     }
 
     /**
-     * getPistonPushReaction C_
+     * getPistonPushReaction l_
      * */
     @Override
-    public EnumPistonReaction C_() {
+    public EnumPistonReaction l_() {
         return EnumPistonReaction.d;
     }
 
     /**
-     * isPickable bm
+     * isPickable bo
      * */
     @Override
-    public boolean bm() {
+    public boolean bo() {
         return false;
     }
 
@@ -288,19 +288,19 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * getMainArm fd
+     * getMainArm fh
      * */
     @Override
-    public EnumMainHand fd() {
+    public EnumMainHand fh() {
         return EnumMainHand.b;
     }
 
     /**
-     * getFallSounds ey
+     * getFallSounds eC
      * */
     @Nullable
     @Override
-    public EntityLiving.a ey() {
+    public EntityLiving.a eC() {
         return null;
     }
 
@@ -314,11 +314,11 @@ public abstract class CalecheLiving extends EntityLiving {
     }
 
     /**
-     * getDeathSound x_
+     * getDeathSound g_
      * */
     @Nullable
     @Override
-    protected SoundEffect x_() {
+    protected SoundEffect g_() {
         return null;
     }
 
@@ -329,10 +329,10 @@ public abstract class CalecheLiving extends EntityLiving {
     public void a(WorldServer worldserver, EntityLightning entitylightning) {}
 
     /**
-     * isAffectedByPotions eX
+     * isAffectedByPotions ft
      * */
     @Override
-    public boolean eX() {
+    public boolean ft() {
         return false;
     }
 
@@ -343,27 +343,27 @@ public abstract class CalecheLiving extends EntityLiving {
     public void a(DataWatcherObject<?> datawatcherobject) {}
 
     /**
-     * attackable fq
+     * attackable fu
      * */
     @Override
-    public boolean fq() {
+    public boolean fu() {
         return false;
     }
 
     /**
-     * getPickResult dt
+     * getPickResult dv
      * */
     @Override
-    public ItemStack dt() {
+    public ItemStack dv() {
         return ItemStack.b;
     }
 
     /**
-     * canBeSeenByAnyone ei
+     * canBeSeenByAnyone el
      * */
     @Override
-    public boolean ei() {
-        return !this.bU();
+    public boolean el() {
+        return !this.G_() && this.bs();
     }
 
 }

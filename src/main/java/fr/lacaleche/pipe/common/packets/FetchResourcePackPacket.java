@@ -7,11 +7,12 @@ import fr.lacaleche.core.utils.promises.interfaces.Resolve;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
-import fr.lacaleche.core.utils.redis.packet.interfaces.IPacketData;
 import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
 import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 
 @Packet(name = "FetchResourcePackPacket")
+@Serializer(variables = {"name"})
 public class FetchResourcePackPacket extends TransactionalPacket {
 
     private String name;
@@ -36,36 +37,8 @@ public class FetchResourcePackPacket extends TransactionalPacket {
         this.setPacketType(PacketType.REQUEST);
     }
 
-    @Override
-    public void read(IPacketData data) {
-        this.setToken(new Token(data.next()));
-        this.setPacketType(PacketType.valueOf(data.next()));
-
-        this.name = data.next();
-
-        if (this.getPacketType() == PacketType.ANSWER && data.hasNext()) {
-            this.setResponse(data.next());
-            this.setResult(TransactionResult.valueOf(data.next()));
-        }
-    }
-
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String write() {
-        buildDefault().build(this.getName()).build(this.getResponse());
-
-        if (getPacketType() == PacketType.REQUEST) {
-            Core.get().getTransactionManager().registerTransaction(new Transaction(this, this.getToken(), this.getResolve(), this.getReject()));
-        }
-
-        if (this.getPacketType() == PacketType.ANSWER) {
-            getBuilder().build(this.getResult());
-        }
-
-        return getBuilder().toString();
     }
 
 }

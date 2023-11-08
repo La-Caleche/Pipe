@@ -6,6 +6,7 @@ import fr.lacaleche.pipe.bukkit.modules.inventory.interfaces.PipeInventory;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.ItemBuilder;
 import fr.lacaleche.pipe.bukkit.modules.inventory.items.anvilitems.StringItem;
 import net.kyori.adventure.text.Component;
+import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,6 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryView;
 
+import java.util.Collections;
 import java.util.Set;
 
 public abstract class AbstractPaginatedInventory extends AbstractInventory implements PaginatedInventory {
@@ -93,8 +95,11 @@ public abstract class AbstractPaginatedInventory extends AbstractInventory imple
             }
             stringItem.get().addLine(Component.empty()).addLine(this.getLocale().t("pipe.inventory.items.filter.description").ct());
 
-            setItem(this.filterSlot, stringItem.buildAnvil(this, result -> {
-                this.filter(result.getText());
+            setItem(this.filterSlot, stringItem.buildAnvil(this, (slot, stateSnapshot) -> {
+                if (slot != AnvilGUI.Slot.OUTPUT)
+                    return Collections.emptyList();
+
+                this.filter(stateSnapshot.getText());
                 return stringItem.closeThenReopenParent(this);
             }).build(), (event) -> {
                 if (event.getClick() == ClickType.RIGHT) {

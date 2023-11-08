@@ -2,8 +2,16 @@ package fr.lacaleche.pipe.bukkit.modules.nms.entities;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import net.minecraft.SystemUtils;
+import net.minecraft.commands.CommandListenerWrapper;
+import net.minecraft.nbt.DynamicOpsNBT;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.chat.ChatComponentUtils;
 import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.network.syncher.DataWatcherObject;
 import net.minecraft.network.syncher.DataWatcherRegistry;
@@ -12,9 +20,11 @@ import net.minecraft.util.INamable;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.World;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,120 +46,223 @@ public class CalecheTextDisplay extends CalecheDisplay {
     private static final byte INITIAL_TEXT_OPACITY = -1;
     public static final int INITIAL_BACKGROUND = 1073741824;
     private static final DataWatcherObject<IChatBaseComponent> DATA_TEXT_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.f);
-    private static final DataWatcherObject<Integer> DATA_LINE_WIDTH_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.b);
-    private static final DataWatcherObject<Integer> DATA_BACKGROUND_COLOR_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.b);
+    public static final DataWatcherObject<Integer> DATA_LINE_WIDTH_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.b);
+    public static final DataWatcherObject<Integer> DATA_BACKGROUND_COLOR_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.b);
     private static final DataWatcherObject<Byte> DATA_TEXT_OPACITY_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.a);
     private static final DataWatcherObject<Byte> DATA_STYLE_FLAGS_ID = DataWatcher.a(CalecheTextDisplay.class, DataWatcherRegistry.a);
-    private final IntInterpolator textOpacity = new IntInterpolator(-1);
-    private final IntInterpolator backgroundColor = new ColorInterpolator(1073741824);
+    private static final IntSet TEXT_RENDER_STATE_IDS = IntSet.of(new int[]{CalecheTextDisplay.DATA_TEXT_ID.a(), CalecheTextDisplay.DATA_LINE_WIDTH_ID.a(), CalecheTextDisplay.DATA_BACKGROUND_COLOR_ID.a(), CalecheTextDisplay.DATA_TEXT_OPACITY_ID.a(), CalecheTextDisplay.DATA_STYLE_FLAGS_ID.a()});
     @Nullable
-    private CachedInfo clientDisplayCache;
+    private CalecheTextDisplay.CachedInfo clientDisplayCache;
+    @Nullable
+    private CalecheTextDisplay.e textRenderState;
 
-    public CalecheTextDisplay(EntityTypes<?> type, World world) {
-        super(type, world);
-        this.interpolators.addEntry(DATA_BACKGROUND_COLOR_ID, this.backgroundColor);
-        this.interpolators.addEntry(Set.of(DATA_TEXT_OPACITY_ID), (value, dataTracker) -> {
-            this.textOpacity.updateValue(value, Integer.valueOf(dataTracker.a(DATA_TEXT_OPACITY_ID) & 255));
-        });
+    public CalecheTextDisplay(EntityTypes<?> entitytypes, World world) {
+        super(entitytypes, world);
     }
 
     @Override
     protected void a_() {
         super.a_();
-        this.am.a(DATA_TEXT_ID, IChatBaseComponent.h());
-        this.am.a(DATA_LINE_WIDTH_ID, 200);
-        this.am.a(DATA_BACKGROUND_COLOR_ID, 1073741824);
-        this.am.a(DATA_TEXT_OPACITY_ID, (byte)-1);
-        this.am.a(DATA_STYLE_FLAGS_ID, (byte)0);
+        this.am.a(CalecheTextDisplay.DATA_TEXT_ID, IChatBaseComponent.h());
+        this.am.a(CalecheTextDisplay.DATA_LINE_WIDTH_ID, 200);
+        this.am.a(CalecheTextDisplay.DATA_BACKGROUND_COLOR_ID, 1073741824);
+        this.am.a(CalecheTextDisplay.DATA_TEXT_OPACITY_ID, (byte) -1);
+        this.am.a(CalecheTextDisplay.DATA_STYLE_FLAGS_ID, (byte) 0);
     }
 
     @Override
-    public void a(DataWatcherObject<?> data) {
-        super.a(data);
-        this.clientDisplayCache = null;
+    public void a(DataWatcherObject<?> datawatcherobject) {
+        super.a(datawatcherobject);
+        if (CalecheTextDisplay.TEXT_RENDER_STATE_IDS.contains(datawatcherobject.a())) {
+            this.updateRenderState = true;
+        }
+
     }
 
     public IChatBaseComponent getText() {
-        return this.am.a(DATA_TEXT_ID);
+        return (IChatBaseComponent) this.am.b(CalecheTextDisplay.DATA_TEXT_ID);
     }
 
-    public void setText(IChatBaseComponent text) {
-        this.am.b(DATA_TEXT_ID, text);
+    public void setText(IChatBaseComponent ichatbasecomponent) {
+        this.am.b(CalecheTextDisplay.DATA_TEXT_ID, ichatbasecomponent);
     }
 
     public int getLineWidth() {
-        return this.am.a(DATA_LINE_WIDTH_ID);
+        return (Integer) this.am.b(CalecheTextDisplay.DATA_LINE_WIDTH_ID);
     }
 
-    public void setLineWidth(int lineWidth) {
-        this.am.b(DATA_LINE_WIDTH_ID, lineWidth);
-    }
-
-    public byte getTextOpacity(float delta) {
-        return (byte)this.textOpacity.get(delta);
+    private void setLineWidth(int i) {
+        this.am.b(CalecheTextDisplay.DATA_LINE_WIDTH_ID, i);
     }
 
     public byte getTextOpacity() {
-        return this.am.a(DATA_TEXT_OPACITY_ID);
+        return (Byte) this.am.b(CalecheTextDisplay.DATA_TEXT_OPACITY_ID);
     }
 
-    public void setTextOpacity(byte textOpacity) {
-        this.am.b(DATA_TEXT_OPACITY_ID, textOpacity);
-    }
-
-    public int getBackgroundColor(float delta) {
-        return this.backgroundColor.get(delta);
+    public void setTextOpacity(byte b0) {
+        this.am.b(CalecheTextDisplay.DATA_TEXT_OPACITY_ID, b0);
     }
 
     public int getBackgroundColor() {
-        return this.am.a(DATA_BACKGROUND_COLOR_ID);
+        return (Integer) this.am.b(CalecheTextDisplay.DATA_BACKGROUND_COLOR_ID);
     }
 
-    public void setBackgroundColor(int background) {
-        this.am.b(DATA_BACKGROUND_COLOR_ID, background);
+    private void setBackgroundColor(int i) {
+        this.am.b(CalecheTextDisplay.DATA_BACKGROUND_COLOR_ID, i);
     }
 
     public byte getFlags() {
-        return this.am.a(DATA_STYLE_FLAGS_ID);
+        return (Byte) this.am.b(CalecheTextDisplay.DATA_STYLE_FLAGS_ID);
     }
 
-    public void setFlags(byte flags) {
-        this.am.b(DATA_STYLE_FLAGS_ID, flags);
+    public void setFlags(byte b0) {
+        this.am.b(CalecheTextDisplay.DATA_STYLE_FLAGS_ID, b0);
+    }
+
+    private static byte loadFlag(byte b0, NBTTagCompound nbttagcompound, String s, byte b1) {
+        return nbttagcompound.q(s) ? (byte) (b0 | b1) : b0;
     }
 
     @Override
-    protected void a(NBTTagCompound nbt) {}
+    protected void a(NBTTagCompound nbttagcompound) {
+        super.a(nbttagcompound);
+        if (nbttagcompound.b("line_width", 99)) {
+            this.setLineWidth(nbttagcompound.h("line_width"));
+        }
+
+        if (nbttagcompound.b("text_opacity", 99)) {
+            this.setTextOpacity(nbttagcompound.f("text_opacity"));
+        }
+
+        if (nbttagcompound.b("background", 99)) {
+            this.setBackgroundColor(nbttagcompound.h("background"));
+        }
+
+        byte b0 = loadFlag((byte) 0, nbttagcompound, "shadow", (byte) 1);
+
+        b0 = loadFlag(b0, nbttagcompound, "see_through", (byte) 2);
+        b0 = loadFlag(b0, nbttagcompound, "default_background", (byte) 4);
+        DataResult<Pair<CalecheTextDisplay.Align, NBTBase>> dataresult = CalecheTextDisplay.Align.CODEC.decode(DynamicOpsNBT.a, nbttagcompound.c("alignment")); // CraftBukkit - decompile error
+        Logger logger = CalecheDisplay.LOGGER;
+
+        Objects.requireNonNull(logger);
+        Optional<CalecheTextDisplay.Align> optional = dataresult.resultOrPartial(CalecheDisplay.prefix("Display entity", logger::error)).map(Pair::getFirst);
+
+        if (optional.isPresent()) {
+            byte b1;
+
+            switch ((CalecheTextDisplay.Align) optional.get()) {
+                case CENTER:
+                    b1 = b0;
+                    break;
+                case LEFT:
+                    b1 = (byte) (b0 | 8);
+                    break;
+                case RIGHT:
+                    b1 = (byte) (b0 | 16);
+                    break;
+                default:
+                    throw new IncompatibleClassChangeError();
+            }
+
+            b0 = b1;
+        }
+
+        this.setFlags(b0);
+        if (nbttagcompound.b("text", 8)) {
+            String s = nbttagcompound.l("text");
+
+            try {
+                IChatMutableComponent ichatmutablecomponent = IChatBaseComponent.ChatSerializer.a(s);
+
+                if (ichatmutablecomponent != null) {
+                    CommandListenerWrapper commandlistenerwrapper = this.da().a(2);
+                    IChatMutableComponent ichatmutablecomponent1 = ChatComponentUtils.a(commandlistenerwrapper, (IChatBaseComponent) ichatmutablecomponent, this, 0);
+
+                    this.setText(ichatmutablecomponent1);
+                } else {
+                    this.setText(IChatBaseComponent.h());
+                }
+            } catch (Exception exception) {
+                CalecheDisplay.LOGGER.warn("Failed to parse display entity text {}", s, exception);
+            }
+        }
+
+    }
+
+    private static void storeFlag(byte b0, NBTTagCompound nbttagcompound, String s, byte b1) {
+        nbttagcompound.a(s, (b0 & b1) != 0);
+    }
 
     @Override
-    protected void b(NBTTagCompound nbt) {}
+    protected void b(NBTTagCompound nbttagcompound) {
+        super.b(nbttagcompound);
+        nbttagcompound.a("text", IChatBaseComponent.ChatSerializer.a(this.getText()));
+        nbttagcompound.a("line_width", this.getLineWidth());
+        nbttagcompound.a("background", this.getBackgroundColor());
+        nbttagcompound.a("text_opacity", this.getTextOpacity());
+        byte b0 = this.getFlags();
 
-    public CachedInfo cacheDisplay(LineSplitter splitter) {
+        storeFlag(b0, nbttagcompound, "shadow", (byte) 1);
+        storeFlag(b0, nbttagcompound, "see_through", (byte) 2);
+        storeFlag(b0, nbttagcompound, "default_background", (byte) 4);
+        CalecheTextDisplay.Align.CODEC.encodeStart(DynamicOpsNBT.a, getAlign(b0)).result().ifPresent((nbtbase) -> {
+            nbttagcompound.a("alignment", nbtbase);
+        });
+    }
+
+    @Override
+    protected void a(boolean flag, float f) {
+        if (flag && this.textRenderState != null) {
+            this.textRenderState = this.createInterpolatedTextRenderState(this.textRenderState, f);
+        } else {
+            this.textRenderState = this.createFreshTextRenderState();
+        }
+
+        this.clientDisplayCache = null;
+    }
+
+    @Nullable
+    public CalecheTextDisplay.e textRenderState() {
+        return this.textRenderState;
+    }
+
+    private CalecheTextDisplay.e createFreshTextRenderState() {
+        return new e(this.getText(), this.getLineWidth(), CalecheDisplay.IntInterpolator.constant(this.getTextOpacity()), CalecheDisplay.IntInterpolator.constant(this.getBackgroundColor()), this.getFlags());
+    }
+
+    private CalecheTextDisplay.e createInterpolatedTextRenderState(CalecheTextDisplay.e display_textdisplay_e, float f) {
+        int i = display_textdisplay_e.backgroundColor.get(f);
+        int j = display_textdisplay_e.textOpacity.get(f);
+
+        return new e(this.getText(), this.getLineWidth(), new CalecheDisplay.i(j, this.getTextOpacity()), new CalecheDisplay.ColorInterpolator(i, this.getBackgroundColor()), this.getFlags());
+    }
+
+    public CalecheTextDisplay.CachedInfo cacheDisplay(CalecheTextDisplay.LineSplitter display_textdisplay_linesplitter) {
         if (this.clientDisplayCache == null) {
-            int i = this.getLineWidth();
-            this.clientDisplayCache = splitter.split(this.getText(), i);
+            if (this.textRenderState != null) {
+                this.clientDisplayCache = display_textdisplay_linesplitter.split(this.textRenderState.text(), this.textRenderState.lineWidth());
+            } else {
+                this.clientDisplayCache = new CachedInfo(List.of(), 0);
+            }
         }
 
         return this.clientDisplayCache;
     }
 
-    public Align getAlign(byte flags) {
-        if ((flags & 8) != 0) {
-            return Align.LEFT;
-        } else {
-            return (flags & 16) != 0 ? Align.RIGHT : Align.CENTER;
-        }
+    public static CalecheTextDisplay.Align getAlign(byte b0) {
+        return (b0 & 8) != 0 ? CalecheTextDisplay.Align.LEFT : ((b0 & 16) != 0 ? CalecheTextDisplay.Align.RIGHT : CalecheTextDisplay.Align.CENTER);
     }
 
-    public enum Align implements INamable {
-        CENTER("center"),
-        LEFT("left"),
-        RIGHT("right");
+    public static enum Align implements INamable {
 
-        public static final Codec<Align> CODEC = INamable.a(Align::values);
+        CENTER("center"), LEFT("left"), RIGHT("right");
+
+        public static final Codec<CalecheTextDisplay.Align> CODEC = INamable.a(CalecheTextDisplay.Align::values);
         private final String name;
 
-        private Align(String name) {
-            this.name = name;
+        private Align(String s) {
+            this.name = s;
         }
 
         @Override
@@ -158,15 +271,22 @@ public class CalecheTextDisplay extends CalecheDisplay {
         }
     }
 
-    public record CachedInfo(List<CachedLine> lines, int width) {
+    public static record e(IChatBaseComponent text, int lineWidth, CalecheDisplay.IntInterpolator textOpacity, CalecheDisplay.IntInterpolator backgroundColor, byte flags) {
+
     }
 
-    public record CachedLine(FormattedString contents, int width) {
+    public static record CachedInfo(List<CalecheTextDisplay.CachedLine> lines, int width) {
+
     }
 
     @FunctionalInterface
     public interface LineSplitter {
-        CachedInfo split(IChatBaseComponent text, int lineWidth);
+
+        CalecheTextDisplay.CachedInfo split(IChatBaseComponent ichatbasecomponent, int i);
+    }
+
+    public static record CachedLine(FormattedString contents, int width) {
+
     }
 
 }

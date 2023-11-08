@@ -3,11 +3,10 @@ package fr.lacaleche.pipe.common.commands.argument;
 import fr.lacaleche.pipe.common.commands.CoreCommandImpl;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.Completer;
+import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class CompleterImpl implements Completer {
 
@@ -45,6 +44,21 @@ public class CompleterImpl implements Completer {
     @Override
     public List<String> getCompleter() {
         return this.completer;
+    }
+
+    @Override
+    public List<String> getSortedCompleter() {
+        Map<String, BigDecimal> numericValues = new HashMap<>();
+        for (String s : this.getCompleter()) {
+            if (NumberUtils.isCreatable(s)) {
+                numericValues.put(s, new BigDecimal(s));
+            }
+        }
+
+        return this.getCompleter().stream().sorted(Comparator.comparing(
+                (String s) -> NumberUtils.isCreatable(s) ? numericValues.get(s) : new BigDecimal(Integer.MAX_VALUE),
+                BigDecimal::compareTo
+        ).thenComparing(String::toString)).toList();
     }
 
     @Override

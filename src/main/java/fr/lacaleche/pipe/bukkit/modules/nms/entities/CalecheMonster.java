@@ -77,18 +77,18 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * isBaby y_
+     * isBaby h_
      */
     @Override
-    public boolean y_() {
+    public boolean h_() {
         return false;
     }
 
     /**
-     * getExperienceReward dX
+     * getExperienceReward ea
      */
     @Override
-    public int dX() {
+    public int ea() {
         return 0;
     }
 
@@ -147,10 +147,10 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * getDeathSound x_
+     * getDeathSound g_
      */
     @Override
-    protected SoundEffect x_() {
+    protected SoundEffect g_() {
         return null;
     }
 
@@ -161,9 +161,9 @@ public abstract class CalecheMonster extends EntityMonster {
     protected void b(BlockPosition blockposition, IBlockData iblockdata) {}
 
     /**
-     * getMobType eJ
+     * getMobType eN
      */
-    public abstract EnumMonsterType eJ();
+    public abstract EnumMonsterType eN();
 
     /**
      * populateDefaultEquipmentSlots a
@@ -225,10 +225,10 @@ public abstract class CalecheMonster extends EntityMonster {
     }
 
     /**
-     * getMyRidingOffset bu
+     * getMyRidingOffset bw
      */
     @Override
-    public abstract double bu();
+    public abstract double bw();
 
     /**
      * dropCustomDeathLoot a

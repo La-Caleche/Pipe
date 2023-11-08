@@ -3,13 +3,17 @@ package fr.pipe;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.mysql.SqlDatabase;
 import fr.lacaleche.core.databases.mysql.SqlDatabaseImpl;
+import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.logger.Logger;
+import net.minecraft.network.chat.RemoteChatSession;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Tests {
 
@@ -21,16 +25,30 @@ public class Tests {
     }
 
     private void run() {
-        Map<Integer, String> uselessMap = new HashMap<>();
-        uselessMap.put(2, "test2");
-        uselessMap.put(-1, "minus1");
-        uselessMap.put(0, "zero");
-        uselessMap.put(-10, "-10");
-        uselessMap.put(10, "10");
-        uselessMap.put(8, "8");
+        Collection<String> ints = new ArrayList<>();
 
-        int[] ints = uselessMap.keySet().stream().mapToInt(Integer::intValue).sorted().toArray();
-        System.out.println(String.join(", ", Arrays.toString(ints)));
+        ints.addAll(IntStream.rangeClosed(0, 24000 / 1000)
+                .boxed()
+                .map(i -> i * 1000)
+                .map(Object::toString)
+                .toList());
+
+        // Preprocess list to store numeric values as BigDecimal
+        Map<String, BigDecimal> numericValues = new HashMap<>();
+        for (String s : ints) {
+            if (NumberUtils.isCreatable(s)) {
+                numericValues.put(s, new BigDecimal(s));
+            }
+        }
+
+        ints = ints.stream().sorted(Comparator.comparing(
+                (String s) -> NumberUtils.isCreatable(s) ? numericValues.get(s) : new BigDecimal(Integer.MAX_VALUE),
+                BigDecimal::compareTo
+        ).thenComparing(String::toString)).toList();
+
+        ints = ints.stream().map(s -> s.replace("%", "")).toList();
+
+        ints.forEach(Logger::info);
     }
 
     private void start() {}

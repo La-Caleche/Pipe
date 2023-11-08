@@ -21,7 +21,7 @@ import net.minecraft.world.level.GeneratorAccess;
 import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.phys.Vec3D;
-import org.bukkit.craftbukkit.v1_19_R3.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_20_R1.event.CraftEventFactory;
 
 import javax.annotation.Nullable;
 import java.time.LocalDate;
@@ -34,10 +34,10 @@ public abstract class CalecheAmbient extends EntityAmbient {
     }
 
     /**
-     * isFlapping aN
+     * isFlapping aP
      */
     @Override
-    public boolean aN() {
+    public boolean aP() {
         return false;
     }
 
@@ -50,19 +50,19 @@ public abstract class CalecheAmbient extends EntityAmbient {
     }
 
     /**
-     * getSoundVolume eN
+     * getSoundVolume eR
      */
     @Override
-    protected float eN() {
+    protected float eR() {
         return 0.1F;
     }
 
     /**
-     * getVoicePitch eO
+     * getVoicePitch eS
      */
     @Override
-    public float eO() {
-        return super.eO() * 0.95F;
+    public float eS() {
+        return super.eS() * 0.95F;
     }
 
     /**
@@ -82,18 +82,18 @@ public abstract class CalecheAmbient extends EntityAmbient {
     }
 
     /**
-     * getDeathSound x_
+     * getDeathSound g_
      */
     @Override
-    protected SoundEffect x_() {
+    protected SoundEffect g_() {
         return null;
     }
 
     /**
-     * isCollidable bn
+     * isPushable bp
      */
     @Override
-    public boolean bn() {
+    public boolean bp() {
         return false;
     }
 
@@ -104,10 +104,10 @@ public abstract class CalecheAmbient extends EntityAmbient {
     protected void A(Entity entity) {}
 
     /**
-     * pushEntities eZ
+     * pushEntities fd
      */
     @Override
-    protected void eZ() {}
+    protected void fd() {}
 
     /**
      * tick l
@@ -119,18 +119,18 @@ public abstract class CalecheAmbient extends EntityAmbient {
     }
 
     /**
-     * customServerAiStep U
+     * customServerAiStep W
      */
     @Override
-    protected void U() {
-        super.U();
+    protected void W() {
+        super.W();
     }
 
     /**
-     * getMovementEmission aQ
+     * getMovementEmission aS
      */
     @Override
-    protected Entity.MovementEmission aQ() {
+    protected Entity.MovementEmission aS() {
         return MovementEmission.a;
     }
 
@@ -141,10 +141,10 @@ public abstract class CalecheAmbient extends EntityAmbient {
     protected void a(double d0, boolean flag, IBlockData iblockdata, BlockPosition blockposition) {}
 
     /**
-     * isIgnoringBlockTriggers cq
+     * isIgnoringBlockTriggers c_
      */
     @Override
-    public boolean cq() {
+    public boolean c_() {
         return true;
     }
 

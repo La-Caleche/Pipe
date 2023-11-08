@@ -7,11 +7,9 @@ import fr.lacaleche.pipe.bukkit.modules.nms.enums.StorageMethods;
 import fr.lacaleche.pipe.bukkit.modules.nms.impls.AbstractController;
 import fr.lacaleche.pipe.bukkit.modules.nms.interfaces.IStorage;
 import fr.lacaleche.pipe.bukkit.modules.nms.utils.ClassFinder;
-import io.netty.channel.Channel;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;

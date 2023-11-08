@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class AbstractAnvilItem implements AnvilItem {
@@ -28,9 +29,9 @@ public abstract class AbstractAnvilItem implements AnvilItem {
     }
 
     @Override
-    public AnvilGUI.Builder buildAnvil(PipeInventory parent, String title, Component componentText, ItemBuilder left, Function<AnvilGUI.Completion, List<AnvilGUI.ResponseAction>> completeFunction) {
+    public AnvilGUI.Builder buildAnvil(PipeInventory parent, String title, Component componentText, ItemBuilder left, BiFunction<Integer, AnvilGUI.StateSnapshot, List<AnvilGUI.ResponseAction>> clickHandler) {
         this.builder = new AnvilGUI.Builder()
-                .onComplete(completeFunction)
+                .onClick(clickHandler)
                 .text(LegacyComponentSerializer.legacySection().serialize(componentText))
                 .title(title)
                 .itemLeft(left.getItem())

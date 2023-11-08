@@ -6,7 +6,7 @@ import net.minecraft.server.level.EntityTrackerEntry;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class EntityTracker {
     public EntityTracker(ICalecheEntity calecheEntity) {
         this.calecheEntity = calecheEntity;
         this.entity = calecheEntity.getEntity();
-        this.entityTracker = new EntityTrackerEntry((WorldServer) entity.cG(), entity, 3, true, this::broadcast, Collections.emptySet());
+        this.entityTracker = new EntityTrackerEntry((WorldServer) entity.dI(), entity, 3, true, this::broadcast, Collections.emptySet());
         this.range = 8 * 16;
     }
 
@@ -39,7 +39,7 @@ public class EntityTracker {
 
         while (iterator.hasNext()) {
             Player player = iterator.next();
-            ServerPlayerConnection serverplayerconnection = ((CraftPlayer) player).getHandle().b;
+            ServerPlayerConnection serverplayerconnection = ((CraftPlayer) player).getHandle().c;
 
             serverplayerconnection.a(packet);
         }

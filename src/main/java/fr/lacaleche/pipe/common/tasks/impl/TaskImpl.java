@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.tasks.impl;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.tasks.interfaces.ErrorCallback;
@@ -147,6 +148,10 @@ public class TaskImpl implements Task {
 
     @Override
     public void crash(RuntimeException exception) {
+        if (this.getErrorCallback() == null) {
+            Logger.catchThrowable("Task %s crashed without an error callback.", exception, this.uuid);
+            return ;
+        }
         this.getErrorCallback().execute(exception);
     }
 

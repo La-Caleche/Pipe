@@ -22,7 +22,7 @@ import fr.lacaleche.pipe.common.packets.HelpPacket;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import net.minecraft.server.level.EntityPlayer;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissibleBase;
 import org.joor.Reflect;

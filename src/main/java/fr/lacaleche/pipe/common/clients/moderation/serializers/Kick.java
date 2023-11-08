@@ -1,7 +1,7 @@
 package fr.lacaleche.pipe.common.clients.moderation.serializers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.lacaleche.core.utils.serializer.annotations.Serializer;
+import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
