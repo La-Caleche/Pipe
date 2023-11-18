@@ -18,6 +18,7 @@ import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -180,9 +181,7 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
-    public boolean ban(Client author, String reason, Date endAt) {
-        String end = (endAt == null) ? "Definitive." :  new SimpleDateFormat("dd/MM/yyyy HH:mm").format(endAt);
-
+    public boolean ban(Client author, String reason, LocalDateTime endAt) {
         if (author == null) {
             SentryAPIImpl.getInstance().captureException(new Exception("Client ban, author is null."));
             return false;

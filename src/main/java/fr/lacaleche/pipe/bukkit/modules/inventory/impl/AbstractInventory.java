@@ -100,7 +100,6 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void setTitle(Component title) {
-        BukkitPipe pipe = Pipe.getBukkit();
         NMSManager nmsManager = Core.getModule(NMSModule.class).getNmsManager();
         IChatBaseComponent vanillaComponent = nmsManager.getStorage().construct(StorageConstructor.ADVENTURE_COMPONENT_CONSTRUCTOR, title);
 

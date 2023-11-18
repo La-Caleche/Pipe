@@ -16,34 +16,30 @@ public class EntityTracker {
 
     private final EntityTrackerEntry entityTracker;
     private final Entity entity;
-    private final int range;
     private final ICalecheEntity calecheEntity;
 
     public EntityTracker(ICalecheEntity calecheEntity) {
         this.calecheEntity = calecheEntity;
         this.entity = calecheEntity.getEntity();
         this.entityTracker = new EntityTrackerEntry((WorldServer) entity.dI(), entity, 3, true, this::broadcast, Collections.emptySet());
-        this.range = 8 * 16;
     }
 
+    @Override
     public boolean equals(Object object) {
         return object instanceof EntityTracker && ((EntityTracker) object).entity.ae() == this.entity.ae();
     }
 
+    @Override
     public int hashCode() {
         return this.entity.af();
     }
 
     public void broadcast(Packet<?> packet) {
-        Iterator<Player> iterator = this.calecheEntity.getViewers().iterator();
-
-        while (iterator.hasNext()) {
-            Player player = iterator.next();
+        for (Player player : this.calecheEntity.getViewers()) {
             ServerPlayerConnection serverplayerconnection = ((CraftPlayer) player).getHandle().c;
 
             serverplayerconnection.a(packet);
         }
-
     }
 
     public void broadcastAndSend(Packet<?> packet) {

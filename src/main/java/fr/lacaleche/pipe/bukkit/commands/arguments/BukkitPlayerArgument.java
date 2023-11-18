@@ -22,7 +22,7 @@ public class BukkitPlayerArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        completer.addAll(Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
+        completer.addAll(Pipe.getBukkit().getPlugin().getServer().getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
         if (allowSelf) completer.addAll(new String[]{"@s", "self"});
         if (allowAll) completer.addAll(new String[]{"@a", "all", "*"});
         if (allowRandom) completer.addAll(new String[]{"@r", "random"});

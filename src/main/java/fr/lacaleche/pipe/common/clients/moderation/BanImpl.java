@@ -6,7 +6,8 @@ import fr.lacaleche.core.databases.mysql.models.annotations.Property;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.clients.moderation.interfaces.IBan;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class BanImpl extends SqlModel implements IBan {
 
@@ -17,9 +18,9 @@ public class BanImpl extends SqlModel implements IBan {
     @Property
     private String reason;
     @Property
-    private Date end_at;
+    private LocalDateTime end_at;
 
-    public BanImpl(ClientImpl author, ClientImpl client, String reason, Date end_at) {
+    public BanImpl(ClientImpl author, ClientImpl client, String reason, LocalDateTime end_at) {
         this.author = author;
         this.client = client;
         this.reason = reason;
@@ -61,24 +62,24 @@ public class BanImpl extends SqlModel implements IBan {
     }
 
     @Override
-    public Date getEndAt() {
+    public LocalDateTime getEndAt() {
         return this.end_at;
     }
 
     @Override
-    public void setEndAt(Date end) {
+    public void setEndAt(LocalDateTime end) {
         this.end_at = end;
         this.save();
     }
 
     @Override
     public boolean isActive() {
-        return this.end_at == null || this.end_at.after(new Date());
+        return this.end_at == null || this.end_at.isAfter(LocalDateTime.now());
     }
 
     @Override
     public void unban(ClientImpl author) {
-        this.setEndAt(new Date());
+        this.setEndAt(LocalDateTime.now());
         this.save();
     }
 }

@@ -95,8 +95,6 @@ public class TabPlayerImpl implements TabPlayer {
             return;
         }
 
-        final boolean hasMovedPreviously = this.hasMoved();
-
         this.previousLocation = this.currentLocation;
         this.currentLocation = this.getPlayer().getLocation();
     }

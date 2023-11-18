@@ -7,7 +7,6 @@ import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
-import fr.lacaleche.pipe.bukkit.modules.god.impl.GodModuleManager;
 import fr.lacaleche.pipe.bukkit.modules.god.interfaces.IGodModuleManager;
 
 import java.util.List;

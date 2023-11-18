@@ -35,8 +35,6 @@ public abstract class AbstractController extends BaseController {
 
     public AbstractController(NMSManager nmsManager, Location location) {
         super(nmsManager);
-        this.setSpawnConstructor(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR);
-
         this.location = location;
     }
 

@@ -33,6 +33,7 @@ public abstract class BaseController implements ICalecheEntity {
     private EntityTracker entityTracker;
 
     private StorageConstructor spawnConstructor;
+    private StorageConstructor destroyConstructor;
 
     private Task tick;
     private boolean noTick = false;
@@ -41,6 +42,9 @@ public abstract class BaseController implements ICalecheEntity {
     public BaseController(NMSManager nmsManager) {
         this.nmsManager = nmsManager;
         this.needUpdateMetadata = false;
+
+        this.spawnConstructor = PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR;
+        this.destroyConstructor = PACKET_PLAY_OUT_ENTITY_DESTROY_CONSTRUCTOR;
     }
 
     @Override
@@ -80,6 +84,10 @@ public abstract class BaseController implements ICalecheEntity {
         this.spawnConstructor = spawnConstructor;
     }
 
+    public void setDestroyConstructor(StorageConstructor destroyConstructor) {
+        this.destroyConstructor = destroyConstructor;
+    }
+
     @Override
     public Packet<PacketListenerPlayOut> getSpawnPacket() {
         return packetPlayOutSpawnEntity;
@@ -93,7 +101,6 @@ public abstract class BaseController implements ICalecheEntity {
     @Override
     public PacketPlayOutEntityMetadata getMetadataPacket() {
         DataWatcher dataWatcher = this.getStorage().invoke(GET_DATA_WATCHER, this.getEntity());
-        Field f = this.getStorage().field(StorageFields.MDP_ITEMS_BY_ID);
         Int2ObjectMap<DataWatcher.Item<?>> itemsById = this.getStorage().get(StorageFields.MDP_ITEMS_BY_ID, dataWatcher);
         return this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_METADATA_CONSTRUCTOR, this.getId(), this.getTrackedValues(itemsById));
     }
@@ -162,8 +169,8 @@ public abstract class BaseController implements ICalecheEntity {
     }
 
     public void constructPackets() {
-        this.packetPlayOutSpawnEntity = this.getStorage().construct(PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR, this.getEntity());
-        this.packetPlayOutEntityDestroy = this.getStorage().construct(PACKET_PLAY_OUT_ENTITY_DESTROY_CONSTRUCTOR, new int [] {this.getId()});
+        this.packetPlayOutSpawnEntity = this.getStorage().construct(this.spawnConstructor, this.getEntity());
+        this.packetPlayOutEntityDestroy = this.getStorage().construct(this.destroyConstructor, new int [] {this.getId()});
     }
 
     public IStorage getStorage() {

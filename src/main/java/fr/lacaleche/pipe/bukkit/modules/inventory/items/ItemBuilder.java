@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteItemNBT;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -166,7 +167,9 @@ public class ItemBuilder {
             Method method = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
             method.setAccessible(true);
             method.invoke(skullMeta, profile);
-        } catch (Exception exception) {}
+        } catch (Exception exception) {
+            Logger.customDebugWCheck("Failed to set player head texture : %s", exception);
+        }
 
         return this;
     }
@@ -202,6 +205,7 @@ public class ItemBuilder {
         return this;
     }
 
+    @Override
     public ItemBuilder clone() {
         this.applyItemMeta();
         return ItemBuilder.from(this.getItem().clone());

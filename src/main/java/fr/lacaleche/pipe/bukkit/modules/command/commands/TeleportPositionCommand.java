@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 @MinecraftCommand(label = "teleportposition", aliases = {"tppos", "tpp", "tpposition", "teleportpos", "teleportp"}, description = "pipe.command.tpp.description", arguments = {"x", "y", "z", "yaw", "pitch", "world"})
 public class TeleportPositionCommand {
 
-    @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER, CommandExecutor.Executor.COMMAND_BLOCK}, minPermLevel = 20, permissions = "pipe.command.tpp")
+    @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER, CommandExecutor.Executor.COMMAND_BLOCK}, minPermLevel = 20, permissions = "pipe.command.tpp")
     public boolean execute(Command<Player> command) {
         Player player = command.sender();
         Locale locale = command.locale();
@@ -38,7 +38,7 @@ public class TeleportPositionCommand {
         pitch = (float) this.parse(command.args(), "pitch", (double) player.getLocation().getPitch());
 
         if (!command.args().blank("world")) {
-            world = Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getWorld(command.args().getString("world"));
+            world = Pipe.getBukkit().getPlugin().getServer().getWorld(command.args().getString("world"));
 
             if (world == null) {
                 command.sender().sendMessage(locale.t("global.world_not_found").arg("world", command.args().getString("world")).from("Teleport").ct());

@@ -7,8 +7,7 @@ public class BukkitModule extends Module {
 
     public BukkitModule(IModuleHandler handler) {
         super(handler);
-
-        this.setFeatureManager(new BukkitFeatureManager(this));
+        this.setFeatureManager(new BukkitFeatureManager());
     }
 
 }

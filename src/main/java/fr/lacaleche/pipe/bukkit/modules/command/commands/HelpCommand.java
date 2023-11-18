@@ -26,7 +26,7 @@ public class HelpCommand {
         manager.addArgument(new BukkitRegisteredCommandArgument("command").optional());
     }
 
-    @CommandExecutor(executor = CommandExecutor.Executor.SERVER)
+    @CommandExecutor(executors = CommandExecutor.Executor.SERVER)
     public boolean execute(Command<ConsoleCommandSender> command) {
         CommandManager commandManager = Pipe.getBukkit().getCommandManager();
         List<String> commands = commandManager.getCommands().keySet().stream().map(s -> s.replace("∅", "")).toList();

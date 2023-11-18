@@ -112,8 +112,8 @@ public interface PipeInventory {
         _5X9(5 * 9),
         _6X9(6 * 9);
 
-        private int size;
-        private InventoryType type;
+        private final int size;
+        private final InventoryType type;
 
         InventoryStyle(int size, InventoryType type) {
             this.size = size;

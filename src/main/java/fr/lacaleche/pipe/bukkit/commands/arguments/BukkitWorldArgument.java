@@ -17,7 +17,7 @@ public class BukkitWorldArgument extends DefaultArgument {
 
     @Override
     public void completer(Completer completer) {
-        completer.addAll(Pipe.getBukkit().<JavaPlugin>getPlugin().getServer().getWorlds().stream().map(WorldInfo::getName).collect(Collectors.toList()));
+        completer.addAll(Pipe.getBukkit().getPlugin().getServer().getWorlds().stream().map(WorldInfo::getName).collect(Collectors.toList()));
     }
 
 }

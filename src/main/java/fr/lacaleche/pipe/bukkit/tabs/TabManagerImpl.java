@@ -19,8 +19,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TabManagerImpl implements TabManager {
 
@@ -52,7 +50,8 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public TabPlayer getTabPlayer(UUID uuid) {
-        return this.tabPlayers.stream().filter(tabPlayer -> tabPlayer.getPlayer().getUniqueId().equals(uuid)).findFirst().orElse(null);
+        return this.tabPlayers.stream().filter(tabPlayer ->
+                tabPlayer.getPlayer().getUniqueId().equals(uuid)).findFirst().orElse(null);
     }
 
     @Override
@@ -62,7 +61,8 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public TabPlayer getTabPlayer(Client client) {
-        return this.tabPlayers.stream().filter(tabPlayer -> tabPlayer.getClient().getUUID() == client.getUUID()).findFirst().orElse(null);
+        return this.tabPlayers.stream().filter(tabPlayer ->
+                tabPlayer.getClient().getUUID().equals(client.getUUID())).findFirst().orElse(null);
     }
 
     @Override
@@ -171,12 +171,12 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public int onGameModeChange(TabPlayer packetReceiver, UUID id, int gameMode) {
-        AtomicInteger newGameMode = new AtomicInteger(gameMode);
+        int newGameMode = gameMode;
         for (TabFeature tabFeature : this.features.values()) {
             if (tabFeature instanceof GameModeListener gameModeListener)
-                newGameMode.set(gameModeListener.onGameModeChange(packetReceiver, id, gameMode));
+                newGameMode = gameModeListener.onGameModeChange(packetReceiver, id, gameMode);
         }
-        return newGameMode.get();
+        return newGameMode;
     }
 
     @Override
@@ -197,22 +197,22 @@ public class TabManagerImpl implements TabManager {
 
     @Override
     public Component onDisplayNameChange(TabPlayer packetReceiver, UUID id, Component displayName) {
-        AtomicReference<Component> newDisplayName = new AtomicReference<>(displayName);
+        Component newDisplayName = displayName;
         for (TabFeature tabFeature : this.features.values()) {
             if (tabFeature instanceof DisplayNameListener displayNameListener)
-                newDisplayName.set(displayNameListener.onDisplayNameChange(packetReceiver, id, displayName));
+                newDisplayName = displayNameListener.onDisplayNameChange(packetReceiver, id, displayName);
         }
-        return newDisplayName.get();
+        return newDisplayName;
     }
 
     @Override
     public int onLatencyChange(TabPlayer packetReceiver, UUID id, int latency) {
-        AtomicInteger newLatency = new AtomicInteger(latency);
+        int newLatency = latency;
         for (TabFeature tabFeature : this.features.values()) {
             if (tabFeature instanceof LatencyListener latencyListener)
-                newLatency.set(latencyListener.onLatencyChange(packetReceiver, id, latency));
+                newLatency = latencyListener.onLatencyChange(packetReceiver, id, latency);
         }
-        return newLatency.get();
+        return newLatency;
     }
 
     @Override

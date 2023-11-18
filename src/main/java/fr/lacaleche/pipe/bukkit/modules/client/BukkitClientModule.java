@@ -169,6 +169,6 @@ public class BukkitClientModule extends BukkitModule {
         BukkitPipeListenerManager bukkitManager = Pipe.getBukkit().getListenerManager();
         bukkitManager.registerBukkitListener(this, new PlayerJoinListener());
         bukkitManager.registerBukkitListener(this, new PlayerLeftListener());
-        bukkitManager.registerCustomListener(this, new ModelSavedListener(this));
+        bukkitManager.registerCustomListener(this, new ModelSavedListener());
     }
 }

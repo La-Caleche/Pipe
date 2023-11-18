@@ -1,5 +1,7 @@
 package fr.lacaleche.pipe.bukkit.utils;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.common.clients.Client;
@@ -25,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PipeCommandUtils {
 
@@ -87,11 +90,11 @@ public class PipeCommandUtils {
      * TODO
      * */
 
-    public static boolean commandExist(Plugin parent, String label) {
-        if (label.matches(".+:.+"))
-            label = label.replace(label.split(":")[0] + ":", "");
-        label = "/" + label;
-        return parent.getServer().getHelpMap().getHelpTopics().stream().map(HelpTopic::getName).toList().contains(label);
+    public static boolean commandExist(Plugin parent, String cmd) {
+        if (cmd.matches(".+:.+"))
+            cmd = cmd.replace(Iterables.get(Splitter.on(':').split(cmd), 0) + ":", "");
+        cmd = "/" + cmd;
+        return parent.getServer().getHelpMap().getHelpTopics().stream().map(HelpTopic::getName).toList().contains(cmd);
     }
 
 
@@ -105,14 +108,11 @@ public class PipeCommandUtils {
      * @since 1.0.0
      */
     public static boolean validateSender(CommandExecutor executor, CommandSender sender) {
-        for (CommandExecutor.Executor executors : executor.executor()) {
-            if (executors == CommandExecutor.Executor.EVERYONE ||
-                    (sender instanceof Player && executors == CommandExecutor.Executor.PLAYER) ||
-                    (sender instanceof ConsoleCommandSender && executors == CommandExecutor.Executor.SERVER) ||
-                    (sender instanceof BlockCommandSender && executors == CommandExecutor.Executor.COMMAND_BLOCK))
-                return true;
-        }
-        return false;
+        List<CommandExecutor.Executor> executors = Arrays.stream(executor.executors()).toList();
+        if (executors.contains(CommandExecutor.Executor.EVERYONE)) return true;
+        if (sender instanceof Player && executors.contains(CommandExecutor.Executor.PLAYER)) return true;
+        if (sender instanceof ConsoleCommandSender && executors.contains(CommandExecutor.Executor.SERVER)) return true;
+        return sender instanceof BlockCommandSender && executors.contains(CommandExecutor.Executor.COMMAND_BLOCK);
     }
 
     /**
@@ -137,12 +137,6 @@ public class PipeCommandUtils {
      */
     public static void parseHelpToSender(Class<?> command, CommandSender sender) {
         sender.sendMessage("(missing HelpUtils)");
-    }
-
-    private static String joinExecutors(CommandExecutor.Executor[] executors) {
-        return Arrays.stream(executors)
-                .map(executor -> StringUtils.capitalize(executor.name().replace('_', ' ')))
-                .collect(Collectors.joining(","));
     }
 
 }

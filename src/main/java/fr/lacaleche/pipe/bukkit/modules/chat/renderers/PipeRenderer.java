@@ -18,9 +18,6 @@ public class PipeRenderer extends AbstractRenderer {
         super((source, sourceDisplayName, message) -> {
             BukkitPipe pipe = Pipe.getBukkit();
 
-            Plugin plugin = pipe.getPlugin();
-            Server server = plugin.getServer();
-
             Component parsedMessage = pipe.text().deserialize(pipe.text().serialize(message).replace("\\", "")).colorIfAbsent(NamedTextColor.GRAY);
 
             TextComponent.Builder textBuilder = Component.text();

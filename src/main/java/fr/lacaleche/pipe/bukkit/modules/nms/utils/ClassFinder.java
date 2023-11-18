@@ -1,61 +1,65 @@
 package fr.lacaleche.pipe.bukkit.modules.nms.utils;
 
+import com.google.common.base.Splitter;
 import net.minecraft.server.level.EntityPlayer;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClassFinder {
 
     private final String version;
-    private final Map<String, Class> cache;
+    private final Map<String, Class<?>> cache;
 
     public ClassFinder() {
-        String[] versionArray = Bukkit.getServer().getClass().getName().replace('.', ',').split(",");
-        this.version = versionArray.length >= 4 ? versionArray[3] : "";
+        List<String> versionArray = Splitter.on(',')
+                .splitToList(Bukkit.getServer().getClass().getName().replace('.', ','));
+        this.version = versionArray.size() >= 4 ? versionArray.get(3) : "";
 
-        this.cache = new HashMap();
+        this.cache = new HashMap<>();
     }
 
     public Class<?> getNMSClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
-        return this.findWithoutVersion("NMS", "net.minecraft", className);
+        return this.findWithoutVersion("net.minecraft", className);
     }
 
     public Class<?> worldClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
-        return this.findWithoutVersion("NMS", "net.minecraft.world", className);
+        return this.findWithoutVersion("net.minecraft.world", className);
     }
 
     public Class<?> networkClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
-        return this.findWithoutVersion("NMS", "net.minecraft.network", className);
+        return this.findWithoutVersion("net.minecraft.network", className);
     }
 
     public Class<?> coreClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
-        return this.findWithoutVersion("NMS", "net.minecraft.core", className);
+        return this.findWithoutVersion("net.minecraft.core", className);
     }
 
     public Class<?> protocolClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
-        return this.findWithoutVersion("NMS", "net.minecraft.network.protocol", className);
+        return this.findWithoutVersion("net.minecraft.network.protocol", className);
     }
 
     public Class<?> getOBCClass(String className) {
         if (this.cache.containsKey(className)) return this.cache.get(className);
 
-        return this.find("OBC", "org.bukkit.craftbukkit", className);
+        return this.find("org.bukkit.craftbukkit", className);
     }
 
-    public Object getHandle(Object object) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public Object getHandle(Object object) throws NoSuchMethodException,
+            InvocationTargetException, IllegalAccessException {
         return object.getClass().getMethod("getHandle").invoke(object);
     }
 
@@ -69,11 +73,11 @@ public class ClassFinder {
         }
     }
 
-    public Class<?> findWithoutVersion(String type, String unversionedPackage, String className) {
+    public Class<?> findWithoutVersion(String unversionedPackage, String className) {
         return this.getAbsoluteClass("%s.%s".formatted(unversionedPackage, className));
     }
 
-    private Class<?> find(String type, String unversionedPackage, String className) {
+    private Class<?> find(String unversionedPackage, String className) {
         return this.getAbsoluteClass("%s.%s.%s".formatted(unversionedPackage, this.version, className));
     }
 

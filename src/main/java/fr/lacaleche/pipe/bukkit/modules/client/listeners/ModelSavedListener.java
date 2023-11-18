@@ -17,12 +17,6 @@ import org.bukkit.plugin.Plugin;
 
 public class ModelSavedListener implements CoreListener {
 
-    private BukkitClientModule clientModule;
-
-    public ModelSavedListener(BukkitClientModule clientModule) {
-        this.clientModule = clientModule;
-    }
-
     @PacketReader(packet = ModelSavedPacket.class)
     public void onModelUpdated(PacketReadEvent event, ModelSavedPacket packet) {
         if (Pipe.getBukkit().getTabManager() != null && packet.getResourceClass().equals(ClientImpl.class.getName())) {

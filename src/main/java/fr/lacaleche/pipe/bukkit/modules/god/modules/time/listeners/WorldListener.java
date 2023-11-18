@@ -16,9 +16,6 @@ public class WorldListener implements BukkitPipeListener {
 
     private TimeModule module;
 
-    private static long timeMillis = 0;
-    private static long lastTime = 0;
-
     public WorldListener(TimeModule module) {
         this.module = module;
     }

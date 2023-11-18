@@ -85,7 +85,7 @@ public interface CommandManager {
      *
      * @return executeCommand result.
      * */
-    CoreCommandImpl handleCommand(Object sender, String label, String userInput, String[] arguments);
+    CoreCommandImpl handleCommand(Object sender, String label, String userInput, List<String> arguments);
 
     /**
      * Function that handle Minecraft Command
@@ -101,7 +101,7 @@ public interface CommandManager {
      *
      * @return last command occurence.
      * */
-    CoreCommandImpl handleChild(String label, Object sender, Class<?> classComand, String userInput, String[] arguments);
+    CoreCommandImpl handleChild(String label, Object sender, Class<?> classComand, String userInput, List<String> arguments);
 
     /**
      * TODO

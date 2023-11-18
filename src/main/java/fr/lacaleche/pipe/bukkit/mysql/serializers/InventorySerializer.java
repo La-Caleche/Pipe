@@ -37,7 +37,6 @@ public class InventorySerializer implements Serializer<ItemStack[]> {
     @Override
     public ItemStack[] deserialize(InputStream inputStream) throws IOException, ClassNotFoundException {
         if (inputStream == null || inputStream.available() == 0) return null;
-        BukkitPipe pipe = Pipe.getBukkit();
 
         BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
         ItemStack[] items = new ItemStack[dataInput.readInt()];

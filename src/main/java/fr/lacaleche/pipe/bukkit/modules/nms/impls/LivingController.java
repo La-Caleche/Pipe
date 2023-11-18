@@ -24,7 +24,6 @@ public abstract class LivingController extends AbstractController implements ICa
 
     public LivingController(NMSManager nmsManager, Location location) {
         super(nmsManager, location);
-        this.setSpawnConstructor(StorageConstructor.PACKET_PLAY_OUT_SPAWN_ENTITY_CONSTRUCTOR);
     }
 
     @Override

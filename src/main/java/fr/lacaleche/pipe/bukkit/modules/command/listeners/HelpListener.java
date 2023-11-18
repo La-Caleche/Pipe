@@ -21,6 +21,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HelpListener implements CoreListener {
@@ -53,7 +54,7 @@ public class HelpListener implements CoreListener {
                 Client client = Pipe.getBukkit().getClient(packet.getPlayer());
                 if (player == null || client == null) return;
 
-                List<CheckPermissionsPacket.AllowedCommand> commands = packet.getResponse();
+                List<CheckPermissionsPacket.AllowedCommand> commands = packet.getResponseAsList(CheckPermissionsPacket.AllowedCommand.class);
                 ObjectNode commandsNode = new ObjectMapper().createObjectNode();
                 ArrayNode array = commandsNode.putArray("commands");
 

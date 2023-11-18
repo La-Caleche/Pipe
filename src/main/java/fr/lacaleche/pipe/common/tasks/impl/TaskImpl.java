@@ -134,15 +134,20 @@ public class TaskImpl implements Task {
 
     @Override
     public void run() throws RuntimeException {
-        if (async) CompletableFuture.runAsync(() -> {
-            try {
-                this.getCallback().execute(this);
-            } catch (Exception exception) {
-                // Because of async execution, we need to catch the exception here
-                SentryAPIImpl.getInstance().captureException(exception);
-                throw new RuntimeException(exception);
-            }
-        });
+        if (async) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    this.getCallback().execute(this);
+                } catch (Exception exception) {
+                    // Because of async execution, we need to catch the exception here
+                    SentryAPIImpl.getInstance().captureException(exception);
+                    throw new RuntimeException(exception);
+                }
+            }).exceptionally(throwable -> {
+                this.getErrorCallback().execute((RuntimeException) throwable);
+                return null;
+            });
+        }
         else this.getCallback().execute(this);
     }
 

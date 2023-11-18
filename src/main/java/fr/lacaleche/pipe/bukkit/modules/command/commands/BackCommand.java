@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 @MinecraftCommand(label = "back", description = "pipe.command.back.description")
 public class BackCommand {
 
-    @CommandExecutor(minPermLevel = 20, executor = CommandExecutor.Executor.PLAYER)
+    @CommandExecutor(minPermLevel = 20, executors = CommandExecutor.Executor.PLAYER)
     public boolean execute(Command<Player> command) {
         Client client = Pipe.getBukkit().getClient(command.sender());
         Location lastPlayerLocation = Pipe.getBukkit().getLastLocation(client);

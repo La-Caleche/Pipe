@@ -9,7 +9,7 @@ import fr.lacaleche.core.databases.mysql.models.annotations.Entity;
 import fr.lacaleche.core.databases.mysql.models.interfaces.ISqlModel;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,7 +48,7 @@ public interface Client extends ISqlModel {
 
     boolean kick(Client author, String reason);
 
-    boolean ban(Client author, String reason, Date endAt);
+    boolean ban(Client author, String reason, LocalDateTime endAt);
 
     boolean unban(Client author);
 

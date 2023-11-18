@@ -101,7 +101,7 @@ public abstract class GlobalCommandManager implements CommandManager {
      * {@inheritDoc}
      */
     @Override
-    public CoreCommandImpl handleCommand(Object sender, String label, String userInput, String[] arguments) {
+    public CoreCommandImpl handleCommand(Object sender, String label, String userInput, List<String> arguments) {
         if (!isRegistered(label)) return null;
 
         Class<MinecraftCommand> object = getCommand(label);
@@ -114,12 +114,12 @@ public abstract class GlobalCommandManager implements CommandManager {
      * {@inheritDoc}
      */
     @Override
-    public CoreCommandImpl handleChild(String label, Object sender, Class<?> command, String userInput, String[] arguments) {
-        if (arguments != null && arguments.length > 0) {
+    public CoreCommandImpl handleChild(String label, Object sender, Class<?> command, String userInput, List<String> arguments) {
+        if (arguments != null && arguments.isEmpty()) {
             for (Class<?> subCommands : command.getDeclaredClasses()) {
                 CommandChild child = CommandsUtils.validateChild(subCommands);
-                if (child != null && child.label().equalsIgnoreCase(arguments[0]) && child.enabled())
-                    return this.handleChild(label, sender, subCommands, userInput, Arrays.copyOfRange(arguments, 1, arguments.length));
+                if (child != null && child.label().equalsIgnoreCase(arguments.get(0)) && child.enabled())
+                    return this.handleChild(label, sender, subCommands, userInput, arguments.stream().skip(1).toList());
             }
         }
         ArgumentManager manager = this.parseArguments(command, arguments);
@@ -248,7 +248,7 @@ public abstract class GlobalCommandManager implements CommandManager {
         for (Class<?> method : manager.getCommand().getDeclaredClasses()) {
             if (method.isAnnotationPresent(CommandChild.class)) {
                 CommandChild child = method.getAnnotation(CommandChild.class);
-                if (child.label().contains(currentArgument.getValue().toLowerCase()))
+                if (child.label().contains(currentArgument.getValue().toLowerCase(Locale.ROOT)))
                     completer.add(child.label());
             }
         }
@@ -266,7 +266,8 @@ public abstract class GlobalCommandManager implements CommandManager {
                     continue;
                 }
 
-                if (completer.next() || parsed.toLowerCase().contains(argument.getValue().toLowerCase()))
+                if (completer.next() ||
+                        parsed.toLowerCase(Locale.ROOT).contains(argument.getValue().toLowerCase(Locale.ROOT)))
                     completed.add(parsed);
             }
             completer.setCompleter(completed);
@@ -335,23 +336,23 @@ public abstract class GlobalCommandManager implements CommandManager {
      * @return a map containing arguments values related to his keys defined in command annotation
      * @since 1.0.0
      */
-    private ArgumentManager parseArguments(Class<?> command, String[] arguments) {
+    private ArgumentManager parseArguments(Class<?> command, List<String> arguments) {
         ArgumentManager manager = this.handleArguments(command);
-        if (arguments == null || arguments.length == 0) return manager;
+        if (arguments == null || arguments.isEmpty()) return manager;
 
         String join = String.join(" ", arguments);
 
         manager.getArgument("default").setValue(join);
         if (manager.getArguments().size() == 1) return manager;
-        for (int index = 0; index < arguments.length; index++) {
+        for (int index = 0; index < arguments.size(); index++) {
             Argument argument;
             if (index < manager.getArguments().size() - 1) {
                 argument = manager.getAbsoluteArgument(index);
                 if (argument.getKey().equals("default")) continue;
-                argument.setValue(arguments[index]);
+                argument.setValue(arguments.get(index));
             } else {
                 argument = manager.getArgument(manager.getArguments().size() - 1);
-                if (argument.isMultiple()) argument.setValue(argument.getValue().concat(" " + arguments[index]));
+                if (argument.isMultiple()) argument.setValue(argument.getValue().concat(" " + arguments.get(index)));
             }
         }
         return manager;

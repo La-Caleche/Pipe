@@ -80,7 +80,7 @@ public class BukkitEntitySelector {
             return onlinePlayers.stream().skip((int) (Math.random() * onlinePlayers.size())).limit(1).collect(Collectors.toList());
 
         if (selector.matches("(@p|nearest)") && argument.isAllowNearest() && command.sender() instanceof Player player)
-            return player.getWorld().getNearbyPlayers(player.getLocation(), 48).stream().filter(nearest -> nearest.getUniqueId() != player.getUniqueId()).limit(1).collect(Collectors.toList());
+            return player.getWorld().getNearbyPlayers(player.getLocation(), 48).stream().filter(nearest -> !nearest.getUniqueId().equals(player.getUniqueId())).limit(1).collect(Collectors.toList());
 
         Player match = onlinePlayers.stream().filter(player -> player.getName().equals(selector)).findFirst().orElse(null);
         return match == null ? List.of() : List.of(match);

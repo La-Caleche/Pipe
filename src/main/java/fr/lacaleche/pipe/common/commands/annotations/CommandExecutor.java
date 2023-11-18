@@ -50,7 +50,7 @@ public @interface CommandExecutor {
      *
      * @return authorized executor
      * */
-    Executor[] executor() default {Executor.EVERYONE};
+    Executor[] executors() default {Executor.EVERYONE};
 
     /**
      * permlevel inf|= minPermLevel

@@ -15,8 +15,8 @@ public enum NamedKeys {
     PLATFORMS_ID("platform", "id", PersistentDataType.INTEGER),
     CBI_DIRECTION("cbi", "direction", PersistentDataType.STRING);
 
-    private NamespacedKey key;
-    private PersistentDataType<?, ?> type;
+    private final NamespacedKey key;
+    private final PersistentDataType<?, ?> type;
 
     NamedKeys(String ns, String key, PersistentDataType<?, ?> type) {
         this.key = new NamespacedKey(ns, key);

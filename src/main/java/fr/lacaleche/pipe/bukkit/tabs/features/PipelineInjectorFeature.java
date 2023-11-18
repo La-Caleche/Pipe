@@ -76,7 +76,8 @@ public class PipelineInjectorFeature extends AbstractTabFeature implements Loada
         this.uninject(tabPlayer);
         try {
             channel.pipeline().addBefore(injectPosition, Core.get().getAppName(), this.getChannelFunction().apply(tabPlayer));
-        } catch (NoSuchElementException | IllegalArgumentException ignored) {
+        } catch (NoSuchElementException | IllegalArgumentException exception) {
+            Logger.customDebugWCheck("Failed to inject pipeline for %s : %s", tabPlayer.getName(), exception);
         }
     }
 
@@ -87,7 +88,8 @@ public class PipelineInjectorFeature extends AbstractTabFeature implements Loada
         try {
             if (channel.pipeline().names().contains(Core.get().getAppName()))
                 channel.pipeline().remove(Core.get().getAppName());
-        } catch (NoSuchElementException ignored) {
+        } catch (NoSuchElementException exception) {
+            Logger.customDebugWCheck("Failed to uninject pipeline for %s : %s", tabPlayer.getName(), exception);
         }
     }
 

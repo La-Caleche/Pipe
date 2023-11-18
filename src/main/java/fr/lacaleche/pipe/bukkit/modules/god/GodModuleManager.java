@@ -1,4 +1,4 @@
-package fr.lacaleche.pipe.bukkit.modules.god.impl;
+package fr.lacaleche.pipe.bukkit.modules.god;
 
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
@@ -77,6 +77,7 @@ public class GodModuleManager implements IGodModuleManager {
         return handler;
     }
 
+    @Override
     public List<IModule> getGodModules() {
         return godModules;
     }

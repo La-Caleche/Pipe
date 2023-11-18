@@ -12,15 +12,13 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
 
     private boolean running;
 
-    private Map<String, Task> callbacks;
-    protected final List<String> done;
+    private final Map<String, Task> callbacks;
 
-    private Map<String, Task> nextCallbacks;
+    private final Map<String, Task> nextCallbacks;
 
     public TaskManagerImpl() {
         this.callbacks = new ConcurrentHashMap<>();
         this.nextCallbacks = new ConcurrentHashMap<>();
-        this.done = new ArrayList<>();
     }
 
     @Override
@@ -34,31 +32,38 @@ public class TaskManagerImpl implements fr.lacaleche.pipe.common.tasks.interface
     }
 
     @Override
-    public synchronized void update(UpdateTickEvent event) {
+    public void update(UpdateTickEvent event) {
         synchronized (this.nextCallbacks) {
-            this.nextCallbacks.forEach((name, task) -> {
-                task.startNow();
-                this.callbacks.put(name, task);
-            });
-            this.nextCallbacks.clear();
+            for (Map.Entry<String, Task> entry : new HashMap<>(nextCallbacks).entrySet()) {
+                entry.getValue().startNow();
+                callbacks.put(entry.getKey(), entry.getValue());
+            }
+            nextCallbacks.clear();
         }
 
-        this.callbacks.forEach((name, task) -> {
+        List<Map.Entry<String, Task>> toDo = new ArrayList<>(callbacks.entrySet());
+        if (toDo.isEmpty()) return;
+
+        List<String> toRemove = new ArrayList<>();
+        toDo.forEach(entry -> {
+            String name = entry.getKey();
+            Task task = entry.getValue();
+
             task.tick(event.getTick());
-            if (!task.canBeExecuted()) return;
+            if (!task.canBeExecuted()) return ;
 
             try {
                 task.run();
             } catch (RuntimeException exception) {
-                this.done.add(name);
                 task.crash(exception);
+                toRemove.add(name);
+                return ;
             }
 
-            if (!task.isLoop() && !task.retry()) this.done.add(name);
+            if (!task.isLoop() && !task.retry())
+                toRemove.add(name);
         });
-
-        this.done.forEach(this.callbacks::remove);
-        this.done.clear();
+        toRemove.forEach(callbacks::remove);
     }
 
     @Override

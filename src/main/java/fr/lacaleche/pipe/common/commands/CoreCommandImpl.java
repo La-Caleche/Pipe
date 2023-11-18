@@ -4,6 +4,8 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.enums.CommandResult;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 
+import java.util.List;
+
 public class CoreCommandImpl {
 
     private String label;
@@ -11,7 +13,7 @@ public class CoreCommandImpl {
     private ArgumentManager manager;
     private Object commandSender;
     private String userInput;
-    private String[] userArguments;
+    private List<String> userArguments;
 
     public CoreCommandImpl(String label, Object commandSender, Class<?> command, ArgumentManager manager) {
         this.label = label;
@@ -25,11 +27,11 @@ public class CoreCommandImpl {
     }
 
 
-    public String[] getUserArguments() {
+    public List<String> getUserArguments() {
         return userArguments;
     }
 
-    public void setUserArguments(String[] userArguments) {
+    public void setUserArguments(List<String> userArguments) {
         this.userArguments = userArguments;
     }
 

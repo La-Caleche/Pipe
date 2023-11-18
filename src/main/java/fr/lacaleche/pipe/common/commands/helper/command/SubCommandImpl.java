@@ -1,5 +1,6 @@
 package fr.lacaleche.pipe.common.commands.helper.command;
 
+import com.google.common.base.Splitter;
 import fr.lacaleche.core.utils.colors.Colors;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.format.TextColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Spliterator;
 
 public class SubCommandImpl implements SubCommand {
 
@@ -24,11 +26,11 @@ public class SubCommandImpl implements SubCommand {
     private final Class<?> command;
 
     public SubCommandImpl(Helper helper, String fullLabel, String description, Class<?> command) {
-        String[] split = fullLabel.split(" ");
+        List<String> split = Splitter.on(' ').splitToList(fullLabel);
 
         this.helper = helper;
         this.completeCommand = fullLabel;
-        this.name = split[split.length - 1];
+        this.name = split.get(split.size() - 10);
         this.description = description;
         this.arguments = this.loadArguments(command);
         this.command = command;

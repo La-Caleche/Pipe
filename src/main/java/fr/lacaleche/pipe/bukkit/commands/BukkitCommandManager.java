@@ -105,6 +105,9 @@ public class BukkitCommandManager extends GlobalCommandManager {
                 sender.sendMessage(locale.t("pipe.helper.command_failed").arg("label", command.getLabel()).ct());
                 return;
             }
+            case COMMAND_SUCCESS, NOT_LC_COMMAND -> {
+                return;
+            }
         }
     }
 

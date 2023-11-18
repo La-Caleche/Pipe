@@ -17,8 +17,7 @@ import java.util.stream.Stream;
 
 public class SortingFeature extends AbstractTabFeature implements JoinListener, Loadable, Refreshable {
 
-    private boolean disabling = false;
-    private Map<TabPlayer, String> cachedKeys = new HashMap<>();
+    private final Map<TabPlayer, String> cachedKeys = new HashMap<>();
 
     @Override
     public void join(TabPlayer tabPlayer) {
@@ -59,6 +58,11 @@ public class SortingFeature extends AbstractTabFeature implements JoinListener, 
     }
 
     private Map<String, Object> constructOptions(String team, Set<TabPlayer> players) {
+        if (team.isBlank()) {
+            Logger.warn("Team name is blank, this is not allowed.");
+            return Map.of();
+        }
+
         Map<String, Object> options = new HashMap<>();
         options.put("players", players.stream().map(TabPlayer::getName).collect(Collectors.toUnmodifiableSet()));
         options.put("friendlyFire", false);

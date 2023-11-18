@@ -49,7 +49,7 @@ public class CommandModule extends BukkitModule {
     public CommandModule(IModuleHandler handler) {
         super(handler);
         ICentralModuleManager centralModuleManager = Core.get().getCentralModuleManager();
-        if (centralModuleManager.getModules().size() > 0) {
+        if (!centralModuleManager.getModules().isEmpty()) {
             Logger.err("Currently %d modules is registered", centralModuleManager.getModules().size());
             Pipe.getBukkit().shutdown("Command module must be loaded first. Please disable all modules and restart the server.");
         }
@@ -60,7 +60,6 @@ public class CommandModule extends BukkitModule {
     @Override
     public void onEnable() {
         BukkitPipe pipe = Pipe.getBukkit();
-        NMSModule nmsModule = Core.getModule(NMSModule.class);
 
         this.commands = new ArrayList<>();
 

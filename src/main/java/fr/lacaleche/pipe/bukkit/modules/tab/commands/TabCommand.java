@@ -2,6 +2,8 @@ package fr.lacaleche.pipe.bukkit.modules.tab.commands;
 
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
+import fr.lacaleche.core.utils.CalecheDebug;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
@@ -42,7 +44,6 @@ public class TabCommand {
         @CommandExecutor(minPermLevel = 20)
         public boolean execute(Command<CommandSender> command) {
             BukkitPipe pipe = Pipe.getBukkit();
-            Plugin plugin = pipe.getPlugin();
             Locale locale = command.locale();
 
             EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
@@ -71,7 +72,6 @@ public class TabCommand {
             @CommandExecutor(minPermLevel = 20)
             public boolean execute(Command<CommandSender> command) {
                 BukkitPipe pipe = Pipe.getBukkit();
-                Plugin plugin = pipe.getPlugin();
                 Locale locale = command.locale();
 
                 EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
@@ -124,7 +124,6 @@ public class TabCommand {
             @CommandExecutor(minPermLevel = 20)
             public boolean execute(Command<CommandSender> command) {
                 BukkitPipe pipe = Pipe.getBukkit();
-                Plugin plugin = pipe.getPlugin();
                 Locale locale = command.locale();
 
                 EntitySelectorResult<Player> result = BukkitEntitySelector.parsePlayers(command, "player");
@@ -137,10 +136,15 @@ public class TabCommand {
                 String text = command.args().getString("text");
 
                 targets.forEach(target -> {
-                    if (command.sender() instanceof Player player && target.getUniqueId() != player.getUniqueId()) {
-                        if (command.clientSender().getRank().getPermissionLevel() < 70) {
+                    if (command.sender() instanceof Player player && !target.getUniqueId().equals(player.getUniqueId())) {
+                        Client clientSender = command.clientSender();
+                        if (clientSender == null) {
+                            Logger.err("Command sender is a player but client is null. %s", CalecheDebug.here());
                             return ;
                         }
+
+                        if (clientSender.getRank().getPermissionLevel() < 70)
+                            return ;
                     }
 
                     TabPlayer targetTab = pipe.getTabManager().getTabPlayer(target);

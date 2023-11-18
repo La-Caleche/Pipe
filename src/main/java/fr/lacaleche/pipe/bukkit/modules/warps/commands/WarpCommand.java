@@ -35,7 +35,7 @@ public class WarpCommand {
         manager.addArgument(new WarpArgument("warp"));
     }
 
-    @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
+    @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
     public boolean execute(Command<Player> command) {
         Client client = Pipe.getBukkit().getClient(command.sender().getUniqueId());
         String warpName = command.args().getString("warp");
@@ -58,7 +58,7 @@ public class WarpCommand {
             manager.addArgument(new WarpArgument("warp"));
         }
 
-        @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
+        @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.getBukkit().getClient(command.sender().getUniqueId());
             String warpName = command.args().getString("warp");
@@ -82,7 +82,7 @@ public class WarpCommand {
 
     @CommandChild(label = "list", description = "pipe.command.warps.list.description")
     public static class ListCommand {
-        @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
+        @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.getBukkit().getClient(command.sender().getUniqueId());
             List<WarpImpl> warps = Core.get().getModelManager().get(WarpImpl.class).stream().toList();
@@ -98,7 +98,7 @@ public class WarpCommand {
             manager.addArgument(new StringArgument("name"));
         }
 
-        @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
+        @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.getBukkit().getClient(command.sender().getUniqueId());
             Location location = command.sender().getLocation();
@@ -129,7 +129,7 @@ public class WarpCommand {
             manager.addArgument(new StringArgument("newName"));
         }
 
-        @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
+        @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.getBukkit().getClient(command.sender().getUniqueId());
             String warpName = command.args().getString("warp");
@@ -167,7 +167,7 @@ public class WarpCommand {
             manager.addArgument(new WarpArgument("warp"));
         }
 
-        @CommandExecutor(executor = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
+        @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER}, minPermLevel = 20)
         public boolean execute(Command<Player> command) {
             Client client = Pipe.getBukkit().getClient(command.sender().getUniqueId());
             String warpName = command.args().getString("warp");

@@ -7,8 +7,6 @@ import fr.lacaleche.pipe.common.tasks.interfaces.TaskCallback;
 
 public class TaskBuilder {
 
-    private Task task;
-
     private int delay;
     private int everyXTick;
     private boolean loop;
@@ -27,11 +25,6 @@ public class TaskBuilder {
         this.zeroTickExecution = false;
         this.callback = (t) -> {};
         this.stopCallback = () -> {};
-    }
-
-    public TaskBuilder setTask(Task task) {
-        this.task = task;
-        return this;
     }
 
     public TaskBuilder startAfter(int delay) {

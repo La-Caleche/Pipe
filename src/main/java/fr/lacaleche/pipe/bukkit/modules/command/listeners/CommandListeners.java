@@ -1,5 +1,7 @@
 package fr.lacaleche.pipe.bukkit.modules.command.listeners;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import fr.lacaleche.core.utils.commons.pairs.IPair;
 import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.core.utils.logger.Logger;
@@ -34,21 +36,24 @@ public class CommandListeners implements Listener {
         PipeDebug.eventCalled(event);
         Client client = Pipe.getBukkit().getClient(event.getPlayer().getUniqueId());
         String message = event.getMessage().substring(1);
-        IPair<CoreCommandImpl, CommandResult> command = parseCommand(event, event.getPlayer(), message);
-        CoreCommandImpl commandImpl = command.getLeft();
+        List<String> splitted = Splitter.on(' ').splitToList(message);
+        IPair<CoreCommandImpl, CommandResult> pair = parseCommand(event, event.getPlayer(), message);
+        CoreCommandImpl command = pair.getLeft();
 
-        if (commandImpl == null) {
-            CommandResult result = command.getRight();
+        if (command == null) {
+            CommandResult result = pair.getRight();
             if (result == CommandResult.COMMAND_NOT_FOUND)
-                event.getPlayer().sendMessage(client.getLocale().t("pipe.helper.command_not_found").arg("label", message.split(" ")[0]).ct());
+                event.getPlayer().sendMessage(client.getLocale()
+                        .t("pipe.helper.command_not_found").arg("label", splitted.get(0)).ct());
             else if (result == CommandResult.MISSING_PERMISSION)
-                event.getPlayer().sendMessage(client.getLocale().t("pipe.helper.permission_denied").arg("label", message.split(" ")[0]).ct());
+                event.getPlayer().sendMessage(client.getLocale()
+                        .t("pipe.helper.permission_denied").arg("label", splitted.get(0)).ct());
             return;
         }
 
-        CommandResult result = commandImpl.execute();
+        CommandResult result = command.execute();
         if (result != CommandResult.COMMAND_SUCCESS) {
-            Pipe.getBukkit().getCommandManager().parseCommandResult(commandImpl, commandImpl.getCommandSender(), result);
+            Pipe.getBukkit().getCommandManager().parseCommandResult(command, command.getCommandSender(), result);
         }
     }
 
@@ -59,21 +64,24 @@ public class CommandListeners implements Listener {
     public void onConsoleExecute(ServerCommandEvent event) {
         Locale locale = Pipe.getBukkit().getDefaultLocale();
         String message = event.getCommand();
-        IPair<CoreCommandImpl, CommandResult> command = parseCommand(event, event.getSender(), message);
-        CoreCommandImpl commandImpl = command.getLeft();
+        List<String> splitted = Splitter.on(' ').splitToList(message);
+        IPair<CoreCommandImpl, CommandResult> pair = parseCommand(event, event.getSender(), message);
+        CoreCommandImpl command = pair.getLeft();
 
-        if (commandImpl == null) {
-            CommandResult result = command.getRight();
+        if (command == null) {
+            CommandResult result = pair.getRight();
             if (result == CommandResult.COMMAND_NOT_FOUND)
-                event.getSender().sendMessage(locale.t("pipe.helper.command_not_found").arg("label", message.split(" ")[0]).ct());
+                event.getSender().sendMessage(locale
+                        .t("pipe.helper.command_not_found").arg("label", splitted.get(0)).ct());
             else if (result == CommandResult.MISSING_PERMISSION)
-                event.getSender().sendMessage(locale.t("pipe.helper.permission_denied").arg("label", message.split(" ")[0]).ct());
+                event.getSender().sendMessage(locale
+                        .t("pipe.helper.permission_denied").arg("label", splitted.get(0)).ct());
             return;
         }
 
-        CommandResult result = commandImpl.execute();
+        CommandResult result = command.execute();
         if (result != CommandResult.COMMAND_SUCCESS) {
-            Pipe.getBukkit().getCommandManager().parseCommandResult(commandImpl, commandImpl.getCommandSender(), result);
+            Pipe.getBukkit().getCommandManager().parseCommandResult(command, command.getCommandSender(), result);
         }
     }
 
@@ -92,25 +100,28 @@ public class CommandListeners implements Listener {
         PipeDebug.eventCalled(event);
         String buffer = event.getBuffer();
         String message = buffer.startsWith("/") ? buffer.substring(1) : buffer;
-        String[] splitted = message.split(" ");
-        IPair<CoreCommandImpl, CommandResult> command = parseTabCommand(event, event.getSender(), message);
+        IPair<CoreCommandImpl, CommandResult> command = parseTabCommand(event.getSender(), message);
         CoreCommandImpl commandImpl = command.getLeft();
 
         if (command.getRight() == CommandResult.NOT_LC_COMMAND) return;
-        else if (command.getRight() == CommandResult.COMMAND_NOT_FOUND || command.getRight() == CommandResult.MISSING_PERMISSION) {
+        else if (command.getRight() == CommandResult.COMMAND_NOT_FOUND
+                || command.getRight() == CommandResult.MISSING_PERMISSION) {
             event.setCancelled(true);
             return;
         }
 
         event.getCompletions().clear();
 
-        int userArgumentsLength = commandImpl.getUserArguments().length;
-        buffer = commandImpl.getUserInput().endsWith(" ") ? commandImpl.getUserInput().trim() + " " : commandImpl.getUserInput();
+        int userArgumentsLength = commandImpl.getUserArguments().size();
+        buffer = commandImpl.getUserInput().endsWith(" ")
+                ? commandImpl.getUserInput().trim() + " "
+                : commandImpl.getUserInput();
         if (userArgumentsLength == 0 && !buffer.endsWith(" ")) return;
 
         Completer completer = new CompleterImpl(commandImpl, event.getSender());
-        completer.setIndex(commandImpl.getUserArguments().length);
-        completer.setNext(userArgumentsLength == 0 || buffer.endsWith(commandImpl.getUserArguments()[userArgumentsLength - 1] + " "));
+        completer.setIndex(commandImpl.getUserArguments().size());
+        completer.setNext(userArgumentsLength == 0
+                || buffer.endsWith(commandImpl.getUserArguments().get(userArgumentsLength - 1) + " "));
 
         Pipe.getBukkit().getCommandManager().parseCompleter(Pipe.getBukkit().getPlugin(), completer);
         event.setCompletions(completer.getSortedCompleter());
@@ -118,24 +129,25 @@ public class CommandListeners implements Listener {
 
     private IPair<CoreCommandImpl, CommandResult> parseCommand(Cancellable event, Object sender, String message) {
         CommandManager manager = Pipe.getBukkit().getCommandManager();
-        String[] fullArguments = message.split(" ");
-        String label = fullArguments[0];
-        String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
+        List<String> fullArguments = Splitter.on(' ').splitToList(message);
+        String label = fullArguments.get(0);
+        List<String> arguments = fullArguments.stream().skip(1).toList();
         Client client = manager.getClient(sender);
 
         CommandResult result = CommandResult.COMMAND_SUCCESS;
 
         if (!manager.commandExist(label)) result = CommandResult.COMMAND_NOT_FOUND;
-        else if (client != null && client.getRank().getPermissionLevel() < 20) result = CommandResult.MISSING_PERMISSION;
+        else if (client != null && client.getRank().getPermissionLevel() < 20)
+            result = CommandResult.MISSING_PERMISSION;
 
         if (result != CommandResult.COMMAND_SUCCESS) {
             event.setCancelled(true);
             return new Pair<>(null, result);
         }
 
-        if (label.split(":").length > 1 && manager.commandExist(label.split(":")[1])) {
-            label = label.split(":")[1];
-        }
+        List<String> tmpLabel = Splitter.on(':').splitToList(label);
+        if (tmpLabel.size() > 1 && manager.commandExist(tmpLabel.get(1)))
+            label = tmpLabel.get(1);
 
         CoreCommandImpl command = manager.handleCommand(sender, label, message, arguments);
         if (command == null) result = CommandResult.NOT_LC_COMMAND;
@@ -143,21 +155,22 @@ public class CommandListeners implements Listener {
         return new Pair<>(command, result);
     }
 
-    private IPair<CoreCommandImpl, CommandResult> parseTabCommand(Cancellable event, Object sender, String message) {
+    private IPair<CoreCommandImpl, CommandResult> parseTabCommand(Object sender, String message) {
         CommandManager manager = Pipe.getBukkit().getCommandManager();
-        String[] fullArguments = message.split(" ");
-        String label = fullArguments[0];
-        String[] arguments = Arrays.copyOfRange(fullArguments, 1, fullArguments.length);
+        List<String> fullArguments = Splitter.on(' ').splitToList(message);
+        String label = fullArguments.get(0);
+        List<String> arguments = fullArguments.stream().skip(1).toList();
         Client client = manager.getClient(sender);
 
         CommandResult result = CommandResult.COMMAND_SUCCESS;
 
         if (!manager.commandExist(label)) result = CommandResult.COMMAND_NOT_FOUND;
-        else if (client != null && client.getRank().getPermissionLevel() < 20) result = CommandResult.MISSING_PERMISSION;
+        else if (client != null && client.getRank().getPermissionLevel() < 20)
+            result = CommandResult.MISSING_PERMISSION;
 
-        if (label.split(":").length > 1 && manager.commandExist(label.split(":")[1])) {
-            label = label.split(":")[1];
-        }
+        List<String> tmpLabel = Splitter.on(':').splitToList(label);
+        if (tmpLabel.size() > 1 && manager.commandExist(tmpLabel.get(1)))
+            label = tmpLabel.get(1);
 
         CoreCommandImpl command = manager.handleCommand(sender, label, message, arguments);
         if (command == null) result = CommandResult.NOT_LC_COMMAND;

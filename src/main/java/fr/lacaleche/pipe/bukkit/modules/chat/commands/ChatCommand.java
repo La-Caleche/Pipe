@@ -21,7 +21,7 @@ public class ChatCommand {
         manager.addArgument(new StringArgument("text").setMultiple(true));
     }
 
-    @CommandExecutor(executor = {CommandExecutor.Executor.SERVER})
+    @CommandExecutor(executors = {CommandExecutor.Executor.SERVER})
     public boolean execute(Command<ConsoleCommandSender> command) {
         Plugin plugin = Pipe.getBukkit().getPlugin();
         String message = command.args().getString("text");
