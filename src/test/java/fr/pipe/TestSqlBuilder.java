@@ -7,6 +7,9 @@ import fr.lacaleche.core.databases.mysql.SqlDatabaseImpl;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.databases.mysql.morph.queries.CountQuery;
 import fr.lacaleche.core.utils.logger.Logger;
+import fr.lacaleche.core.utils.seripet.interfaces.CoreSerializer;
+import fr.lacaleche.core.utils.seripet.interfaces.DeserializedResult;
+import fr.lacaleche.core.utils.seripet.interfaces.SerializedResult;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
@@ -33,18 +36,28 @@ public class TestSqlBuilder {
         Core core = Core.get();
         Locale locale = Pipe.getCommon().getDefaultLocale();
 
-        List<TranslationImpl> translations = new ModelFilter<TranslationImpl>().model(TranslationImpl.class).getAll().toList();
-        int countInDb = core.<SqlDatabase>getDatabase().getDatastore().count(TranslationImpl.class).count();
+        SerializedResult result = CoreSerializer.get().serialize(locale);
+        if (result.succeeded()) {
+            Logger.info("Result: %s", result.get());
+        }
 
-        List<TranslationImpl> translationsWithoutLocale = translations.stream().filter(translation -> translation.getLocale() == null).findAny().stream().toList();
+        DeserializedResult deserializedResult = CoreSerializer.get().deserialize(result.get());
+        if (deserializedResult.succeeded()) {
+            Logger.info("Result: %s", deserializedResult.get());
+        }
 
-        Logger.info("Found %d/%d translations", translations.size(), countInDb);
-        Logger.info("Found %d translations without locale", translationsWithoutLocale.size());
-
-        Client client = new ModelFilter<ClientImpl>().model(ClientImpl.class).sql(sql -> sql.where("uuid", "973576cf-90b0-4137-8fcd-00e41fa2f562")).getOne();
-        Logger.info(client.getUUID().toString());
-        Logger.info("Slug: " + client.getLocale().getSlug() + ", id: " + client.getRank().getId());
-        Logger.info(client.getRank().getSlug());
+//        List<TranslationImpl> translations = new ModelFilter<TranslationImpl>().model(TranslationImpl.class).getAll().toList();
+//        int countInDb = core.<SqlDatabase>getDatabase().getDatastore().count(TranslationImpl.class).count();
+//
+//        List<TranslationImpl> translationsWithoutLocale = translations.stream().filter(translation -> translation.getLocale() == null).findAny().stream().toList();
+//
+//        Logger.info("Found %d/%d translations", translations.size(), countInDb);
+//        Logger.info("Found %d translations without locale", translationsWithoutLocale.size());
+//
+//        Client client = new ModelFilter<ClientImpl>().model(ClientImpl.class).sql(sql -> sql.where("uuid", "973576cf-90b0-4137-8fcd-00e41fa2f562")).getOne();
+//        Logger.info(client.getUUID().toString());
+//        Logger.info("Slug: " + client.getLocale().getSlug() + ", id: " + client.getRank().getId());
+//        Logger.info(client.getRank().getSlug());
 
 //        Locale locale = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).sql(sql -> sql.where("slug", "fr")).getOne();
 //        Logger.info(locale.getSlug());

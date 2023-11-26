@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Packet(name = "CheckPermissionsPacket")
-@Serializer(variables = {"commands"})
+@Serializer(variables = {"commands", "player"})
 public class CheckPermissionsPacket extends TransactionalPacket {
 
     private List<String> commands;
@@ -46,14 +46,7 @@ public class CheckPermissionsPacket extends TransactionalPacket {
         this.commands = commands;
         this.player = player;
 
-        ObjectNode commandsNode = new ObjectMapper().createObjectNode();
-        ArrayNode array = commandsNode.putArray("commands");
-
-        this.commands.forEach(command -> {
-            array.add(CoreSerializer.get().serialize(new AllowedCommand(command)).getJsonNode());
-        });
-
-        this.setResponse(commandsNode.toString());
+        this.setResponse(this.commands.stream().map(AllowedCommand::new).toList());
         this.setPacketType(PacketType.REQUEST);
         this.setToken(new Token(64));
         this.setResolve(resolve);

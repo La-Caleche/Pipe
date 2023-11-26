@@ -18,13 +18,13 @@ public class BanImpl extends SqlModel implements IBan {
     @Property
     private String reason;
     @Property
-    private LocalDateTime end_at;
+    private LocalDateTime endAt;
 
-    public BanImpl(ClientImpl author, ClientImpl client, String reason, LocalDateTime end_at) {
+    public BanImpl(ClientImpl author, ClientImpl client, String reason, LocalDateTime endAt) {
         this.author = author;
         this.client = client;
         this.reason = reason;
-        this.end_at = end_at;
+        this.endAt = endAt;
         this.insertOrSave();
         this.cache();
     }
@@ -63,18 +63,18 @@ public class BanImpl extends SqlModel implements IBan {
 
     @Override
     public LocalDateTime getEndAt() {
-        return this.end_at;
+        return this.endAt;
     }
 
     @Override
     public void setEndAt(LocalDateTime end) {
-        this.end_at = end;
+        this.endAt = end;
         this.save();
     }
 
     @Override
     public boolean isActive() {
-        return this.end_at == null || this.end_at.isAfter(LocalDateTime.now());
+        return this.endAt == null || this.endAt.isAfter(LocalDateTime.now());
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.events.interfaces.CoreListener;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
 import fr.lacaleche.core.utils.redis.packet.events.PacketReadEvent;
 import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
@@ -38,7 +39,7 @@ public class HelpListener implements CoreListener {
 
                 HelpPacket responsePacket = new HelpPacket(packet.getHost(), packet.getPlayer(), packet.getCommand(), packet.getLocale(), packet.getToken());
                 responsePacket.setResult(TransactionResult.ACCEPT);
-                responsePacket.setResponse(GsonComponentSerializer.gson().serialize(formatted.asComponent()));
+                responsePacket.setResponse(CoreSerializer.get().toJson(GsonComponentSerializer.gson().serialize(formatted.asComponent())));
 
                 Core.get().getPacketManager().publish(responsePacket, event.from());
             }
@@ -55,21 +56,15 @@ public class HelpListener implements CoreListener {
                 if (player == null || client == null) return;
 
                 List<CheckPermissionsPacket.AllowedCommand> commands = packet.getResponseAsList(CheckPermissionsPacket.AllowedCommand.class);
-                ObjectNode commandsNode = new ObjectMapper().createObjectNode();
-                ArrayNode array = commandsNode.putArray("commands");
-
-                commands.forEach(command -> {
+                CheckPermissionsPacket responsePacket = new CheckPermissionsPacket(packet.getPlayer(), packet.getToken());
+                responsePacket.setResult(TransactionResult.ACCEPT);
+                responsePacket.setResponse(commands.stream().peek(command -> {
                     String label = command.getCommand().replace("∅", "");
                     if (Pipe.getBukkit().getCommandManager().isRegistered(label)) {
                         Helper helper = new HelperImpl(client.getLocale(), label);
                         command.setAllowed(helper.senderCanUseCommand(player));
-                        array.add(CoreSerializer.get().serialize(command).getJsonNode());
                     }
-                });
-
-                CheckPermissionsPacket responsePacket = new CheckPermissionsPacket(packet.getPlayer(), packet.getToken());
-                responsePacket.setResult(TransactionResult.ACCEPT);
-                responsePacket.setResponse(commandsNode.toString());
+                }).toList());
                 Core.get().getPacketManager().publish(responsePacket, event.from());
             }).startAfter(10));
         }

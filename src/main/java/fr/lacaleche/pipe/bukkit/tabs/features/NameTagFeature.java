@@ -157,6 +157,7 @@ public class NameTagFeature extends AbstractTabFeature implements Loadable, Unlo
             }
 
             if (updateText) {
+                if (nameTag.getLine(controller.getOrder()) == null) return ;
                 controller.setText(nameTag.getLine(controller.getOrder()).getLeft());
             }
         }

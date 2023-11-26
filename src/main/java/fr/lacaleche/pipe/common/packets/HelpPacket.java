@@ -23,7 +23,7 @@ public class HelpPacket extends TransactionalPacket {
     private UUID player;
     private String host;
     private String command;
-    private Locale locale;
+    private LocaleImpl locale;
 
     public HelpPacket() {
     }
@@ -32,7 +32,7 @@ public class HelpPacket extends TransactionalPacket {
         this.host = host;
         this.player = player;
         this.command = command;
-        this.locale = locale;
+        this.locale = (LocaleImpl) locale;
 
         this.setToken(token);
         this.setPacketType(PacketType.ANSWER);
@@ -42,9 +42,8 @@ public class HelpPacket extends TransactionalPacket {
         this.host = host;
         this.player = player;
         this.command = command;
-        this.locale = locale;
+        this.locale = (LocaleImpl) locale;
 
-        this.setResponse("{}");
         this.setPacketType(PacketType.REQUEST);
         this.setToken(new Token(64));
         this.setResolve(resolve);
@@ -55,7 +54,7 @@ public class HelpPacket extends TransactionalPacket {
         return command;
     }
 
-    public Locale getLocale() {
+    public LocaleImpl getLocale() {
         return locale;
     }
 

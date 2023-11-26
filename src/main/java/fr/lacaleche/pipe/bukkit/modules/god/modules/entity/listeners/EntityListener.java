@@ -1,8 +1,10 @@
 package fr.lacaleche.pipe.bukkit.modules.god.modules.entity.listeners;
 
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.bukkit.modules.god.modules.entity.EntityModule;
 import fr.lacaleche.pipe.common.commands.utils.PipeDebug;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;

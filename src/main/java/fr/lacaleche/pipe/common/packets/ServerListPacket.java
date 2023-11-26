@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Packet(name = "ServerListPacket")
-@Serializer(variables = {"uuid"})
+@Serializer(variables = {"player"})
 public class ServerListPacket extends TransactionalPacket {
 
-    private UUID uuid;
+    private UUID player;
 
     public ServerListPacket() {}
 
@@ -35,17 +35,21 @@ public class ServerListPacket extends TransactionalPacket {
         this.setPacketType(PacketType.ANSWER);
     }
 
-    public ServerListPacket(UUID uuid, Resolve<Object> resolve, Reject<Object> reject) {
-        this.uuid = uuid;
-        this.setResponse(new ArrayList<>());
+    public ServerListPacket(UUID player, Resolve<Object> resolve, Reject<Object> reject) {
+        this.player = player;
+
         this.setToken(new Token(64));
         this.setResolve(resolve);
         this.setReject(reject);
         this.setPacketType(PacketType.REQUEST);
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public void setPlayer(UUID player) {
+        this.player = player;
+    }
+
+    public UUID getPlayer() {
+        return player;
     }
 
 }

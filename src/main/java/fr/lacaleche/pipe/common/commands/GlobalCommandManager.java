@@ -115,7 +115,7 @@ public abstract class GlobalCommandManager implements CommandManager {
      */
     @Override
     public CoreCommandImpl handleChild(String label, Object sender, Class<?> command, String userInput, List<String> arguments) {
-        if (arguments != null && arguments.isEmpty()) {
+        if (arguments != null && !arguments.isEmpty()) {
             for (Class<?> subCommands : command.getDeclaredClasses()) {
                 CommandChild child = CommandsUtils.validateChild(subCommands);
                 if (child != null && child.label().equalsIgnoreCase(arguments.get(0)) && child.enabled())
