@@ -10,7 +10,7 @@ public enum NamedKeys {
     CBI("cbi", "key", PersistentDataType.BYTE),
     CBI_CATEGORY("cbi", "category", PersistentDataType.STRING),
     CBI_NAME("cbi", "name", PersistentDataType.STRING),
-    CBI_TALL_INDEX("cbi", "tall_index", PersistentDataType.INTEGER),
+    CBI_BLOCK_INDEX("cbi", "block_index", PersistentDataType.INTEGER),
     CBI_BLOCK_FACE("cbi", "block_face", PersistentDataType.STRING),
     PLATFORMS_ID("platform", "id", PersistentDataType.INTEGER),
     CBI_DIRECTION("cbi", "direction", PersistentDataType.STRING);

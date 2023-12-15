@@ -1,6 +1,7 @@
 package fr.lacaleche.pipe.common.commands;
 
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
@@ -253,7 +254,6 @@ public abstract class GlobalCommandManager implements CommandManager {
             }
         }
 
-        if (completer.next()) completer.incrementIndex();
         int argumentsSize = manager.getArguments().size() - 1;
         if (argumentsSize > 0 && completer.index() <= argumentsSize) {
             Argument argument = manager.getArgument(completer.index());
