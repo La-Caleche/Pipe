@@ -72,6 +72,7 @@ public class CommandModule extends BukkitModule {
         this.commands.add(NightVisionCommand.class);
         this.commands.add(PipeDebugCommand.class);
         this.commands.add(SpeedCommand.class);
+        this.commands.add(SudoCommand.class);
         this.commands.add(TeleportCommand.class);
         this.commands.add(TeleportPositionCommand.class);
 

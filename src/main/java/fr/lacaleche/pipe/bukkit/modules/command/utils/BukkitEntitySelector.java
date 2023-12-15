@@ -1,11 +1,14 @@
 package fr.lacaleche.pipe.bukkit.modules.command.utils;
 
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
 import fr.lacaleche.pipe.common.commands.utils.EntitySelectorResult;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -79,8 +82,14 @@ public class BukkitEntitySelector {
         if (selector.matches("(@r|random)") && argument.isAllowRandom())
             return onlinePlayers.stream().skip((int) (Math.random() * onlinePlayers.size())).limit(1).collect(Collectors.toList());
 
-        if (selector.matches("(@p|nearest)") && argument.isAllowNearest() && command.sender() instanceof Player player)
-            return player.getWorld().getNearbyPlayers(player.getLocation(), 48).stream().filter(nearest -> !nearest.getUniqueId().equals(player.getUniqueId())).limit(1).collect(Collectors.toList());
+        if (selector.matches("(@p|nearest)") && argument.isAllowNearest()) {
+            if (command.sender() instanceof Player player)
+                return player.getWorld().getNearbyPlayers(player.getLocation(), 48).stream().filter(nearest -> !nearest.getUniqueId().equals(player.getUniqueId())).limit(1).collect(Collectors.toList());
+            else if (command.sender() instanceof BlockCommandSender blockCommandSender) {
+                Location location = blockCommandSender.getBlock().getLocation();
+                return location.getWorld().getNearbyPlayers(location, 48).stream().limit(1).collect(Collectors.toList());
+            }
+        }
 
         Player match = onlinePlayers.stream().filter(player -> player.getName().equals(selector)).findFirst().orElse(null);
         return match == null ? List.of() : List.of(match);

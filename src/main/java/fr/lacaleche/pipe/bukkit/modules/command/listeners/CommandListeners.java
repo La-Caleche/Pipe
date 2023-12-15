@@ -119,7 +119,7 @@ public class CommandListeners implements Listener {
         if (userArgumentsLength == 0 && !buffer.endsWith(" ")) return;
 
         Completer completer = new CompleterImpl(commandImpl, event.getSender());
-        completer.setIndex(commandImpl.getUserArguments().size());
+        completer.setIndex(userArgumentsLength);
         completer.setNext(userArgumentsLength == 0
                 || buffer.endsWith(commandImpl.getUserArguments().get(userArgumentsLength - 1) + " "));
 
