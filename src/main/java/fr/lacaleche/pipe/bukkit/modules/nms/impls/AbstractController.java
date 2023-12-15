@@ -234,7 +234,13 @@ public abstract class AbstractController extends BaseController {
     @Override
     public void remove() {
         super.remove();
-        this.getEntity().ah();
+        try {
+            this.getEntity().ah();
+        } catch (AssertionError error) {
+            if (error.getMessage().startsWith("Unknown entity"))
+                Logger.customDebugWCheck("Folia raised an error while trying to retire bukkit entity scheduler. But that's fine.");
+            else throw error;
+        }
     }
 
     @Override

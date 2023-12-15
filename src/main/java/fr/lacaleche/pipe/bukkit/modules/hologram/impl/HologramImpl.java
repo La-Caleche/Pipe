@@ -99,6 +99,12 @@ public class HologramImpl implements Hologram {
     }
 
     @Override
+    public void hideTo(Player player) {
+        this.viewers.remove(player);
+        this.controller.hide(player);
+    }
+
+    @Override
     public void create() {
         this.controller.spawn();
 

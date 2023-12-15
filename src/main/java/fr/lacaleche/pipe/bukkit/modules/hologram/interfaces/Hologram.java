@@ -26,6 +26,8 @@ public interface Hologram {
 
     void showTo(Player player);
 
+    void hideTo(Player player);
+
     void create();
 
 }
