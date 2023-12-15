@@ -30,19 +30,20 @@ public class GodModuleManager implements IGodModuleManager {
     }
 
     @Override
-    public void enableModule(IModule module) {
+    public boolean enableModule(IModule module) {
         if (!module.getClass().isAnnotationPresent(AGodModule.class)) {
             Logger.warn("Module " + module.getClass().getSimpleName() + " is not a god module");
-            return;
+            return false;
         }
 
-        this.handler.enableModule(module);
+        if (!this.handler.enableModule(module)) return false;
         this.godModules.add(module);
+        return true;
     }
 
     @Override
-    public void enableModule(Class<? extends IModule> moduleClazz) {
-        this.enableModule(Objects.requireNonNull(this.instantiateModule(moduleClazz, this.handler)));
+    public boolean enableModule(Class<? extends IModule> moduleClazz) {
+        return this.enableModule(Objects.requireNonNull(this.instantiateModule(moduleClazz, this.handler)));
     }
 
     @Override

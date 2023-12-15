@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IGodModuleManager extends IModuleManager {
 
-    void enableModule(Class<? extends IModule> moduleClazz);
+    boolean enableModule(Class<? extends IModule> moduleClazz);
 
     void disableModule(IModule module);
 
