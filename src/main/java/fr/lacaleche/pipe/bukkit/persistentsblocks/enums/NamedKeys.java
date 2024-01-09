@@ -13,7 +13,8 @@ public enum NamedKeys {
     CBI_BLOCK_INDEX("cbi", "block_index", PersistentDataType.INTEGER),
     CBI_BLOCK_FACE("cbi", "block_face", PersistentDataType.STRING),
     PLATFORMS_ID("platform", "id", PersistentDataType.INTEGER),
-    CBI_DIRECTION("cbi", "direction", PersistentDataType.STRING);
+    CBI_DIRECTION("cbi", "direction", PersistentDataType.STRING),
+    CBI_BLOCK_ENTITY("cbi", "block_entity", PersistentDataType.STRING);
 
     private final NamespacedKey key;
     private final PersistentDataType<?, ?> type;
