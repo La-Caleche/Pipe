@@ -10,6 +10,7 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.events.BukkitPipeListenerManager;
 import fr.lacaleche.pipe.bukkit.modules.BukkitModule;
+import fr.lacaleche.pipe.bukkit.modules.client.BukkitClientModule;
 import fr.lacaleche.pipe.bukkit.modules.command.commands.*;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.CommandListeners;
 import fr.lacaleche.pipe.bukkit.modules.command.listeners.HelpListener;
@@ -89,6 +90,13 @@ public class CommandModule extends BukkitModule {
             reflect.set("perm", this.permissibleBaseMap.get(player));
             this.permissibleBaseMap.remove(player);
         });
+    }
+
+    @Override
+    public void ready() {
+        BukkitClientModule clientModule = Core.getModule(BukkitClientModule.class);
+        clientModule.registerPlayerPlaceHolder("left_player");
+        clientModule.registerPlayerPlaceHolder("right_player");
     }
 
     @Override

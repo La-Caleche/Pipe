@@ -152,7 +152,14 @@ public class BukkitClientModule extends BukkitModule {
             return Component.text("Unknown").color(NamedTextColor.GRAY);
         });
 
-        text.registerPlaceHolder("player", (placeHolderArguments, locale) -> {
+        this.registerPlayerPlaceHolder("player");
+    }
+
+    public void registerPlayerPlaceHolder(String key) {
+        Pipe pipe = Pipe.getBukkit();
+        PipeText text = pipe.text();
+
+        text.registerPlaceHolder(key, (placeHolderArguments, locale) -> {
             Object argument = placeHolderArguments.next();
             if (argument instanceof Player player) {
                 Client client = pipe.getClient(player.getUniqueId());

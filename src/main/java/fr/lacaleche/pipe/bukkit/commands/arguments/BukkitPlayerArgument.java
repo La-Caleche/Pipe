@@ -49,6 +49,13 @@ public class BukkitPlayerArgument extends DefaultArgument {
         return this;
     }
 
+    public BukkitPlayerArgument fullButAll() {
+        allowSelf = true;
+        allowRandom = true;
+        allowNearest = true;
+        return this;
+    }
+
     public BukkitPlayerArgument allowFull() {
         allowSelf = true;
         allowAll = true;

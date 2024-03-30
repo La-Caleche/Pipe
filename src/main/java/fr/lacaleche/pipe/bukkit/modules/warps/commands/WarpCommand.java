@@ -145,7 +145,9 @@ public class WarpCommand {
             String newName = command.args().getString("newName");
             String oldName = warp.getName();
 
-            WarpImpl existingWarp = new ModelFilter<WarpImpl>().model(WarpImpl.class).cache(w -> w.getName().equalsIgnoreCase(newName)).getOne();
+            WarpImpl existingWarp = new ModelFilter<WarpImpl>().model(WarpImpl.class)
+                    .cache(w -> w.getName().equalsIgnoreCase(newName))
+                    .sql(sqlBuilder -> sqlBuilder.where(new Where("name", newName))).getOne();
             if (existingWarp != null) {
                 command.sender().sendMessage(client.getLocale().t("pipe.command.warps.already_exist").arg("name", newName).ct());
                 return true;
