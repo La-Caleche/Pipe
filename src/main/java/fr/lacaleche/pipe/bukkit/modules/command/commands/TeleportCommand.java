@@ -30,7 +30,7 @@ public class TeleportCommand {
             }
 
             leftPlayer = playerSender;
-            rightPlayerResult = BukkitEntitySelector.parsePlayers(command, "rightPlayer");
+            rightPlayerResult = BukkitEntitySelector.parsePlayers(command, "leftPlayer");
         } else {
             leftPlayerResult = BukkitEntitySelector.parsePlayers(command, "leftPlayer");
             rightPlayerResult = BukkitEntitySelector.parsePlayers(command, "rightPlayer");
@@ -52,7 +52,7 @@ public class TeleportCommand {
             if (leftPlayerResult != null) leftPlayer = leftPlayerResult.first();
 
             leftPlayer.teleport(rightPlayer.getLocation().clone().add(0, 1, 0));
-            command.sender().sendMessage(command.locale().t("pipe.command.tp.success").ph("left_player", leftPlayer).ph("right_player", leftPlayer).from("Teleport").ct());
+            command.sender().sendMessage(command.locale().t("pipe.command.tp.success").ph("left_player", leftPlayer).ph("right_player", rightPlayer).from("Teleport").ct());
             return true;
         }
 
