@@ -7,6 +7,7 @@ import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.commands.arguments.BukkitPlayerArgument;
 import fr.lacaleche.pipe.bukkit.modules.hephaestus.HephaestusModule;
 import fr.lacaleche.pipe.bukkit.modules.hephaestus.commands.arguments.AnimationsArgument;
+import fr.lacaleche.pipe.bukkit.modules.hephaestus.commands.arguments.BonesArgument;
 import fr.lacaleche.pipe.bukkit.modules.hephaestus.commands.arguments.ModelsArgument;
 import fr.lacaleche.pipe.bukkit.modules.hephaestus.commands.arguments.ViewsArgument;
 import fr.lacaleche.pipe.bukkit.modules.hephaestus.interfaces.HephaestusManager;
@@ -14,6 +15,7 @@ import fr.lacaleche.pipe.common.commands.annotations.ArgumentsManager;
 import fr.lacaleche.pipe.common.commands.annotations.CommandChild;
 import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 import fr.lacaleche.pipe.common.commands.annotations.MinecraftCommand;
+import fr.lacaleche.pipe.common.commands.argument.arguments.BooleanArgument;
 import fr.lacaleche.pipe.common.commands.argument.arguments.StringArgument;
 import fr.lacaleche.pipe.common.commands.argument.interfaces.ArgumentManager;
 import fr.lacaleche.pipe.common.commands.interfaces.Command;
@@ -22,8 +24,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import team.unnamed.hephaestus.Bone;
 import team.unnamed.hephaestus.Model;
 import team.unnamed.hephaestus.animation.Animation;
+import team.unnamed.hephaestus.bukkit.BoneView;
 import team.unnamed.hephaestus.bukkit.ModelView;
 import team.unnamed.hephaestus.view.modifier.BoneModifierType;
 import team.unnamed.hephaestus.view.modifier.player.rig.PlayerRig;
@@ -31,6 +35,7 @@ import team.unnamed.hephaestus.view.modifier.player.skin.Skin;
 import team.unnamed.hephaestus.view.modifier.player.skin.SkinProvider;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -122,13 +127,14 @@ public class HephaestusCommand {
 
     }
 
-    @CommandChild(label = "colorize", arguments = {"view", "color"}, description = "pipe.commands.hephaestus.colorize.description")
+    @CommandChild(label = "colorize", arguments = {"view", "color", "bone"}, description = "pipe.commands.hephaestus.colorize.description")
     public static class Colorize {
 
         @ArgumentsManager
         public void manager(ArgumentManager manager) {
             manager.addArgument(new ViewsArgument("view"));
             manager.addArgument(new StringArgument("color"));
+            manager.addArgument(new BonesArgument("bone").optional());
         }
 
         @CommandExecutor(executors = {CommandExecutor.Executor.PLAYER})
@@ -156,7 +162,22 @@ public class HephaestusCommand {
                 return true;
             }
 
-            view.colorize(color);
+            if (!command.args().blank("bone")) {
+                String boneId = command.args().getString("bone");
+                List<BoneView> boneViews;
+                if (boneId.startsWith("!"))
+                    boneViews = List.of(view.bone(boneId.substring(1)));
+                else boneViews = manager.getBoneChildren(view, boneId);
+
+                if (boneViews == null || boneViews.isEmpty()) {
+                    command.sender().sendMessage(command.locale().t("pipe.commands.hephaestus.bone_not_found").arg("bone", boneId).from("Hephaestus").ct());
+                    return true;
+                }
+
+                int finalColor = color;
+                boneViews.forEach(boneView -> boneView.colorize(finalColor));
+            } else view.colorize(color);
+
             command.sender().sendMessage(command.locale().t("pipe.commands.hephaestus.colorize.success").arg("view", viewId).arg("color", colorArg).from("Hephaestus").ct());
             return true;
         }

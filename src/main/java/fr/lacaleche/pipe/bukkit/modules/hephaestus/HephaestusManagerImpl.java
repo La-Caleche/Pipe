@@ -12,7 +12,9 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.hephaestus.Bone;
 import team.unnamed.hephaestus.Model;
+import team.unnamed.hephaestus.bukkit.BoneView;
 import team.unnamed.hephaestus.bukkit.BukkitModelEngine;
 import team.unnamed.hephaestus.bukkit.ModelView;
 import team.unnamed.hephaestus.bukkit.v1_20_R1.BukkitModelEngine_v1_20_R1;
@@ -29,8 +31,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class HephaestusManagerImpl implements HephaestusManager {
@@ -148,6 +150,45 @@ public class HephaestusManagerImpl implements HephaestusManager {
 
         final var base = Bukkit.getEntity(uuid);
         return base == null ? null : this.getModelEngine().tracker().getViewOnBase(base);
+    }
+
+    @Override
+    public List<Bone> getBones(Model model) {
+        List<Bone> bones = new ArrayList<>(model.bones());
+        model.bones().forEach(bone -> getBones(bone, bones));
+        return bones;
+    }
+
+    @Override
+    public List<Bone> getBones(ModelView modelView) {
+        return this.getBones(modelView.model());
+    }
+
+    @Override
+    public List<BoneView> getBoneChildren(ModelView entity, Bone bone) {
+        List<Bone> bones = new ArrayList<>();
+        this.getBones(bone, bones);
+
+        List<BoneView> children = new ArrayList<>();
+        bones.forEach(b -> {
+            BoneView boneView = entity.bone(b.name());
+            if (boneView != null) children.add(boneView);
+        });
+
+        return children;
+    }
+
+    @Override
+    public List<BoneView> getBoneChildren(ModelView entity, String bone) {
+        BoneView boneView = entity.bone(bone);
+        if (boneView == null) return new ArrayList<>();
+        return this.getBoneChildren(entity, boneView.bone());
+    }
+
+    private void getBones(Bone bone, List<Bone> bones) {
+        bones.add(bone);
+        if (bone.children().isEmpty()) return ;
+        bone.children().forEach(child -> getBones(child, bones));
     }
 
     private Model loadModel(final @NotNull File file) {
