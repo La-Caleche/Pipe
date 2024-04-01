@@ -71,6 +71,10 @@ public class HephaestusManagerImpl implements HephaestusManager {
 
     @Override
     public void stop() {
+        this.getModelEngine().tracker().getTrackedViews().forEach((uuid, modelView) -> {
+            if (modelView.base() == null) return ;
+            modelView.base().remove();
+        });
         this.getModelEngine().close();
         this.getModelRegistry().models().clear();
     }
@@ -83,17 +87,23 @@ public class HephaestusManagerImpl implements HephaestusManager {
     }
 
     @Override
-    public void spawnPlayer(String player, Location location, Callback<Boolean> callback) {
+    public void spawnPlayer(String player, Location location, Callback<String> callback) {
+        final Model model = this.modelRegistry.model("jeqo");
+        if (model == null) {
+            if (callback != null) callback.done("pipe.commands.hephaestus.model_not_found");
+            return ;
+        }
+
         Pipe.asyncZeroTick(task -> {
             Skin skin = this.skinProvider.fetch(player);
             if (skin == null) {
-                if (callback != null) callback.done(false);
+                if (callback != null) callback.done("pipe.commands.hephaestus.skin_not_found");
                 return ;
             }
 
 
             Pipe.get().getTaskManager().newTask(builder -> builder.run(t -> {
-                final ModelView view = create(this.modelRegistry.model("jeqo"), location);
+                final ModelView view = create(model, location);
                 final PlayerRig rig = PlayerRig.detailed();
 
                 view.bones().forEach(boneView -> {
@@ -106,7 +116,7 @@ public class HephaestusManagerImpl implements HephaestusManager {
                     });
                 });
 
-                if (callback != null) callback.done(true);
+                if (callback != null) callback.done("success");
             }));
         });
     }

@@ -40,7 +40,7 @@ public class WorldListener implements BukkitPipeListener {
             case VANILLA_CYCLE:
                 break;
             case SPEED_CYCLE:
-                plugin.getServer().getWorlds().forEach(w -> w.setTime(w.getTime() +speedMultiplierFeature.value().getValue()));
+                plugin.getServer().getWorlds().forEach(w -> w.setTime(w.getTime() + speedMultiplierFeature.value().getValue()));
                 break;
             case HALF_CYCLE:
                 if (event.getTick() % 2 == 0) {

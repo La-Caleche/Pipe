@@ -21,7 +21,7 @@ public interface HephaestusManager {
 
     ModelView create(Model model, Location location);
 
-    void spawnPlayer(String player, Location location, Callback<Boolean> callback);
+    void spawnPlayer(String player, Location location, Callback<String> callback);
 
     void remove(ModelView entity);
 

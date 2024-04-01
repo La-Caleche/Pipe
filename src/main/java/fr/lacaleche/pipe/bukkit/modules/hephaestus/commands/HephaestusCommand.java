@@ -78,15 +78,15 @@ public class HephaestusCommand {
             HephaestusManager manager = module.getManager();
             String player = command.args().getString("player");
 
-            manager.spawnPlayer(player, command.sender().getLocation(), new Callback<Boolean>() {
+            manager.spawnPlayer(player, command.sender().getLocation(), new Callback<String>() {
                 @Override
-                public void done(Boolean success) {
-                    if (!success) {
-                        command.sender().sendMessage(command.locale().t("pipe.commands.hephaestus.skin_not_found").arg("player", player).from("Hephaestus").ct());
+                public void done(String error) {
+                    if (error.equals("success")) {
+                        command.sender().sendMessage(command.locale().t("pipe.commands.hephaestus.spawn.player.success").arg("player", player).from("Hephaestus").ct());
                         return ;
                     }
 
-                    command.sender().sendMessage(command.locale().t("pipe.commands.hephaestus.spawn.player.success").arg("player", player).from("Hephaestus").ct());
+                    command.sender().sendMessage(command.locale().t(error).arg("player", player).from("Hephaestus").ct());
                 }
             });
 
