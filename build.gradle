@@ -18,6 +18,13 @@ dependencies {
     compileOnly rootProject.lcDependencies.anvilGui
     compileOnly rootProject.lcDependencies.customBlockData
 
+    compileOnly rootProject.lcDependencies.creativeApi
+
+    compileOnly rootProject.lcDependencies.hephaestusApi
+    compileOnly rootProject.lcDependencies.hephaestusReaderBlockbench
+    compileOnly rootProject.lcDependencies.hephaestusRuntimeBukkitAPI
+    compileOnly rootProject.lcDependencies.hephaestusRuntimeV1_20_R1
+
     testImplementation project(":library:CalecheCore")
     testImplementation rootProject.lcDependencies.adventureApi
     testImplementation rootProject.lcDependencies.commonLang
