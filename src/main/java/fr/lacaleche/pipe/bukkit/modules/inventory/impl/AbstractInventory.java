@@ -123,12 +123,16 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void show() {
+        if (this.getInventory() == null) return ;
+
         this.visible = true;
         this.getPlayer().openInventory(this.getInventory());
     }
 
     @Override
     public void hide() {
+        if (this.getInventory() == null) return ;
+
         this.visible = false;
         this.getPlayer().closeInventory(InventoryCloseEvent.Reason.PLUGIN);
     }
@@ -168,11 +172,15 @@ public abstract class AbstractInventory implements PipeInventory {
 
     @Override
     public void clear() {
+        if (this.getInventory() == null) return ;
+
         this.getInventory().clear();
     }
 
     @Override
     public void refresh() {
+        if (this.getInventory() == null) return ;
+
         this.clear();
         InventoryFillEvent fillEvent = new InventoryFillEvent(this);
         fillEvent.call();
