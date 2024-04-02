@@ -10,6 +10,7 @@ import team.unnamed.hephaestus.bukkit.BukkitModelEngine;
 import team.unnamed.hephaestus.bukkit.ModelView;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface HephaestusManager {
 
@@ -18,6 +19,8 @@ public interface HephaestusManager {
     BukkitModelEngine getModelEngine();
 
     ModelView getModelEntityById(String id);
+
+    ModelView getModelEntityById(UUID id);
 
     void start();
 

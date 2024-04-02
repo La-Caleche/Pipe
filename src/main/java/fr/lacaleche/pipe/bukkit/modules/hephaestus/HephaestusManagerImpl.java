@@ -148,6 +148,11 @@ public class HephaestusManagerImpl implements HephaestusManager {
             return null;
         }
 
+        return this.getModelEntityById(uuid);
+    }
+
+    @Override
+    public ModelView getModelEntityById(UUID uuid) {
         final var base = Bukkit.getEntity(uuid);
         return base == null ? null : this.getModelEngine().tracker().getViewOnBase(base);
     }
