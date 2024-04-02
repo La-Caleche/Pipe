@@ -33,7 +33,7 @@ public class InventoryManager {
             return;
         }
 
-        if (reason == InventoryCloseEvent.Reason.PLAYER) pipeInventory.close();
+        if (reason == InventoryCloseEvent.Reason.PLAYER || reason == InventoryCloseEvent.Reason.PLUGIN) pipeInventory.close();
     }
 
     public void disable() {
