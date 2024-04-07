@@ -32,12 +32,14 @@ public abstract class GlobalCommandManager implements CommandManager {
     private final Map<String, Class<MinecraftCommand>> aliases;
     private final Map<String, Object> commandsCache;
     private final Map<IModule, List<Class<MinecraftCommand>>> moduleCommands;
+    private final Map<String, Boolean> cachedExistingCommands;
 
     public GlobalCommandManager() {
         this.commands = new HashMap<>();
         this.aliases = new HashMap<>();
         this.commandsCache = new HashMap<>();
         this.moduleCommands = new HashMap<>();
+        this.cachedExistingCommands = new HashMap<>();
     }
 
     /**
@@ -356,6 +358,19 @@ public abstract class GlobalCommandManager implements CommandManager {
             }
         }
         return manager;
+    }
+
+    protected void cacheCommand(String label, boolean result) {
+        cachedExistingCommands.put(label, result);
+    }
+
+    protected boolean isCommandCached(String label) {
+        return cachedExistingCommands.containsKey(label);
+    }
+
+    @Override
+    public boolean commandExist(String label) {
+        return this.isCommandCached(label) && cachedExistingCommands.getOrDefault(label, false);
     }
 }
 

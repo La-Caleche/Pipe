@@ -19,6 +19,10 @@ public class HealthListener implements Listener {
     @EventHandler
     public void onFoodLevelChangeEvent(FoodLevelChangeEvent event) {
         PipeDebug.eventCalled(event);
+        PipeDebug.setCancelled(event, true);
+        if (true) {
+            return;
+        }
         if (event.getEntity() instanceof Player player) {
             if (event.getItem() != null) {
                 this.module.getFeatureManager().<Boolean>cancelConditionnaly(event, "PLAYER_EAT_FOOD", (f, value) -> value);
