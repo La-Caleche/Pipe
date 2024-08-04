@@ -3,6 +3,7 @@ package fr.lacaleche.pipe.bukkit.modules.warps.warp;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.bukkit.BukkitPipe;
 import fr.lacaleche.pipe.bukkit.mysql.annotations.BukkitBlob;
@@ -44,9 +45,18 @@ public class WarpImpl extends SqlModel implements IWarp {
             if (thisWorld == null && locWorld != null) this.world = locWorld.getName();
             else if (thisWorld != null && locWorld == null) this.location.setWorld(thisWorld);
             else if (thisWorld != null) this.location.setWorld(thisWorld);
+            else {
+                Logger.warn("Warp %s has an invalid world and/or the world is not loaded, skipping...", this.name);
+                return ;
+            }
 
             this.save();
         }
+    }
+
+    @Override
+    public boolean valid() {
+        return this.location.getWorld() != null;
     }
 
     @Override
