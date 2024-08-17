@@ -3,24 +3,16 @@ package fr.lacaleche.pipe;
 import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
 import fr.lacaleche.core.events.GlobalListenerManager;
-import fr.lacaleche.core.modules.Module;
-import fr.lacaleche.core.modules.interfaces.IModule;
-import fr.lacaleche.core.utils.CalecheDebug;
-import fr.lacaleche.core.utils.commons.consumers.TriConsumer;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.adventure.PipeText;
 import fr.lacaleche.pipe.common.adventure.PipeTextImpl;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
-import fr.lacaleche.pipe.common.commands.interfaces.CommandManager;
 import fr.lacaleche.core.Core;
+import fr.lacaleche.pipe.common.commands.interfaces.PipeCommandManager;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
-import fr.lacaleche.pipe.bukkit.tabs.interfaces.TabManager;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
@@ -28,7 +20,7 @@ public abstract class AbstractPipe implements Pipe {
 
     private static Pipe instance;
 
-    private CommandManager commandManager;
+    private PipeCommandManager<?> commandManager;
     private Runnable shutdownHook;
     private TaskManager taskManager;
     private final PipeText pipeText;
@@ -52,12 +44,12 @@ public abstract class AbstractPipe implements Pipe {
     }
 
     @Override
-    public CommandManager getCommandManager() {
+    public PipeCommandManager<?> getCommandManager() {
         return commandManager;
     }
 
     @Override
-    public void setCommandManager(CommandManager commandManager) {
+    public <C> void setCommandManager(PipeCommandManager<C> commandManager) {
         this.commandManager = commandManager;
     }
 

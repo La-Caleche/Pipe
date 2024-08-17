@@ -1,18 +1,12 @@
 package fr.pipe;
 
-import fr.lacaleche.core.Core;
-import fr.lacaleche.core.databases.mysql.SqlDatabase;
-import fr.lacaleche.core.databases.mysql.SqlDatabaseImpl;
-import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.logger.Logger;
-import net.minecraft.network.chat.RemoteChatSession;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Tests {

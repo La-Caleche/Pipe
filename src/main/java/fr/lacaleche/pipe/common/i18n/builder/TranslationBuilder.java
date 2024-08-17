@@ -1,6 +1,5 @@
 package fr.lacaleche.pipe.common.i18n.builder;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 
 public interface TranslationBuilder {
