@@ -6,6 +6,7 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.permission.PermissionResult;
 
 import java.util.Collection;
 import java.util.List;
@@ -77,7 +78,7 @@ public interface PipeCommandManager<C> {
     /**
      * TODO
      * */
-    boolean hasPermission(C sender, Permission permission);
+    PermissionResult hasPermission(C sender, Permission permission);
 
     /**
      * TODO

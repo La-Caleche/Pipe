@@ -11,11 +11,12 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.permission.PermissionResult;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import java.util.*;
 
-public class GlobalCommandManager<C> implements PipeCommandManager<C> {
+public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
 
     private CommandManager<C> cloudCommandManager;
     private AnnotationParser<C> cloudAnnotationParser;
@@ -39,7 +40,7 @@ public class GlobalCommandManager<C> implements PipeCommandManager<C> {
                 Permissions.class,
                 (permissions, builder) -> {
                     String stringPermissions = String.join(",", permissions.permissions());
-                    String formattedPermission = String.format("perms=%s;strictPermLevel=%d;minPermLevel=%d", stringPermissions, permissions.strictPermLevel(), permissions.minPermLevel());
+                    String formattedPermission = String.format("lc_perms:perms=%s;strictPermLevel=%d;minPermLevel=%d", stringPermissions, permissions.strictPermLevel(), permissions.minPermLevel());
                     return builder.permission(Permission.of(formattedPermission));
                 }
         );
@@ -95,7 +96,8 @@ public class GlobalCommandManager<C> implements PipeCommandManager<C> {
         final Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>> commands = this.getModuleCommands(module);
         if (commands == null || commands.isEmpty()) return;
 
-        commands.keySet().forEach(clazz -> this.unregisterCommand(module, clazz));
+        final Set<Class<?>> commandClasses = Set.copyOf(commands.keySet());
+        commandClasses.forEach(clazz -> this.unregisterCommand(module, clazz));
     }
 
     @Override
@@ -116,11 +118,6 @@ public class GlobalCommandManager<C> implements PipeCommandManager<C> {
         final Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>> commands = this.moduleCommands.get(module);
         if (commands == null || commands.isEmpty()) return null;
         return commands.get(commandClazz);
-    }
-
-    @Override
-    public boolean hasPermission(C sender, Permission permission) {
-        return false;
     }
 
     private void requireNonNull() {
