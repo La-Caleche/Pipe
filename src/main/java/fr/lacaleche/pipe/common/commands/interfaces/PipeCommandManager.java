@@ -2,6 +2,7 @@ package fr.lacaleche.pipe.common.commands.interfaces;
 
 import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.pipe.common.clients.Client;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
@@ -84,5 +85,10 @@ public interface PipeCommandManager<C> {
      * TODO
      * */
     boolean isRegisteredFor(IModule module, Class<?> command);
+
+    /**
+     * TODO
+     * */
+    Client getClient(C sender);
 
 }

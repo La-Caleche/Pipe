@@ -11,7 +11,6 @@ import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.permission.Permission;
-import org.incendo.cloud.permission.PermissionResult;
 import org.incendo.cloud.setting.ManagerSetting;
 
 import java.util.*;
@@ -31,6 +30,7 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     public void setCloudCommandManager(CommandManager<C> commandManager) {
         this.cloudCommandManager = commandManager;
         this.cloudCommandManager.settings().set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
+
     }
 
     @Override
