@@ -32,6 +32,8 @@ public interface Client extends ISqlModel {
 
     boolean isStaff();
 
+    boolean isAdmin();
+
     boolean hasPermission(Permission permission);
 
     boolean hasPermission(String permission);

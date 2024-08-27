@@ -30,7 +30,6 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     public void setCloudCommandManager(CommandManager<C> commandManager) {
         this.cloudCommandManager = commandManager;
         this.cloudCommandManager.settings().set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
-
     }
 
     @Override

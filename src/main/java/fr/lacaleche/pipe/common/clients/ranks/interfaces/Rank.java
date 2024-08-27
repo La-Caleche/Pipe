@@ -32,4 +32,6 @@ public interface Rank extends ISqlModel {
 
     boolean isStaff();
 
+    boolean isAdmin();
+
 }

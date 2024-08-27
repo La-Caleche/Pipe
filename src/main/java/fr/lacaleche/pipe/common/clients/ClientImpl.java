@@ -19,10 +19,7 @@ import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -125,7 +122,15 @@ public class ClientImpl extends SqlModel implements Client {
 
     @Override
     public boolean hasPermission(String slug) {
-        Permission permission = new ModelFilter<PermissionImpl>().model(PermissionImpl.class).cache(perm -> perm.getSlug().equals(slug)).sql((sqlBuilder) -> sqlBuilder.where(new Where("slug", slug))).getOne();
+        Permission permission = new ModelFilter<PermissionImpl>().model(PermissionImpl.class)
+                .cache(perm -> perm.getSlug().equals(slug))
+                .sql((sqlBuilder) -> sqlBuilder.where(new Where("slug", slug))).saveInCache()
+                .def(() -> {
+                    PermissionImpl newPermission = new PermissionImpl(slug);
+                    newPermission.save();
+                    return newPermission;
+                })
+                .getOne();
         return this.hasPermission(permission);
     }
 
@@ -227,6 +232,11 @@ public class ClientImpl extends SqlModel implements Client {
     @Override
     public boolean isStaff() {
         return this.getRank().isStaff();
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return this.getRank().isAdmin();
     }
 
     @Override
