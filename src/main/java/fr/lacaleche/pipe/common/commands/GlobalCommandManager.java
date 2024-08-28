@@ -1,17 +1,28 @@
 package fr.lacaleche.pipe.common.commands;
 
+import fr.lacaleche.core.databases.generic.ModelFilter;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.core.utils.commons.pairs.Pair;
-import fr.lacaleche.core.utils.logger.Logger;
-import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
+import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.pipe.common.clients.Client;
+import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
 import fr.lacaleche.pipe.common.commands.annotations.Permissions;
 import fr.lacaleche.pipe.common.commands.interfaces.CloudCommand;
 import fr.lacaleche.pipe.common.commands.interfaces.PipeCommandManager;
+import fr.lacaleche.pipe.common.commands.parsers.CachedClientParser;
+import fr.lacaleche.pipe.common.commands.parsers.ClientParser;
+import fr.lacaleche.pipe.common.commands.parsers.LocaleParser;
+import fr.lacaleche.pipe.common.commands.parsers.RankParser;
+import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
 import org.incendo.cloud.permission.Permission;
+import org.incendo.cloud.permission.PermissionResult;
 import org.incendo.cloud.setting.ManagerSetting;
+import org.joor.Reflect;
+import org.joor.ReflectException;
 
 import java.util.*;
 
@@ -30,6 +41,12 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     public void setCloudCommandManager(CommandManager<C> commandManager) {
         this.cloudCommandManager = commandManager;
         this.cloudCommandManager.settings().set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
+
+        this.cloudCommandManager.parserRegistry()
+                .registerNamedParser("client", ClientParser.parser())
+                .registerNamedParser("cached_client", CachedClientParser.parser())
+                .registerParser(RankParser.parser())
+                .registerParser(LocaleParser.parser());
     }
 
     @Override
@@ -63,14 +80,7 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
         final Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>> commands = this.moduleCommands.getOrDefault(module, new HashMap<>());
 
         if (!isRegisteredFor(module, commandClass)) {
-            try {
-                commands.put(commandClass, Pair.of(command, this.getCloudAnnotationParser().parse(command)));
-            } catch (Exception exception) {
-                SentryAPIImpl.getInstance().captureException(exception);
-                Logger.err("Their is an error while parsing the command: " + commandClass.getSimpleName());
-                return;
-            }
-
+            commands.put(commandClass, Pair.of(command, this.getCloudAnnotationParser().parse(command)));
             this.moduleCommands.put(module, commands);
         }
     }
@@ -78,6 +88,8 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     @Override
     public boolean unregisterCommand(IModule module, Class<?> command) {
         this.requireNonNull();
+        if (!this.getCloudCommandManager().hasCapability(CloudCapability.StandardCapabilities.ROOT_COMMAND_DELETION)) return true;
+
         if (!isRegisteredFor(module, command)) return false;
         final Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>> commands = this.getModuleCommands(module);
         final Pair<CloudCommand, Collection<Command<C>>> commandPair = commands.get(command);
@@ -117,6 +129,81 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
         final Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>> commands = this.moduleCommands.get(module);
         if (commands == null || commands.isEmpty()) return null;
         return commands.get(commandClazz);
+    }
+
+    @Override
+    public boolean allowed(Client client, String rootCommand) {
+        if (client.isStaff()) return true;
+
+        return this.getCloudCommandManager().rootCommands().stream().anyMatch(s -> {
+            if (s.contains(":")) {
+                String[] split = s.split(":");
+                return split[1].equalsIgnoreCase(rootCommand);
+            }
+            return s.equalsIgnoreCase(rootCommand);
+        });
+    }
+
+    @Override
+    public PermissionResult hasPermission(Client client, Permission cloudPermission) {
+        if (client == null) return PermissionResult.allowed(cloudPermission);
+        final Map<String, String> permissionsMap = Arrays.stream(cloudPermission.permissionString().substring(9).split(";")).map(s -> s.split("=")).collect(
+                java.util.stream.Collectors.toMap(strings -> strings[0], strings -> strings[1]));
+        if (client.isAdmin()) return PermissionResult.allowed(cloudPermission);
+
+        int minPermLevel = getInt(permissionsMap.get("minPermLevel"));
+        int strictPermLevel = getInt(permissionsMap.get("strictPermLevel"));
+        String[] permissions = permissionsMap.get("perms").split(",");
+        boolean allowed = false;
+
+        if (minPermLevel == 0 && strictPermLevel == 0 && permissions.length == 0)
+            return PermissionResult.allowed(cloudPermission);
+
+        if (minPermLevel > 0 && client.getRank().getPermissionLevel() >= minPermLevel)
+            allowed = true;
+        else if (strictPermLevel > 0 && client.getRank().getPermissionLevel() == strictPermLevel)
+            allowed = true;
+
+        for (String permName : permissions) {
+            fr.lacaleche.pipe.common.clients.ranks.interfaces.Permission permission = new ModelFilter<PermissionImpl>().model(PermissionImpl.class)
+                    .cache(perm -> perm.getSlug().equalsIgnoreCase(permName))
+                    .sql(sql -> sql.where("slug", permName)).saveInCache()
+                    .def(() -> {
+                        PermissionImpl newPermission = new PermissionImpl(permName);
+                        newPermission.save();
+                        return newPermission;
+                    })
+                    .getOne();
+            if (client.hasPermission(permission)) allowed = true;
+        }
+
+        return PermissionResult.of(allowed, cloudPermission);
+    }
+
+    @Override
+    public Locale locale(C sender) {
+        Locale locale = Pipe.get().getDefaultLocale();
+
+        Reflect reflect = Reflect.on(sender);
+        try {
+            UUID uuid = reflect.call("getUniqueId").get();
+            if (uuid != null) {
+                locale = Pipe.get().getClient(uuid).getLocale();
+            }
+        } catch (ReflectException ignored) {
+            // Exception ignored because the sender is not a player
+            // and we don't want to crash the server or show any error message
+        }
+
+        return locale;
+    }
+
+    private int getInt(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private void requireNonNull() {

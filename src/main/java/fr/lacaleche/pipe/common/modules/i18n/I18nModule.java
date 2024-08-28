@@ -28,8 +28,11 @@ public class I18nModule extends Module {
 
     @Override
     public void onEnable() {
-        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).getAll().toList();
+        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).saveInCache().getAll().toList();
         Logger.customDebug("%d translation keys cached from database...", keys.size());
+
+        List<LocaleImpl> locales = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).saveInCache().getAll().toList();
+        Logger.customDebug("%d locales cached from database...", locales.size());
     }
 
     @Override
@@ -68,7 +71,7 @@ public class I18nModule extends Module {
         Logger.customDebug("Expiring %d translation keys...".formatted(cachedTranslationKeys.size()));
         cachedTranslationKeys.forEach(TranslationKey::expireNow);
 
-        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).getAll().toList();
+        List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).saveInCache().getAll().toList();
         Logger.customDebug("%d translation keys cached from database...", keys.size());
 
         Logger.customDebug("Refreshing %d locales...".formatted(cachedLocales.size()));

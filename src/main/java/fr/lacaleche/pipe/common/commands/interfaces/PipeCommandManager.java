@@ -80,7 +80,12 @@ public interface PipeCommandManager<C> {
     /**
      * TODO
      * */
-    PermissionResult hasPermission(C sender, Permission permission);
+    PermissionResult hasPermission(Client client, Permission permission);
+
+    /**
+     * TODO
+     * */
+    boolean allowed(Client client, String rootCommand);
 
     /**
      * TODO

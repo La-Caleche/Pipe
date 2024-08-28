@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Packet(name = "RegisterNewServerPacket")
-@Serializer(variables = {"app", "host", "serverIcon", "maxPlayers", "devServer", "commands"})
+@Serializer(variables = {"app", "host", "serverIcon", "maxPlayers", "devServer"})
 public class RegisterServerPacket extends PacketImpl {
 
     private String app;
@@ -16,27 +16,20 @@ public class RegisterServerPacket extends PacketImpl {
     private String serverIcon;
     private int maxPlayers;
     boolean devServer;
-    private List<String> commands;
-
 
     public RegisterServerPacket() {
     }
 
-    public RegisterServerPacket(String app, String host, String serverIcon, int maxPlayers, boolean devServer, List<String> commands) {
+    public RegisterServerPacket(String app, String host, String serverIcon, int maxPlayers, boolean devServer) {
         this.app = app;
         this.host = host;
         this.serverIcon = serverIcon;
         this.maxPlayers = maxPlayers;
         this.devServer = devServer;
-        this.commands = commands;
     }
 
     public int getMaxPlayers() {
         return maxPlayers;
-    }
-
-    public List<String> getCommands() {
-        return commands;
     }
 
     public String getApp() {
