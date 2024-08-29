@@ -9,15 +9,14 @@ import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
 import fr.lacaleche.pipe.common.commands.annotations.Permissions;
 import fr.lacaleche.pipe.common.commands.interfaces.CloudCommand;
 import fr.lacaleche.pipe.common.commands.interfaces.PipeCommandManager;
-import fr.lacaleche.pipe.common.commands.parsers.CachedClientParser;
-import fr.lacaleche.pipe.common.commands.parsers.ClientParser;
-import fr.lacaleche.pipe.common.commands.parsers.LocaleParser;
-import fr.lacaleche.pipe.common.commands.parsers.RankParser;
+import fr.lacaleche.pipe.common.commands.parsers.*;
+import fr.lacaleche.pipe.common.i18n.LocaleCaptionProvider;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
+import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.permission.PermissionResult;
 import org.incendo.cloud.setting.ManagerSetting;
@@ -30,6 +29,7 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
 
     private CommandManager<C> cloudCommandManager;
     private AnnotationParser<C> cloudAnnotationParser;
+    private LocaleCaptionProvider<C> captionProvider;
 
     private final Map<IModule, Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>>> moduleCommands;
 
@@ -43,10 +43,16 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
         this.cloudCommandManager.settings().set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
 
         this.cloudCommandManager.parserRegistry()
-                .registerNamedParser("client", ClientParser.parser())
+                .registerNamedParser("client", ClientParser.clientParser())
                 .registerNamedParser("cached_client", CachedClientParser.parser())
-                .registerParser(RankParser.parser())
-                .registerParser(LocaleParser.parser());
+                .registerNamedParser("joined_string", JoinedStringParser.parser())
+                .registerNamedParser("flag_yielding_joined_string", JoinedStringParser.flagYieldingJoinedStringParser())
+                .registerParser(DurationDateParser.parser())
+                .registerParser(LocaleParser.parser())
+                .registerParser(RankParser.parser());
+
+        this.captionProvider = new LocaleCaptionProvider<>();
+        this.cloudCommandManager.captionRegistry().registerProvider(this.captionProvider);
     }
 
     @Override
@@ -70,6 +76,11 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     @Override
     public AnnotationParser<C> getCloudAnnotationParser() {
         return this.cloudAnnotationParser;
+    }
+
+    @Override
+    public LocaleCaptionProvider<C> getCaptionProvider() {
+        return captionProvider;
     }
 
     @Override
@@ -182,20 +193,7 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
 
     @Override
     public Locale locale(C sender) {
-        Locale locale = Pipe.get().getDefaultLocale();
-
-        Reflect reflect = Reflect.on(sender);
-        try {
-            UUID uuid = reflect.call("getUniqueId").get();
-            if (uuid != null) {
-                locale = Pipe.get().getClient(uuid).getLocale();
-            }
-        } catch (ReflectException ignored) {
-            // Exception ignored because the sender is not a player
-            // and we don't want to crash the server or show any error message
-        }
-
-        return locale;
+        return Pipe.get().getLocale(sender);
     }
 
     private int getInt(String value) {

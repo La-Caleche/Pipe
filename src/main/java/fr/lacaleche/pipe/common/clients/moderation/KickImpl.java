@@ -3,15 +3,18 @@ package fr.lacaleche.pipe.common.clients.moderation;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.BelongsTo;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.clients.moderation.interfaces.IKick;
+import fr.lacaleche.pipe.common.modules.client.ClientClassMatcher;
 
 import java.util.Date;
 
 public class KickImpl extends SqlModel implements IKick {
-    @BelongsTo(column = "author_id")
+
+    @BelongsTo(column = "author_id", classMatcher = ClientClassMatcher.class)
     private ClientImpl author;
-    @BelongsTo(column = "client_id")
+    @BelongsTo(column = "client_id", classMatcher = ClientClassMatcher.class)
     private ClientImpl client;
     @Property
     private String reason;

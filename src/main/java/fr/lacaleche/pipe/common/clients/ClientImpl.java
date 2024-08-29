@@ -2,6 +2,8 @@ package fr.lacaleche.pipe.common.clients;
 
 import fr.lacaleche.core.databases.mysql.models.annotations.HasMany;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.Where;
+import fr.lacaleche.core.utils.Callback;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.moderation.BanImpl;
@@ -21,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 public class ClientImpl extends SqlModel implements Client {
@@ -166,57 +169,38 @@ public class ClientImpl extends SqlModel implements Client {
     }
 
     @Override
-    public boolean kick(Client author, String reason) {
-        if (author == null) {
-            SentryAPIImpl.getInstance().captureException(new Exception("Client kick, author is null."));
-            return false;
-        }
-
-        AtomicBoolean success = new AtomicBoolean(false);
-
+    public void kick(Client author, String reason, BiConsumer<Boolean, Optional<Exception>> callback) {
         Pipe.get().getTaskManager().newTask(builder -> builder.run(task -> {
             new KickImpl((ClientImpl) author, this, reason);
             this.refresh();
+            callback.accept(true, Optional.empty());
         }).error(exception -> {
             SentryAPIImpl.getInstance().captureException(exception);
-            success.set(false);
+            callback.accept(false, Optional.of(exception));
         }).async(true).zeroTickExecution(true));
-
-        return success.get();
     }
 
     @Override
-    public boolean ban(Client author, String reason, LocalDateTime endAt) {
-        if (author == null) {
-            SentryAPIImpl.getInstance().captureException(new Exception("Client ban, author is null."));
-            return false;
-        }
-
-        AtomicBoolean success = new AtomicBoolean(true);
-
+    public void ban(Client author, String reason, LocalDateTime endAt, BiConsumer<Boolean, Optional<Exception>> callback) {
         Pipe.get().getTaskManager().newTask(builder -> builder.run(task -> {
             new BanImpl((ClientImpl) author, this, reason, endAt);
             this.refresh();
+            callback.accept(true, Optional.empty());
         }).error(exception -> {
             SentryAPIImpl.getInstance().captureException(exception);
-            success.set(false);
+            callback.accept(false, Optional.of(exception));
         }).async(true).zeroTickExecution(true));
-
-        return success.get();
     }
 
     @Override
-    public boolean unban(Client author) {
-        AtomicBoolean success = new AtomicBoolean(true);
-
+    public void unban(Client author, BiConsumer<Boolean, Optional<Exception>> callback) {
         Pipe.get().getTaskManager().newTask(builder -> builder.run(task -> {
             this.bans.stream().filter(BanImpl::isActive).findFirst().ifPresent(ban -> ban.unban((ClientImpl) author));
+            callback.accept(true, Optional.empty());
         }).error(exception -> {
             SentryAPIImpl.getInstance().captureException(exception);
-            success.set(false);
+            callback.accept(false, Optional.of(exception));
         }).async(true).zeroTickExecution(true));
-
-        return success.get();
     }
 
     @Override

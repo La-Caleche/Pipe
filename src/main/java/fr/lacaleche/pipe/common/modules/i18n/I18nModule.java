@@ -7,6 +7,7 @@ import fr.lacaleche.core.modules.annotations.AModule;
 import fr.lacaleche.core.modules.enums.ModuleTarget;
 import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.core.utils.logger.Logger;
+import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
@@ -33,6 +34,8 @@ public class I18nModule extends Module {
 
         List<LocaleImpl> locales = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).saveInCache().getAll().toList();
         Logger.customDebug("%d locales cached from database...", locales.size());
+
+        Pipe.get().getCommandManager().getCaptionProvider().loadLocales();
     }
 
     @Override
@@ -53,6 +56,8 @@ public class I18nModule extends Module {
 
         Logger.customDebug("Expiring %d locales...".formatted(cachedLocales.size()));
         cachedLocales.forEach(Locale::expireNow);
+
+        Pipe.get().getCommandManager().getCaptionProvider().clear();
     }
 
     @Override

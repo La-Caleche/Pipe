@@ -5,6 +5,7 @@ import fr.lacaleche.core.databases.mysql.SqlDatabase;
 import fr.lacaleche.core.databases.mysql.morph.builder.builders.SelectQueryBuilder;
 import fr.lacaleche.core.databases.mysql.morph.builder.sql.WhereNot;
 import fr.lacaleche.core.databases.mysql.morph.queries.SimpleQuery;
+import fr.lacaleche.core.utils.Callback;
 import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.pipe.common.clients.moderation.BanImpl;
 import fr.lacaleche.pipe.common.clients.moderation.KickImpl;
@@ -17,10 +18,8 @@ import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 @Entity("clients")
@@ -58,11 +57,11 @@ public interface Client extends ISqlModel {
 
     BanImpl getLastBan();
 
-    boolean kick(Client author, String reason);
+    void kick(Client author, String reason, BiConsumer<Boolean, Optional<Exception>> callback);
 
-    boolean ban(Client author, String reason, LocalDateTime endAt);
+    void ban(Client author, String reason, LocalDateTime endAt, BiConsumer<Boolean, Optional<Exception>> callback);
 
-    boolean unban(Client author);
+    void unban(Client author, BiConsumer<Boolean, Optional<Exception>> callback);
 
     List<BanImpl> getBans();
 

@@ -13,6 +13,10 @@ public interface IBan {
 
     void setAuthor(ClientImpl client);
 
+    ClientImpl getUnbanAuthor();
+
+    void setUnbanAuthor(ClientImpl client);
+
     ClientImpl getClient();
 
     void setClient(ClientImpl client);

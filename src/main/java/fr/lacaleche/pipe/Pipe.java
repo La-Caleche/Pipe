@@ -10,6 +10,8 @@ import fr.lacaleche.pipe.common.commands.interfaces.PipeCommandManager;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.tasks.interfaces.Task;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.UUID;
 
@@ -32,6 +34,16 @@ public interface Pipe {
      * TODO
      */
     Locale getDefaultLocale();
+
+    /**
+     * TODO
+     */
+    @NonNull <C> Locale getLocale(C recipient);
+
+    /**
+     * TODO
+     */
+    @Nullable <C> Client getClient(C recipient);
 
     /**
      * TODO

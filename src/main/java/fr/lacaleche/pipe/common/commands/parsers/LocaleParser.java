@@ -9,7 +9,6 @@ import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
-import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
@@ -18,6 +17,18 @@ import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import java.util.stream.Collectors;
 
 public class LocaleParser<C> implements ArgumentParser<C, Locale>, BlockingSuggestionProvider.Strings<C> {
+
+    protected static CloudParserException exception(
+            final @NonNull String input,
+            final @NonNull CommandContext<?> context
+    ) {
+        return CloudParserException.buildException(
+                LocaleParser.class,
+                context,
+                Caption.of("argument.parse.failure.locale"),
+                CaptionVariable.of("input", input)
+        );
+    }
 
     public static <C> @NonNull ParserDescriptor<C, Locale> parser() {
         return ParserDescriptor.of(new LocaleParser<>(), Locale.class);
@@ -37,7 +48,7 @@ public class LocaleParser<C> implements ArgumentParser<C, Locale>, BlockingSugge
                     .getOneOrThrow(() -> new IllegalArgumentException("Locale not found"));
             return ArgumentParseResult.success(locale);
         } catch (final IllegalArgumentException exception) {
-            return ArgumentParseResult.failure(new LocaleParser.LocaleParseException(input, commandContext));
+            return ArgumentParseResult.failure(exception(input, commandContext));
         }
     }
 
@@ -53,39 +64,6 @@ public class LocaleParser<C> implements ArgumentParser<C, Locale>, BlockingSugge
                 .map(Locale::getSlug)
                 .map(String::toLowerCase)
                 .collect(Collectors.toList());
-    }
-
-    public static final class LocaleParseException extends ParserException {
-
-        private final String input;
-
-        /**
-         * Construct a new MaterialParseException
-         *
-         * @param input   Input
-         * @param context Command context
-         */
-        public LocaleParseException(
-                final @NonNull String input,
-                final @NonNull CommandContext<?> context
-        ) {
-            super(
-                    ClientParser.class,
-                    context,
-                    Caption.of("argument.parse.failure.locale"),
-                    CaptionVariable.of("input", input)
-            );
-            this.input = input;
-        }
-
-        /**
-         * Get the input
-         *
-         * @return Input
-         */
-        public @NonNull String input() {
-            return this.input;
-        }
     }
 
 }

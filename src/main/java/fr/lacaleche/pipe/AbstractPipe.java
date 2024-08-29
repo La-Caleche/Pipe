@@ -13,6 +13,10 @@ import fr.lacaleche.pipe.common.commands.interfaces.PipeCommandManager;
 import fr.lacaleche.pipe.common.i18n.LocaleImpl;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
 import fr.lacaleche.pipe.common.tasks.interfaces.TaskManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joor.Reflect;
+import org.joor.ReflectException;
 
 import java.util.*;
 
@@ -25,6 +29,8 @@ public abstract class AbstractPipe implements Pipe {
     private TaskManager taskManager;
     private final PipeText pipeText;
     private Locale defaultLocale;
+
+    private final Map<Object, Client> recipientsCache = new HashMap<>();
 
     private Class<? extends ClientImpl> clientClass;
 
@@ -58,6 +64,38 @@ public abstract class AbstractPipe implements Pipe {
         if (this.defaultLocale == null)
             this.defaultLocale = new ModelFilter<LocaleImpl>().model(LocaleImpl.class).sql(sql -> sql.where(new Where("is_default", true))).cache(LocaleImpl::isDefault).getOne();
         return this.defaultLocale;
+    }
+
+    @Override
+    public <C> @NotNull Locale getLocale(C recipient) {
+        final Client client = this.getClient(recipient);
+        return client == null ? this.getDefaultLocale() : client.getLocale();
+    }
+
+    /**
+     * Get the client from a generic recipient
+     * <p>
+     * Exception ignored because the sender is not a player
+     * and we don't want to crash the server or show any error message
+     *
+     * @param recipient the recipient
+     * @param <C>       the type of the recipient
+     * @return the client
+     */
+    @Override
+    public <C> @Nullable Client getClient(C recipient) {
+        Client client = this.recipientsCache.getOrDefault(recipient, null);
+        if (client != null) return client;
+
+        Reflect reflect = Reflect.on(recipient);
+        try {
+            UUID uuid = reflect.call("getUniqueId").get();
+            if (uuid != null) {
+                client = this.getClient(uuid);
+                if (client != null) this.recipientsCache.put(recipient, client);
+            }
+        } catch (ReflectException ignored) {}
+        return client;
     }
 
     @Override

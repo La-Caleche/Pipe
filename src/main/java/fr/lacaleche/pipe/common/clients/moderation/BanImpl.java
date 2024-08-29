@@ -3,17 +3,22 @@ package fr.lacaleche.pipe.common.clients.moderation;
 import fr.lacaleche.core.databases.mysql.models.SqlModel;
 import fr.lacaleche.core.databases.mysql.models.annotations.BelongsTo;
 import fr.lacaleche.core.databases.mysql.models.annotations.Property;
+import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.pipe.common.clients.ClientImpl;
 import fr.lacaleche.pipe.common.clients.moderation.interfaces.IBan;
+import fr.lacaleche.pipe.common.modules.client.ClientClassMatcher;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class BanImpl extends SqlModel implements IBan {
 
-    @BelongsTo(column = "author_id")
+    @BelongsTo(column = "author_id", classMatcher = ClientClassMatcher.class)
     private ClientImpl author;
-    @BelongsTo(column = "client_id")
+    @BelongsTo(column = "unban_author_id", classMatcher = ClientClassMatcher.class)
+    private ClientImpl unbanAuthor;
+
+    @BelongsTo(column = "client_id", classMatcher = ClientClassMatcher.class)
     private ClientImpl client;
     @Property
     private String reason;
@@ -36,6 +41,17 @@ public class BanImpl extends SqlModel implements IBan {
     @Override
     public void setAuthor(ClientImpl client) {
         this.author = client;
+        this.save();
+    }
+
+    @Override
+    public ClientImpl getUnbanAuthor() {
+        return unbanAuthor;
+    }
+
+    @Override
+    public void setUnbanAuthor(ClientImpl unbanAuthor) {
+        this.unbanAuthor = unbanAuthor;
         this.save();
     }
 
@@ -79,7 +95,10 @@ public class BanImpl extends SqlModel implements IBan {
 
     @Override
     public void unban(ClientImpl author) {
+        Logger.info("Unbanning %s", this.client.getUsername());
+        this.waitBeforeSave();
         this.setEndAt(LocalDateTime.now());
-        this.save();
+        this.setUnbanAuthor(author);
+        this.save(true);
     }
 }
