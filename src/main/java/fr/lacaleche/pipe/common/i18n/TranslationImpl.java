@@ -25,7 +25,6 @@ public class TranslationImpl extends SqlModel implements Translation {
         this.translation = translation;
 
         this.insertOrSave();
-        this.cache();
     }
 
     public TranslationImpl(String error) {

@@ -63,7 +63,6 @@ public class ClientImpl extends SqlModel implements Client {
         this.allowedCommands = new ArrayList<>();
 
         this.insertOrSave();
-        this.cache();
     }
 
     @Override

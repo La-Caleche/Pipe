@@ -6,7 +6,7 @@ import fr.lacaleche.core.modules.handler.ModuleHandler;
 import fr.lacaleche.core.modules.interfaces.IModule;
 import fr.lacaleche.pipe.Pipe;
 
-public class MinecraftModuleHandler extends ModuleHandler {
+public class PipeModuleHandler extends ModuleHandler {
 
     @Override
     public void disableModule(IModule module) {

@@ -4,13 +4,15 @@ import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
+import fr.lacaleche.pipe.common.commands.enums.CommandExecutor;
 
 import java.util.UUID;
 
 @Packet(name = "GsPacket")
-@Serializer(variables = {"sender", "message", "server", "proxy"})
+@Serializer(variables = {"executor", "sender", "message", "server", "proxy"})
 public class GsPacket extends PacketImpl {
 
+    private CommandExecutor executor;
     private UUID sender;
     private String message;
     private String server;
@@ -19,7 +21,8 @@ public class GsPacket extends PacketImpl {
     public GsPacket() {
     }
     
-    public GsPacket(String message) {
+    public GsPacket(CommandExecutor executor, String message) {
+        this.executor = executor;
         this.message = message;
         this.sender = null;
         this.proxy = Core.get().getHost();
@@ -44,6 +47,10 @@ public class GsPacket extends PacketImpl {
 
     public UUID getSender() {
         return sender;
+    }
+
+    public CommandExecutor getExecutor() {
+        return executor;
     }
 
     public String getMessage() {

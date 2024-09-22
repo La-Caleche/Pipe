@@ -1,8 +1,8 @@
 package fr.lacaleche.pipe.common.commands.parsers;
 
-import fr.lacaleche.core.databases.generic.ModelFilter;
-import fr.lacaleche.pipe.common.clients.ranks.RankImpl;
-import fr.lacaleche.pipe.common.clients.ranks.interfaces.Rank;
+import fr.lacaleche.core.Core;
+import fr.lacaleche.core.utils.CalecheDebug;
+import fr.lacaleche.pipe.common.modules.common.ModuleClass;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
@@ -13,39 +13,34 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 
-import java.util.stream.Collectors;
-
-public class RankParser<C> implements ArgumentParser<C, Rank>, BlockingSuggestionProvider.Strings<C> {
+public class AvailableModulesParser<C> implements ArgumentParser<C, ModuleClass>, BlockingSuggestionProvider.Strings<C> {
 
     protected static CloudParserException exception(
             final @NonNull String input,
             final @NonNull CommandContext<?> context
     ) {
         return CloudParserException.buildException(
-                RankParser.class,
+                AvailableModulesParser.class,
                 context,
-                Caption.of("argument.parse.failure.rank"),
+                Caption.of("argument.parse.failure.availablemodules"),
                 CaptionVariable.of("input", input)
         );
     }
 
-    public static <C> @NonNull ParserDescriptor<C, Rank> parser() {
-        return ParserDescriptor.of(new RankParser<>(), Rank.class);
+    public static <C> @NonNull ParserDescriptor<C, ModuleClass> parser() {
+        return ParserDescriptor.of(new AvailableModulesParser<>(), ModuleClass.class);
     }
 
     @Override
-    public @NonNull ArgumentParseResult<Rank> parse(
+    public @NonNull ArgumentParseResult<ModuleClass> parse(
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput commandInput
     ) {
         final String input = commandInput.readString();
         try {
-            final Rank rank = new ModelFilter<RankImpl>()
-                    .model(RankImpl.class)
-                    .cache(cached -> cached.getSlug().equalsIgnoreCase(input))
-                    .sql(sql -> sql.where("slug", input))
-                    .getOneOrThrow(() -> new IllegalArgumentException("Rank not found"));
-            return ArgumentParseResult.success(rank);
+            final ModuleClass moduleClass = ModuleClass.of(Core.get().getCentralModuleManager()
+                    .getAnyAvailableModule(input));
+            return ArgumentParseResult.success(moduleClass);
         } catch (final IllegalArgumentException exception) {
             return ArgumentParseResult.failure(exception(input, commandContext));
         }
@@ -56,13 +51,7 @@ public class RankParser<C> implements ArgumentParser<C, Rank>, BlockingSuggestio
             final @NonNull CommandContext<C> commandContext,
             final @NonNull CommandInput input
     ) {
-        return new ModelFilter<RankImpl>()
-                .model(RankImpl.class)
-                .cache(rank -> input.remainingInput().isBlank() || rank.getSlug().startsWith(input.remainingInput()))
-                .getAll()
-                .map(Rank::getSlug)
-                .map(String::toLowerCase)
-                .collect(Collectors.toList());
+        return Core.get().getCentralModuleManager().getAvailableModules()
+                .stream().map(clazz -> CalecheDebug.shortPackage(clazz.getName())).toList();
     }
-
 }

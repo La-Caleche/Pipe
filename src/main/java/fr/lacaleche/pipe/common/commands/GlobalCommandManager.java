@@ -6,22 +6,25 @@ import fr.lacaleche.core.utils.commons.pairs.Pair;
 import fr.lacaleche.pipe.Pipe;
 import fr.lacaleche.pipe.common.clients.Client;
 import fr.lacaleche.pipe.common.clients.ranks.PermissionImpl;
+import fr.lacaleche.pipe.common.commands.annotations.Locked;
 import fr.lacaleche.pipe.common.commands.annotations.Permissions;
+import fr.lacaleche.pipe.common.commands.annotations.mappers.LockedAnnotationMapper;
+import fr.lacaleche.pipe.common.commands.injectors.GlobalPipeCommandContextInjector;
 import fr.lacaleche.pipe.common.commands.interfaces.CloudCommand;
+import fr.lacaleche.pipe.common.commands.interfaces.PipeArgumentsCommandManager;
 import fr.lacaleche.pipe.common.commands.interfaces.PipeCommandManager;
 import fr.lacaleche.pipe.common.commands.parsers.*;
 import fr.lacaleche.pipe.common.i18n.LocaleCaptionProvider;
 import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import io.leangen.geantyref.TypeToken;
 import org.incendo.cloud.CloudCapability;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
-import org.incendo.cloud.caption.CaptionProvider;
+import org.incendo.cloud.parser.StandardParameters;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.permission.PermissionResult;
 import org.incendo.cloud.setting.ManagerSetting;
-import org.joor.Reflect;
-import org.joor.ReflectException;
 
 import java.util.*;
 
@@ -30,6 +33,7 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     private CommandManager<C> cloudCommandManager;
     private AnnotationParser<C> cloudAnnotationParser;
     private LocaleCaptionProvider<C> captionProvider;
+    private PipeArgumentsCommandManager<C> argumentsCommandManager;
 
     private final Map<IModule, Map<Class<?>, Pair<CloudCommand, Collection<Command<C>>>>> moduleCommands;
 
@@ -43,13 +47,27 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
         this.cloudCommandManager.settings().set(ManagerSetting.ALLOW_UNSAFE_REGISTRATION, true);
 
         this.cloudCommandManager.parserRegistry()
+                .registerAnnotationMapper(Locked.class, new LockedAnnotationMapper());
+
+        this.cloudCommandManager.parserRegistry()
                 .registerNamedParser("client", ClientParser.clientParser())
                 .registerNamedParser("cached_client", CachedClientParser.parser())
-                .registerNamedParser("joined_string", JoinedStringParser.parser())
-                .registerNamedParser("flag_yielding_joined_string", JoinedStringParser.flagYieldingJoinedStringParser())
+                .registerParser(AvailableModulesParser.parser())
                 .registerParser(DurationDateParser.parser())
+                .registerParser(FeatureParser.parser())
+                .registerParser(FeatureValueParser.parser())
                 .registerParser(LocaleParser.parser())
                 .registerParser(RankParser.parser());
+
+        this.cloudCommandManager.parserRegistry()
+                .registerParserSupplier(TypeToken.get(IModule.class), options -> {
+                    final boolean moduleLocked = options.get(PipeParameters.MODULE_LOCKED, false);
+                    final boolean featureLocked = options.get(PipeParameters.FEATURE_LOCKED, false);
+                    return new EnabledModuleParser<>(moduleLocked, featureLocked);
+                });
+
+        this.cloudCommandManager.parameterInjectorRegistry()
+                .registerInjector(GlobalPipeCommandContext.class, new GlobalPipeCommandContextInjector<>());
 
         this.captionProvider = new LocaleCaptionProvider<>();
         this.cloudCommandManager.captionRegistry().registerProvider(this.captionProvider);
@@ -69,6 +87,11 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     }
 
     @Override
+    public void setArgumentsCommandManager(PipeArgumentsCommandManager<C> argumentsCommandManager) {
+        this.argumentsCommandManager = argumentsCommandManager;
+    }
+
+    @Override
     public CommandManager<C> getCloudCommandManager() {
         return this.cloudCommandManager;
     }
@@ -81,6 +104,11 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     @Override
     public LocaleCaptionProvider<C> getCaptionProvider() {
         return captionProvider;
+    }
+
+    @Override
+    public PipeArgumentsCommandManager<C> getArgumentsCommandManager() {
+        return argumentsCommandManager;
     }
 
     @Override
@@ -159,7 +187,7 @@ public abstract class GlobalCommandManager<C> implements PipeCommandManager<C> {
     public PermissionResult hasPermission(Client client, Permission cloudPermission) {
         if (client == null) return PermissionResult.allowed(cloudPermission);
         final Map<String, String> permissionsMap = Arrays.stream(cloudPermission.permissionString().substring(9).split(";")).map(s -> s.split("=")).collect(
-                java.util.stream.Collectors.toMap(strings -> strings[0], strings -> strings[1]));
+                java.util.stream.Collectors.toMap(strings -> strings[0], strings -> strings.length > 1 ? strings[1] : ""));
         if (client.isAdmin()) return PermissionResult.allowed(cloudPermission);
 
         int minPermLevel = getInt(permissionsMap.get("minPermLevel"));

@@ -31,7 +31,6 @@ public class BanImpl extends SqlModel implements IBan {
         this.reason = reason;
         this.endAt = endAt;
         this.insertOrSave();
-        this.cache();
     }
     @Override
     public ClientImpl getAuthor() {

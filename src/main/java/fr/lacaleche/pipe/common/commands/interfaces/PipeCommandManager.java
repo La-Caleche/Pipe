@@ -36,6 +36,11 @@ public interface PipeCommandManager<C> {
     /**
      * TODO
      * */
+    void setArgumentsCommandManager(PipeArgumentsCommandManager<C> argumentsCommandManager);
+
+    /**
+     * TODO
+     * */
     CommandManager<C> getCloudCommandManager();
 
     /**
@@ -47,6 +52,11 @@ public interface PipeCommandManager<C> {
      * TODO
      * */
     LocaleCaptionProvider<C> getCaptionProvider();
+
+    /**
+     * TODO
+     */
+    PipeArgumentsCommandManager<C> getArgumentsCommandManager();
 
     /**
      * Function to define a new Minecraft Command.
