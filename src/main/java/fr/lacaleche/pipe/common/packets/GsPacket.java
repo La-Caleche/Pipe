@@ -4,7 +4,7 @@ import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
-import fr.lacaleche.pipe.common.commands.enums.CommandExecutor;
+import fr.lacaleche.core.commands.enums.CommandExecutor;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class GsPacket extends PacketImpl {
         this.executor = executor;
         this.message = message;
         this.sender = null;
-        this.proxy = Core.get().getHost();
+        this.proxy = Core.get().conf().getHost();
         this.server = "";
     }
 

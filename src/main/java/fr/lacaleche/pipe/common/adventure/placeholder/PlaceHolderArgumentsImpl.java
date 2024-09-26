@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class PlaceHolderArgumentsImpl implements PlaceHolderArguments {
 
-    private Set<?> arguments;
+    private final Set<?> arguments;
 
     public PlaceHolderArgumentsImpl(List<?> arguments) {
         this.arguments = Set.copyOf(arguments);

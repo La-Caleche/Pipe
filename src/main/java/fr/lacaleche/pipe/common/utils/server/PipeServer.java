@@ -1,7 +1,5 @@
 package fr.lacaleche.pipe.common.utils.server;
 
-import java.util.List;
-
 public interface PipeServer {
 
     String getApp();

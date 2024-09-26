@@ -3,9 +3,10 @@ dependencies {
 
     compileOnlyApi project.adventure_text_mini_message
 
-    api project.cloud_core
-    api project.cloud_annotations
-
     testImplementation project(":library:CalecheCore")
     testImplementation project.common_lang
+
+    testImplementation(platform(project.junit))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
