@@ -1,13 +1,13 @@
 package fr.lacaleche.pipe.common.commands;
 
 import fr.lacaleche.core.Core;
+import fr.lacaleche.core.commands.annotations.DisabledOnly;
+import fr.lacaleche.core.commands.annotations.Locked;
+import fr.lacaleche.core.commands.interfaces.CloudCommand;
 import fr.lacaleche.core.modules.ModuleClass;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
 import fr.lacaleche.core.modules.features.interfaces.IFeatureValue;
 import fr.lacaleche.core.modules.interfaces.IModule;
-import fr.lacaleche.core.commands.annotations.DisabledOnly;
-import fr.lacaleche.core.commands.annotations.Locked;
-import fr.lacaleche.core.commands.interfaces.CloudCommand;
 import fr.lacaleche.pipe.common.models.client.interfaces.PipeClient;
 import org.incendo.cloud.annotation.specifier.Greedy;
 import org.incendo.cloud.annotations.Argument;

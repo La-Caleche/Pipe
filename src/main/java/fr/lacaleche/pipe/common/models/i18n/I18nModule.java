@@ -2,17 +2,16 @@ package fr.lacaleche.pipe.common.models.i18n;
 
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.generic.ModelFilter;
-import fr.lacaleche.core.modules.Module;
-import fr.lacaleche.core.modules.annotations.AModule;
-import fr.lacaleche.core.modules.enums.ModuleTarget;
-import fr.lacaleche.core.modules.interfaces.IModuleHandler;
-import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.models.i18n.LocaleImpl;
 import fr.lacaleche.core.models.i18n.TranslationImpl;
 import fr.lacaleche.core.models.i18n.TranslationKeyImpl;
 import fr.lacaleche.core.models.i18n.interfaces.Locale;
 import fr.lacaleche.core.models.i18n.interfaces.Translation;
 import fr.lacaleche.core.models.i18n.interfaces.TranslationKey;
+import fr.lacaleche.core.modules.Module;
+import fr.lacaleche.core.modules.annotations.AModule;
+import fr.lacaleche.core.modules.enums.ModuleTarget;
+import fr.lacaleche.core.utils.logger.Logger;
 
 import java.util.List;
 

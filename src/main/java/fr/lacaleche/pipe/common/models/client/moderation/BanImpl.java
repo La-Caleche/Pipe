@@ -30,6 +30,7 @@ public class BanImpl extends SqlModel implements IBan {
         this.endAt = endAt;
         this.insertOrSave();
     }
+
     @Override
     public AbstractCoreClient getAuthor() {
         return this.author;

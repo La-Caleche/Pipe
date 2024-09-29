@@ -1,24 +1,13 @@
 package fr.lacaleche.pipe.common.packets;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.lacaleche.core.Core;
 import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
-import fr.lacaleche.core.utils.redis.packet.transaction.Transaction;
-import fr.lacaleche.core.utils.redis.packet.transaction.enums.TransactionResult;
-import fr.lacaleche.core.utils.sentry.SentryAPIImpl;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
-import fr.lacaleche.core.utils.seripet.interfaces.CoreSerializer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

@@ -21,6 +21,7 @@ public class KickImpl extends SqlModel implements IKick {
         this.reason = reason;
         this.insertOrSave();
     }
+
     @Override
     public AbstractCoreClient getAuthor() {
         return this.author;

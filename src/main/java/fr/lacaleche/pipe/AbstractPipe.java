@@ -13,7 +13,6 @@ import fr.lacaleche.pipe.common.models.client.PipeLocaleImpl;
 import fr.lacaleche.pipe.common.models.client.PipeRankImpl;
 import fr.lacaleche.pipe.common.models.client.interfaces.PipeClient;
 import fr.lacaleche.pipe.common.models.client.interfaces.PipeLocale;
-import fr.lacaleche.pipe.common.models.client.interfaces.PipeRank;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class AbstractPipe implements Pipe {

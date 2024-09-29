@@ -3,11 +3,11 @@ package fr.lacaleche.pipe;
 import fr.lacaleche.core.Core;
 import fr.lacaleche.core.databases.mysql.SqlDatabase;
 import fr.lacaleche.core.databases.mysql.SqlDatabaseImpl;
+import fr.lacaleche.core.models.i18n.interfaces.Locale;
 import fr.lacaleche.core.utils.logger.Logger;
 import fr.lacaleche.core.utils.seripet.interfaces.CoreSerializer;
 import fr.lacaleche.core.utils.seripet.interfaces.DeserializedResult;
 import fr.lacaleche.core.utils.seripet.interfaces.SerializedResult;
-import fr.lacaleche.core.models.i18n.interfaces.Locale;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ public class TestSqlBuilder {
     }
 
     private void run() {
-        Core core = Core.get();
+        final Core core = Core.get();
         Locale locale = Pipe.getCommon().getDefaultLocale();
 
         SerializedResult result = CoreSerializer.get().serialize(locale);
@@ -55,7 +55,7 @@ public class TestSqlBuilder {
     }
 
     private void start() {
-        Core core = Core.get();
+        final Core core = Core.get();
         core.setDatabase(new SqlDatabaseImpl());
 
         if (!core.<SqlDatabase>getDatabase().openConnection()) {
@@ -65,7 +65,7 @@ public class TestSqlBuilder {
     }
 
     private void stop() {
-        Core core = Core.get();
+        final Core core = Core.get();
         core.<SqlDatabase>getDatabase().closeConnection(true);
         core.getModelManager().flushCache();
     }

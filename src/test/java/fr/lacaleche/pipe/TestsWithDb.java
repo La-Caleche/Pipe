@@ -22,13 +22,13 @@ public class TestsWithDb {
     }
 
     private void start() {
-        Core core = Core.get();
+        final Core core = Core.get();
         core.setDatabase(new SqlDatabaseImpl());
 
         if (core.<SqlDatabase>getDatabase().openConnection()) {
             Logger.info("Mysql connection initialized");
         } else {
-            Logger.err("Mysql connection failed");
+            Logger.error("Mysql connection failed");
         }
     }
 
@@ -36,7 +36,7 @@ public class TestsWithDb {
         if (Core.get().<SqlDatabase>getDatabase().closeConnection(true)) {
             Logger.info("Mysql connection closed");
         } else {
-            Logger.err("Mysql connection failed");
+            Logger.error("Mysql connection failed");
         }
     }
 }

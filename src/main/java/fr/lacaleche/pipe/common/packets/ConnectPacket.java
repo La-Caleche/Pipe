@@ -1,11 +1,11 @@
 package fr.lacaleche.pipe.common.packets;
 
+import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.promises.interfaces.Reject;
 import fr.lacaleche.core.utils.promises.interfaces.Resolve;
 import fr.lacaleche.core.utils.redis.packet.TransactionalPacket;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.redis.packet.enums.PacketType;
-import fr.lacaleche.core.utils.Token;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
 
 import java.util.UUID;

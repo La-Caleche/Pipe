@@ -23,14 +23,14 @@ public class TestRedis {
     }
 
     private void start() {
-        Core core = Core.get();
+        final Core core = Core.get();
         core.setDatabase(new SqlDatabaseImpl());
         core.registerJedisFactory(new JedisFactory());
 
         if (core.<SqlDatabase>getDatabase().openConnection()) {
             Logger.info("Mysql connection initialized");
         } else {
-            Logger.err("Mysql connection failed");
+            Logger.error("Mysql connection failed");
         }
     }
 
@@ -40,7 +40,7 @@ public class TestRedis {
         if (Core.get().<SqlDatabase>getDatabase().closeConnection(true)) {
             Logger.info("Mysql connection closed");
         } else {
-            Logger.err("Mysql connection failed");
+            Logger.error("Mysql connection failed");
         }
     }
 }

@@ -1,10 +1,10 @@
 package fr.lacaleche.pipe.common.packets;
 
 import fr.lacaleche.core.Core;
+import fr.lacaleche.core.commands.enums.CommandExecutor;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
-import fr.lacaleche.core.commands.enums.CommandExecutor;
 
 import java.util.UUID;
 

@@ -19,4 +19,4 @@ create table locales
 
 create unique index locales_slug_uindex
     on locales (slug);
-}
+
