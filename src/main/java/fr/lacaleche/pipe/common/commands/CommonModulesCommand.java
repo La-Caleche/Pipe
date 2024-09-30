@@ -8,6 +8,7 @@ import fr.lacaleche.core.modules.ModuleClass;
 import fr.lacaleche.core.modules.features.interfaces.IFeature;
 import fr.lacaleche.core.modules.features.interfaces.IFeatureValue;
 import fr.lacaleche.core.modules.interfaces.IModule;
+import fr.lacaleche.core.modules.interfaces.IModuleHandler;
 import fr.lacaleche.pipe.common.models.client.interfaces.PipeClient;
 import org.incendo.cloud.annotation.specifier.Greedy;
 import org.incendo.cloud.annotations.Argument;
@@ -81,19 +82,43 @@ public class CommonModulesCommand<C> implements CloudCommand {
     @Command("module|m|mod enable <module>")
     public void enableModule(
             final PipeCommandContext<C, PipeClient<? extends C>> context,
-            @Argument(value = "module") @Locked(Locked.What.MODULE) @DisabledOnly
+            final IModuleHandler moduleHandler,
+            @Argument(value = "module")@Locked(Locked.What.MODULE)@DisabledOnly
             final ModuleClass moduleClass
     ) {
-//        if (moduleClass.clazz().isAnnotationPresent(AGodModule.class)) {
-//            GodModule godModule = Core.getModule(GodModule.class);
-//            godModule.getGodModuleManager().enableModule(moduleClass);
-//        } else {
-//            core.getCentralModuleManager().enableModule(modManagerModule.getHandler(), moduleClass);
-//        }
+        Core.get().getCentralModuleManager().enableModule(moduleHandler, moduleClass.clazz());
 
         context.sendMessage(context.locale()
-                .ct("pipe.command.module.informations.enabled", "pipe.command.module.informations.disabled", false)
+                .t("pipe.command.module.enabled")
                 .arg("module", moduleClass.clazz().getSimpleName())
+                .from("Module").buildComponent());
+    }
+
+    @Command("module|m|mod disable <module>")
+    public void disableModule(
+            final PipeCommandContext<C, PipeClient<? extends C>> context,
+            @Argument(value = "module")@Locked(Locked.What.MODULE)
+            final IModule enabledModule
+    ) {
+        Core.get().getCentralModuleManager().disableModule(enabledModule);
+
+        context.sendMessage(context.locale()
+                .t("pipe.command.module.disabled")
+                .arg("module", enabledModule.getClass().getSimpleName())
+                .from("Module").buildComponent());
+    }
+
+    @Command("module|m|mod reload <module>")
+    public void reloadModule(
+            final PipeCommandContext<C, PipeClient<? extends C>> context,
+            @Argument(value = "module")@Locked(Locked.What.MODULE)
+            final IModule enabledModule
+    ) {
+        Core.get().getCentralModuleManager().reloadModule(enabledModule);
+
+        context.sendMessage(context.locale()
+                .t("pipe.command.module.reloaded")
+                .arg("module", enabledModule.getClass().getSimpleName())
                 .from("Module").buildComponent());
     }
 
