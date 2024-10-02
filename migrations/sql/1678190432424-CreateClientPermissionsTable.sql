@@ -6,7 +6,6 @@ You can run your migration by using DatabaseMigration artifact and running
 `java -jar DatabaseMigration.jar migrate`
 */
 
-createTable {
 create table client_permissions
 (
     client_id     int null,
@@ -18,9 +17,6 @@ create table client_permissions
         foreign key (permission_id) references permissions (id)
             on update cascade on delete cascade
 );
-}
 
-createConstraint {
 create unique index client_permissions_rank_id_permission_id_uindex
     on client_permissions (client_id, permission_id);
-}

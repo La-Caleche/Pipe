@@ -1,10 +1,10 @@
 package fr.lacaleche.pipe.common.packets;
 
 import fr.lacaleche.core.Core;
+import fr.lacaleche.core.commands.enums.CommandExecutor;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
-import fr.lacaleche.pipe.common.commands.annotations.CommandExecutor;
 
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Serializer(variables = {"executor", "sender", "message", "server", "proxy"})
 public class GsPacket extends PacketImpl {
 
-    private CommandExecutor.Executor executor;
+    private CommandExecutor executor;
     private UUID sender;
     private String message;
     private String server;
@@ -21,11 +21,11 @@ public class GsPacket extends PacketImpl {
     public GsPacket() {
     }
     
-    public GsPacket(CommandExecutor.Executor executor, String message) {
+    public GsPacket(CommandExecutor executor, String message) {
         this.executor = executor;
         this.message = message;
         this.sender = null;
-        this.proxy = Core.get().getHost();
+        this.proxy = Core.get().conf().getHost();
         this.server = "";
     }
 
@@ -49,7 +49,7 @@ public class GsPacket extends PacketImpl {
         return sender;
     }
 
-    public CommandExecutor.Executor getExecutor() {
+    public CommandExecutor getExecutor() {
         return executor;
     }
 

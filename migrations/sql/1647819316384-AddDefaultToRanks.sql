@@ -5,7 +5,5 @@ Please be sure that your migration work before pushing them to git.
 You can run your migration by using DatabaseMigration artifact and running
 `java -jar DatabaseMigration.jar migrate`
 */
-addDefault {
-    alter table ranks
-        add is_default boolean default false null after color_code;
-}
+alter table ranks
+    add is_default boolean default false null after color_code;

@@ -6,7 +6,5 @@ You can run your migration by using DatabaseMigration artifact and running
 `java -jar DatabaseMigration.jar migrate`
 */
 
-AddUsernameInClientTable {
-    alter table clients
-        add username varchar(255) null;
-}
+alter table clients
+    add username varchar(255) null;

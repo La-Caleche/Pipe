@@ -1,10 +1,9 @@
 package fr.lacaleche.pipe.common.adventure;
 
-import fr.lacaleche.core.utils.logger.Logger;
-import fr.lacaleche.pipe.Pipe;
+import fr.lacaleche.core.Core;
 import fr.lacaleche.pipe.common.adventure.placeholder.PlaceHolderArguments;
 import fr.lacaleche.pipe.common.adventure.placeholder.PlaceHolderArgumentsImpl;
-import fr.lacaleche.pipe.common.i18n.interfaces.Locale;
+import fr.lacaleche.pipe.common.models.client.interfaces.PipeLocale;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -18,7 +17,7 @@ import java.util.function.BiFunction;
 
 public class PipeTextImpl implements PipeText {
 
-    private final Map<String, BiFunction<PlaceHolderArguments, Locale, Component>> registeredPlaceholders;
+    private final Map<String, BiFunction<PlaceHolderArguments, PipeLocale, Component>> registeredPlaceholders;
 
     public PipeTextImpl() {
         this.registeredPlaceholders = new HashMap<>();
@@ -30,7 +29,7 @@ public class PipeTextImpl implements PipeText {
     }
 
     @Override
-    public Component deserialize(String text, Locale locale, Map<String, List<?>> placeHoldersValues) {
+    public Component deserialize(String text, PipeLocale locale, Map<String, List<?>> placeHoldersValues) {
         Map<String, Component> placeHolders = new HashMap<>();
 
         this.registeredPlaceholders.keySet().stream().filter(placeHoldersValues::containsKey).forEach(s -> {
@@ -42,11 +41,11 @@ public class PipeTextImpl implements PipeText {
 
     @Override
     public Component deserialize(String text) {
-        return this.deserialize(text, Pipe.get().getDefaultLocale(), Map.of());
+        return this.deserialize(text, (PipeLocale) Core.get().getDefaultLocale(), Map.of());
     }
 
     @Override
-    public void registerPlaceHolder(String key, BiFunction<PlaceHolderArguments, Locale, Component> placeHolder) {
+    public void registerPlaceHolder(String key, BiFunction<PlaceHolderArguments, PipeLocale, Component> placeHolder) {
         this.registeredPlaceholders.put(key, placeHolder);
         this.registeredPlaceholders.put("raw_%s".formatted(key), (placeHolderArguments, locale) -> Component.text(((TextComponent) placeHolder.apply(placeHolderArguments, locale)).content()));
     }

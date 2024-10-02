@@ -6,14 +6,10 @@ You can run your migration by using DatabaseMigration artifact and running
 `java -jar DatabaseMigration.jar migrate`
 */
 
-addLocaleId {
-    alter table clients
-        add locale_id int null;
-}
+alter table clients
+    add locale_id int null;
 
-addFkToLocale {
-    alter table clients
-        add constraint clients_locales_id_fk
-            foreign key (locale_id) references locales (id)
-                on update cascade on delete set null;
-}
+alter table clients
+    add constraint clients_locales_id_fk
+        foreign key (locale_id) references locales (id)
+            on update cascade on delete set null;

@@ -6,7 +6,5 @@ You can run your migration by using DatabaseMigration artifact and running
 `java -jar DatabaseMigration.jar migrate`
 */
 
-addGlobalToFeatures {
-    alter table features
-        add host varchar(255) null after name;
-}
+alter table features
+    add host varchar(255) null after name;

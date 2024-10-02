@@ -3,7 +3,6 @@ package fr.lacaleche.pipe.common.packets;
 import fr.lacaleche.core.utils.redis.packet.PacketImpl;
 import fr.lacaleche.core.utils.redis.packet.annotations.Packet;
 import fr.lacaleche.core.utils.seripet.annotations.Serializer;
-import fr.lacaleche.core.utils.seripet.interfaces.CoreSerializer;
 
 import java.util.List;
 
