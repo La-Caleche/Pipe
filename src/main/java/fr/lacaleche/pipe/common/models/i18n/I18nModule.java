@@ -23,7 +23,7 @@ public class I18nModule extends Module {
         List<TranslationKeyImpl> keys = new ModelFilter<TranslationKeyImpl>().model(TranslationKeyImpl.class).saveInCache().getAll().toList();
         Logger.debug("%d translation keys cached from database...", keys.size());
 
-        List<LocaleImpl> locales = new ModelFilter<LocaleImpl>().model((Class<LocaleImpl>) this.getLocaleClassMatching()).saveInCache().getAll().toList();
+        List<LocaleImpl> locales = new ModelFilter<LocaleImpl>().model(this.getLocaleClassMatching()).saveInCache().getAll().toList();
         Logger.debug("%d locales cached from database...", locales.size());
 
         Core.get().getCommandManager().getCaptionProvider().loadLocales();
