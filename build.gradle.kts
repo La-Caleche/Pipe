@@ -1,5 +1,5 @@
 plugins {
-    id("fr.lacaleche.caldle") version "1.2.3"
+    id("fr.lacaleche.caldle")
 }
 
 dependencies {
