@@ -1,6 +1,6 @@
 # Minecraft
 [versions]
-core = "2.0.4+"
+core = "2.+"
 
 # Dependencies
 junit = "5.11.0"

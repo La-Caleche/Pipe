@@ -22,3 +22,7 @@ pluginManagement {
         id("fr.lacaleche.caldle.dev-dependencies-override") version settings.providers.gradleProperty("caldleVersion")
     }
 }
+
+plugins {
+    id("fr.lacaleche.caldle.dev-dependencies-override")
+}
