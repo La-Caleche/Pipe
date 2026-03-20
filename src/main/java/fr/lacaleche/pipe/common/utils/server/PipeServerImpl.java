@@ -6,13 +6,13 @@ import fr.lacaleche.pipe.common.packets.RegisterServerPacket;
 @Serializer(as = PipeServerImpl.class, variables = {"app", "host", "serverIcon", "maxPlayers", "onlinePlayers", "online", "devServer"})
 public class PipeServerImpl implements PipeServer {
 
-    private String app;
-    private String host;
-    private String serverIcon;
-    private int maxPlayers;
+    private final String app;
+    private final String host;
+    private final String serverIcon;
+    private final int maxPlayers;
     private int onlinePlayers;
     private boolean online;
-    private boolean devServer;
+    private final boolean devServer;
 
     public PipeServerImpl(RegisterServerPacket packet) {
         this(packet.getApp(), packet.getHost(), packet.getServerIcon(), packet.getMaxPlayers(), packet.isDevServer());

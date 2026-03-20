@@ -1,3 +1,5 @@
+rootProject.name = "pipe"
+
 pluginManagement {
     repositories {
         gradlePluginPortal()

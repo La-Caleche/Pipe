@@ -35,7 +35,7 @@ public class EverythingIsTrue {
             throw e;
         }
     }
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         setFinalStatic(Boolean.class.getField("FALSE"), true);
 
         System.out.format("Everything is %s", false); // "Everything is true"

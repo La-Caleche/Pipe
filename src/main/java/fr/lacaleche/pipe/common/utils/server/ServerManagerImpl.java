@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ServerManagerImpl implements ServerManager {
 
-    private List<PipeServer> servers;
+    private final List<PipeServer> servers;
 
     public ServerManagerImpl() {
         this.servers = new ArrayList<>();

@@ -11,7 +11,7 @@ import java.util.Map;
 @Serializer(variables = {"resourcePacks"})
 public class RegisterResourcePacksPacket extends PacketImpl {
 
-    private Map<String, String> resourcePacks;
+    private final Map<String, String> resourcePacks;
 
     public RegisterResourcePacksPacket() {
         this.resourcePacks = new HashMap<>();
